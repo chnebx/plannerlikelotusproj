@@ -1,0 +1,10 @@
+﻿<Application x:Class="Experiment.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Experiment"
+             xmlns:conv="clr-namespace:Experiment.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <conv:BrushToBrighterBrushConverter x:Key="BrushToBrighterBrushConverter" />
+    </Application.Resources>
+</Application>

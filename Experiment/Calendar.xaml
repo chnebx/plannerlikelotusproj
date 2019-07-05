@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="Experiment.Calendar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Experiment"
+             xmlns:conv="clr-namespace:Experiment.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:BooleanToVisibleConverter x:Key="BooleanToVisibleConverter"></conv:BooleanToVisibleConverter>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0">
+            <TabItem x:Name="monthModeTab" Width="80" Header="Mois">
+                <!--<local:MonthPlanner x:Name="actualMonthPlanner"></local:MonthPlanner>-->
+            </TabItem>
+            <TabItem x:Name="yearModeTab" Width="80" Header="Année">
+                <!--<local:Planner x:Name="actualPlanner"></local:Planner>-->
+            </TabItem>
+        </TabControl>
+        
+    </Grid>
+    
+</UserControl>

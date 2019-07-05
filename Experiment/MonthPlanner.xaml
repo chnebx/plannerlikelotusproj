@@ -1,0 +1,417 @@
+﻿<UserControl x:Class="Experiment.MonthPlanner"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Experiment"
+             xmlns:models="clr-namespace:Experiment.Models"
+             xmlns:conv="clr-namespace:Experiment.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="PrevForwardBtn" TargetType="{x:Type Button}">
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="Background" Value="#FF8484AA"></Setter>
+            <Setter Property="Margin" Value="10,0,10,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Ellipse
+                                Width="{TemplateBinding Width}" 
+                                Height="{TemplateBinding Height}" 
+                                Fill="{TemplateBinding Background}"
+                                >
+                            </Ellipse>
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Content="{TemplateBinding Content}">
+                            </ContentPresenter>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <conv:WeColorConverter x:Key="WeColorConverter" />
+        <conv:BrushToGradientConverter x:Key="BrushToGradientConverter" />
+        <conv:OpacityToFullVisibilityConverter x:Key="OpacityToFullVisibilityConverter" />
+        <CollectionViewSource x:Key="MonthDaysViewSource" Source="{Binding MonthDays}"/>
+        
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Height="60" CornerRadius="20" Background="#FF8484AA" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3">
+            <StackPanel Orientation="Horizontal">
+                <Button Click="BackwardBtn_Click" FontSize="32" Style="{StaticResource PrevForwardBtn}" x:Name="BackwardBtn" Content="&lt;" Width="40" Height="40"></Button>
+                <!-- FontSize="48" -->
+                <TextBlock 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"            
+                    Foreground="White"
+                    FontSize="48"
+                    Margin="30 0"
+                    x:Name="lblMonth"
+                    Text="{Binding CurrentMonth}"/>
+
+                <Button Click="ForwardBtn_Click" FontSize="32" Style="{StaticResource PrevForwardBtn}" x:Name="ForwardBtn" Content="&gt;" Width="40" Height="40"></Button>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="7*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="FontSize" Value="24" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="Foreground" Value="#FF8484AA" />
+                </Style>
+            </Grid.Resources>
+            <TextBlock x:Name="LundiHeader" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="L"></TextBlock>
+            <TextBlock x:Name="MardiHeader" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="M"></TextBlock>
+            <TextBlock x:Name="MercrediHeader" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="M"></TextBlock>
+            <TextBlock x:Name="JeudiHeader" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Text="J"></TextBlock>
+            <TextBlock x:Name="VendrediHeader" Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" Text="V"></TextBlock>
+            <TextBlock x:Name="SamediHeader" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" Text="S"></TextBlock>
+            <TextBlock x:Name="DimancheHeader" Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" Text="D"></TextBlock>
+        </Grid>
+        <Border Grid.Row="2">
+            
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFA7A3C9"/>
+                    <GradientStop Color="#FF6D6DA6" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <ItemsControl ItemsSource="{Binding MonthDays}" >
+                    <ItemsControl.Resources>
+                        <DataTemplate DataType="{x:Type models:Day}">
+                            <Border CornerRadius="6"
+                                    AllowDrop="True"
+                                    Drop="MonthDay_Drop"
+                                    MouseLeftButtonUp="Day_MouseLeftButtonUp"
+                                    MouseEnter="Day_MouseEnter"
+                                    MouseLeave="Day_MouseLeave"
+                                    >
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DayType}" Value="Enabled">
+                                                <Setter Property="Background" Value="#EEFFFFFF" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsWE}" Value="True">
+                                                <Setter Property="Background" Value="#EDFFF8E2" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                <Setter Property="Background" Value="#FFF3F3FF" />
+                                            </DataTrigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#FFFFF0C7"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Viewbox Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,5,10,0">
+                                    <TextBlock Foreground="#AA8484AA" FontWeight="Bold"  Text="{Binding DayNum}" />
+                                </Viewbox>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.Resources>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Style.Resources>
+                                <Style TargetType="Border">
+                                    <!--<Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="BorderBrush" Value="LightGray" />-->
+                                    
+                                </Style>
+                            </Style.Resources>
+                            <Setter Property="Grid.Row" Value="{Binding Path=MonthRow}" />
+                            <Setter Property="Grid.Column" Value="{Binding Path=MonthColumn}" />
+                            <Setter Property="FrameworkElement.Margin" Value="1"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+
+                <ItemsControl x:Name="eventsShow" ItemsSource="{Binding eventsCollection}">
+                    <ItemsControl.Resources>
+                        <DataTemplate DataType="{x:Type models:EventStack}">
+                            <Border
+                                MouseLeftButtonUp="Event_MouseLeftButtonUp" 
+                                CornerRadius="6"
+                                AllowDrop="True"
+                                Drop="MonthDay_Drop"
+                                >
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#EE9191E0"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="False">
+                                                <Setter Property="Background" Value="#EE7070BE"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="3*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0" Background="Transparent"  
+                                          PreviewMouseDown="Event_PreviewMouseDown"
+                                          PreviewMouseMove="Event_PreviewMouseMove">
+                                        <Border
+                                            Grid.Row="0">
+                                            <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                <TextBlock Foreground="white" FontWeight="Bold" Text="{Binding DayNum}"></TextBlock>
+                                            </Viewbox>
+                                        </Border>
+                                        <Popup
+                                            AllowsTransparency="True"
+                                            VerticalOffset="20"
+                                            IsOpen="{Binding IsMouseOver, Mode=OneWay, RelativeSource = {RelativeSource
+                                            Mode=FindAncestor, AncestorType={x:Type Grid}, AncestorLevel=1}}"
+                                            >
+                                            <Border Opacity="0.98" Height="auto" Width="auto" MinWidth="150" CornerRadius="10">
+                                                <Border.Background>
+                                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                        <GradientStop Color="#FFEEEEEE" Offset="0"/>
+                                                        <GradientStop Color="#FFEAE6E6" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="30"></RowDefinition>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <Border CornerRadius="10,10,0,0" Grid.Row="0" Background="#EE7070BE">
+                                                        <TextBlock Text="{Binding Current.DayTitle}"
+                                                           Foreground="White"
+                                                           FontSize="13"
+                                                           FontWeight="Bold"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"></TextBlock>
+                                                    </Border>
+                                                    <Border x:Name="clippingborder" Grid.Row="1" Background="White" CornerRadius="0,0,10,10" />
+                                                    <ItemsControl Grid.Row="1" ItemsSource="{Binding Events}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Background="#FFECAD3E">
+                                                                    <StackPanel Height="50" Orientation="Horizontal" VerticalAlignment="Stretch" Opacity="{Binding IsFilterResult, Converter={StaticResource OpacityToFullVisibilityConverter}}">
+                                                                        <StackPanel.Background>
+                                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                                <GradientStop Color="#FFFDFDFD" Offset="0.323"/>
+                                                                                <GradientStop Color="#FFF9F5F5" Offset="1"/>
+                                                                                <GradientStop Color="#FFF9F9F9" Offset="0.57"/>
+                                                                                <GradientStop Color="#FFF7F7F7" Offset="0.913"/>
+                                                                                <GradientStop Color="#FFF7F7F7" Offset="0"/>
+                                                                                <GradientStop Color="White" Offset="0.093"/>
+                                                                            </LinearGradientBrush>
+                                                                        </StackPanel.Background>
+                                                                        <Border 
+                                                                            Width="25"
+                                                                            Height="auto"
+                                                                            Margin="0,0,5,0"
+                                                                            Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
+                                                                            >
+                                                                        </Border>
+                                                                        <StackPanel Orientation="Vertical" Width="auto" Margin="0,0,5,0">
+                                                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                                                                <TextBlock 
+                                                                            FontWeight="Bold" 
+                                                                            FontSize="19"
+                                                                            Text="{Binding Name}"
+                                                                            HorizontalAlignment="Center"       
+                                                                            Foreground="#EE7070BE"
+                                                                            >
+                                                                                </TextBlock>
+                                                                                <TextBlock
+                                                                                FontSize="13"
+                                                                                Foreground="#FFA2A3A4"
+                                                                                Margin="0,5,5,0"
+                                                                                >
+                                                                                    <TextBlock.Text>
+                                                                                        <MultiBinding StringFormat="  ( {0} {1} )">
+                                                                                            <Binding Path="ActualEmployer.FirstName"></Binding>
+                                                                                            <Binding Path="ActualEmployer.LastName"></Binding>
+                                                                                        </MultiBinding>
+                                                                                    </TextBlock.Text>
+                                                                                </TextBlock>
+                                                                            </StackPanel>
+
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock
+                                                                                FontSize="13"
+                                                                                Foreground="#FF838383"
+                                                                                FontWeight="Medium"
+                                                                                Margin="0,0,5,0"
+                                                                                >
+                                                                                    <TextBlock.Text>
+                                                                                        <MultiBinding StringFormat="De {0}h{1} à {2}h{3} à {4}" >
+                                                                                            <Binding Path="ShowHour"></Binding>
+                                                                                            <Binding Path="ShowMinutes"></Binding>
+                                                                                            <Binding Path="ShowEndHour"></Binding>
+                                                                                            <Binding Path="ShowEndMinutes"></Binding>
+                                                                                            <Binding Path="LocationName.TownName"></Binding>
+                                                                                        </MultiBinding>
+                                                                                    </TextBlock.Text>
+                                                                                </TextBlock>
+                                                                            </StackPanel>
+                                                                        </StackPanel>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel Height="auto" Width="auto" HorizontalAlignment="Stretch">
+                                                                </StackPanel>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                    </ItemsControl>
+                                                </Grid>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
+                                    
+                                    <ItemsControl ItemsSource="{Binding Events}" Grid.Row="1">
+                                        <ItemsControl.Resources>
+                                            <DataTemplate DataType="{x:Type models:Event}">
+                                                <Border
+                                                BorderThickness="2"
+                                                PreviewMouseDown="Event_PreviewMouseDown"
+                                                PreviewMouseMove="Event_PreviewMouseMove"
+                                                Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
+                                                CornerRadius="6"
+                                                >
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="#e6bc3c"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsMouseOver" Value="False">
+                                                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Viewbox MaxWidth="200" Margin="5,0,5,0">
+                                                        <TextBlock FontWeight="Bold" Background="Transparent" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat=" {0:HH:mm} - {1:HH:mm}  {2}">
+                                                                    <Binding Path="Start"></Binding>
+                                                                    <Binding Path="End"></Binding>
+                                                                    <Binding Path="ShortName"></Binding>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect ShadowDepth="0.2" BlurRadius="1" Color="#FFAAAAAA" />
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                    </Viewbox>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.Resources>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                </Grid>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style>
+                                                <Setter Property="Grid.Row" Value="{Binding Path=Row}"></Setter>
+                                                <Setter Property="Grid.RowSpan" Value="{Binding Path=RowSpan}"></Setter>
+                                            </Style>
+
+                                        </ItemsControl.ItemContainerStyle>
+                                    </ItemsControl>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.Resources>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                    <RowDefinition Height="4*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Grid.Row" Value="{Binding Path=MonthRow}" />
+                            <Setter Property="Grid.Column" Value="{Binding Path=MonthColumn}" />
+                            <Setter Property="FrameworkElement.Margin" Value="1"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </Grid>
+        </Border>
+        
+        
+        
+        
+    </Grid>
+</UserControl>

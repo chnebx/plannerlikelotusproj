@@ -1,0 +1,231 @@
+﻿<Window x:Class="Experiment.Views.DefineLocationDialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Experiment.Views"
+        xmlns:conv="clr-namespace:Experiment.Converters"
+        mc:Ignorable="d"
+        Title="Définir le lieu" Height="450" Width="800">
+    <Window.Resources>
+        <conv:BooleanToVisibleConverter x:Key="BooleanToVisibleConverter"/>
+        <conv:SearchStringToVisibleConverter x:Key="SearchStringToVisibleConverter" />
+        <CollectionViewSource 
+            x:Key="LocationsSource" 
+            Source="{Binding locations}"></CollectionViewSource>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="6*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Border Grid.Row="0" 
+                Grid.Column="0" 
+                Grid.ColumnSpan="3"
+                >
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFC99436" Offset="0"/>
+                    <GradientStop Color="#FFE6AE1D" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <TextBlock Text="Définir le lieu" 
+                       FontSize="20"
+                       Margin="10,0,0,0"
+                       VerticalAlignment="Center"
+                       Foreground="white"
+                       FontWeight="Bold"
+                       ></TextBlock>
+        </Border>
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <Label Content="Chercher : "></Label>
+            <StackPanel Margin="5,0,0,10" Orientation="Horizontal">
+                <ComboBox SelectionChanged="FilterLocationTypeCombo_SelectionChanged"
+                          SelectedValuePath="Content"
+                          x:Name="FilterLocationTypeCombo"
+                          Width="100">
+                    <ComboBoxItem>Ville/Village</ComboBoxItem>
+                    <ComboBoxItem>Type d'emplacement</ComboBoxItem>
+                    <ComboBoxItem>Adresse</ComboBoxItem>
+                </ComboBox>
+                <TextBox Width="210" x:Name="txtBoxFilterLocationName" Margin="10,0,0,0" HorizontalAlignment="Left" Height="22">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=FilterLocationTypeCombo}" Value="1">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <ComboBox x:Name="comboBoxFilterLocationType" Margin="10,0,0,0" Width="100">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=FilterLocationTypeCombo}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=FilterLocationTypeCombo}" Value="2">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+        <TextBlock Margin="5,0,0,0" Grid.Row="2" Grid.ColumnSpan="2" FontSize="20" FontWeight="Bold">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="Lieu sélectionné : {0} {1} à {2}">
+                    <Binding ElementName="LocationsList" Path="SelectedItem.PlaceType"></Binding>
+                    <Binding ElementName="LocationsList" Path="SelectedItem.PlaceName"></Binding>
+                    <Binding ElementName="LocationsList" Path="SelectedItem.TownName"></Binding>
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <Label HorizontalAlignment="Center" Content="Ajouter un lieu : "></Label>
+            <Button x:Name="AddLocationBtn" Click="AddLocationBtn_Click" HorizontalAlignment="Center" Content="Ajouter" Width="80"></Button>
+        </StackPanel>
+        <WrapPanel HorizontalAlignment="Right" Margin="0,7,27,0" Grid.Row="1" Grid.Column="2">
+            <Button IsEnabled="{Binding ElementName=LocationsList, Path=SelectedItems.Count}" 
+                    Margin="4,0,4,4" 
+                    Content="OK"
+                    IsDefault="True" 
+                    Click="OkBtn_Click"
+                    Width="80"></Button>
+            <Button Margin="4,0,4,4" Content="Annuler" Width="80" IsCancel="True" Click="CancelBtn_Click"></Button>
+        </WrapPanel>
+        <Grid x:Name="NewLocationGrid" Visibility="{Binding CreateLocationsPanelActive, Converter={StaticResource BooleanToVisibleConverter}}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Border  Background="#FF979797" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                <TextBlock HorizontalAlignment="Center" Text="Nouveau lieu connu" Foreground="white"></TextBlock>
+            </Border>
+            <StackPanel Margin="0,0,0,5" Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                <StackPanel Margin="0,0,5,0">
+                    <Label Content="Ville /  Village : "></Label>
+                    <TextBox x:Name="txtLocationTownName" Margin="5,0,3,0" Width="115" Height="20"></TextBox>
+                    <Label Content="Addresse : "></Label>
+                    <TextBox x:Name="txtLocationAddress" Margin="5,0,3,0" HorizontalAlignment="Right" Width="115" Height="20"></TextBox>
+                </StackPanel>
+                <StackPanel Margin="5,0,3,0">
+                    <StackPanel Margin="5,0,5,0">
+                        <Label Content="Type d'emplacement : "></Label>
+                        <ComboBox x:Name="comboLocationPlaceType" Width="115"  Height="20"></ComboBox>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <Button Grid.Row="1" 
+                    x:Name="CreateLocationBtn"
+                    Margin="0,16,30,0" 
+                    Grid.Column="0" 
+                    VerticalAlignment="Top" 
+                    HorizontalAlignment="Right" 
+                    Width="80"
+                    Height="30"
+                    Click="CreateLocationBtn_Click"
+                    Content="Créer"></Button>
+        </Grid>
+        <Grid Grid.Row="4" Grid.ColumnSpan="3" Grid.Column="0" Margin="5,0,5,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <!--<Label Grid.Row="0" HorizontalAlignment="Center" Content="Liste des employeurs connus : "></Label>-->
+            <Border Visibility="{Binding ElementName=txtBoxFilterLocationName, Path=Text, Converter={StaticResource SearchStringToVisibleConverter}}" Background="#FFDEB80D" CornerRadius="8,8,0,0">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="17" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="({0}) Filtre en cours : {1}">
+                            <Binding ElementName="FilterLocationTypeCombo" Path="SelectedValue"></Binding>
+                            <Binding ElementName="txtBoxFilterLocationName" Path="Text" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Border>
+            <DataGrid 
+                x:Name="LocationsList"
+                HorizontalContentAlignment="Stretch"
+                IsSynchronizedWithCurrentItem="True"
+                AutoGenerateColumns="False"
+                AlternationCount="2"
+                AlternatingRowBackground="#deebf8"
+                Grid.Row="1"
+                GridLinesVisibility="None"
+                IsReadOnly="True"
+                SelectedValue="{Binding SelectedLocation, Mode=TwoWay}"
+                VirtualizingPanel.IsVirtualizing="True"
+                TextElement.FontSize="17" BorderBrush="#FF688CAF"
+                >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Ville / Village" Width="*" Binding="{Binding TownName}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Emplacement" Width="*" Binding="{Binding PlaceType}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Adresse" Width="*" Binding="{Binding Address}"></DataGridTextColumn>
+                </DataGrid.Columns>
+
+            </DataGrid>
+            <!--<ListView HorizontalContentAlignment="Stretch"
+                      x:Name="LocationsList"
+                      SelectionMode="Single"
+                      Grid.Row="1"
+                      IsSynchronizedWithCurrentItem="True"          
+                      SelectedValue="{Binding SelectedLocation, Mode=TwoWay}"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      TextElement.FontSize="17"
+                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      util:GridViewSort.AutoSort="True"
+                      util:GridViewSort.ShowSortGlyph="False"
+                      >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn 
+                                DisplayMemberBinding="{Binding TownName}"
+                                util:GridViewSort.PropertyName="TownName"
+                                Width="150">
+                                <GridViewColumn.Header>
+                                    <TextBlock Text="Ville/Village"></TextBlock>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                            <GridViewColumn 
+                                DisplayMemberBinding="{Binding PlaceType}"
+                                util:GridViewSort.PropertyName="PlaceType"
+                                Width="150">
+                                <GridViewColumn.Header>
+                                    <TextBlock Text="Emplacement"></TextBlock>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                            <GridViewColumn 
+                                DisplayMemberBinding="{Binding Address}"
+                                util:GridViewSort.PropertyName="Address"
+                                Width="auto">
+                                <GridViewColumn.Header>
+                                    <TextBlock Text="Adresse"></TextBlock>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>-->
+        </Grid>
+    </Grid>
+</Window>
