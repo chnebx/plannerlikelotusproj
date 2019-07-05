@@ -86,7 +86,7 @@
             <TextBlock x:Name="SamediHeader" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" Text="S"></TextBlock>
             <TextBlock x:Name="DimancheHeader" Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" Text="D"></TextBlock>
         </Grid>
-        <Border Grid.Row="2">
+        <Border Grid.Row="2" MouseLeave="Border_MouseLeave">
             
             <Border.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -172,23 +172,11 @@
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type models:EventStack}">
                             <Border
-                                MouseLeftButtonUp="Event_MouseLeftButtonUp" 
+                                MouseLeftButtonUp="Event_MouseLeftButtonUp"
                                 CornerRadius="6"
                                 AllowDrop="True"
                                 Drop="MonthDay_Drop"
                                 >
-                                <Border.Style>
-                                    <Style TargetType="{x:Type Border}">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#EE9191E0"/>
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="False">
-                                                <Setter Property="Background" Value="#EE7070BE"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"></RowDefinition>
@@ -199,6 +187,18 @@
                                           PreviewMouseMove="Event_PreviewMouseMove">
                                         <Border
                                             Grid.Row="0">
+                                            <Border.Style>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#EE9191E0"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="False">
+                                                            <Setter Property="Background" Value="#EE7070BE"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
                                             <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                                 <TextBlock Foreground="white" FontWeight="Bold" Text="{Binding DayNum}"></TextBlock>
                                             </Viewbox>
@@ -229,7 +229,7 @@
                                                            VerticalAlignment="Center"
                                                            HorizontalAlignment="Center"></TextBlock>
                                                     </Border>
-                                                    <Border x:Name="clippingborder" Grid.Row="1" Background="White" CornerRadius="0,0,10,10" />
+                                                    <Border Background="White" x:Name="clippingborder" Grid.Row="1" CornerRadius="0,0,10,10" />
                                                     <ItemsControl Grid.Row="1" ItemsSource="{Binding Events}">
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate>
@@ -310,68 +310,86 @@
                                             </Border>
                                         </Popup>
                                     </Grid>
-                                    
-                                    <ItemsControl ItemsSource="{Binding Events}" Grid.Row="1">
-                                        <ItemsControl.Resources>
-                                            <DataTemplate DataType="{x:Type models:Event}">
-                                                <Border
+                                    <Border Grid.Row="1" Background="#EE7070BE">
+                                        <ItemsControl ItemsSource="{Binding Events}" Grid.Row="1">
+                                            <ItemsControl.Resources>
+                                                <DataTemplate DataType="{x:Type models:Event}">
+                                                    <Border
                                                 BorderThickness="2"
                                                 PreviewMouseDown="Event_PreviewMouseDown"
                                                 PreviewMouseMove="Event_PreviewMouseMove"
                                                 Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
                                                 CornerRadius="6"
                                                 >
-                                                    <Border.Style>
-                                                        <Style TargetType="{x:Type Border}">
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="BorderBrush" Value="#e6bc3c"/>
-                                                                </Trigger>
-                                                                <Trigger Property="IsMouseOver" Value="False">
-                                                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-                                                    <Viewbox MaxWidth="200" Margin="5,0,5,0">
-                                                        <TextBlock FontWeight="Bold" Background="Transparent" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                            <TextBlock.Text>
-                                                                <MultiBinding StringFormat=" {0:HH:mm} - {1:HH:mm}  {2}">
-                                                                    <Binding Path="Start"></Binding>
-                                                                    <Binding Path="End"></Binding>
-                                                                    <Binding Path="ShortName"></Binding>
-                                                                </MultiBinding>
-                                                            </TextBlock.Text>
-                                                            <TextBlock.Effect>
-                                                                <DropShadowEffect ShadowDepth="0.2" BlurRadius="1" Color="#FFAAAAAA" />
-                                                            </TextBlock.Effect>
-                                                        </TextBlock>
-                                                    </Viewbox>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.Resources>
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="*"></RowDefinition>
-                                                        <RowDefinition Height="*"></RowDefinition>
-                                                        <RowDefinition Height="*"></RowDefinition>
-                                                        <RowDefinition Height="*"></RowDefinition>
-                                                        <RowDefinition Height="*"></RowDefinition>
-                                                        <RowDefinition Height="*"></RowDefinition>
-                                                    </Grid.RowDefinitions>
-                                                </Grid>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemContainerStyle>
-                                            <Style>
-                                                <Setter Property="Grid.Row" Value="{Binding Path=Row}"></Setter>
-                                                <Setter Property="Grid.RowSpan" Value="{Binding Path=RowSpan}"></Setter>
-                                            </Style>
+                                                        <Border.Style>
+                                                            <Style TargetType="{x:Type Border}">
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="BorderBrush" Value="#e6bc3c"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="False">
+                                                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <Grid>
+                                                            <Viewbox MaxWidth="200" Margin="4,0,4,0">
+                                                                <TextBlock FontWeight="Bold" Background="Transparent" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    <TextBlock.Text>
+                                                                        <MultiBinding StringFormat=" {0:HH:mm} - {1:HH:mm}  {2}">
+                                                                            <Binding Path="Start"></Binding>
+                                                                            <Binding Path="End"></Binding>
+                                                                            <Binding Path="ShortName"></Binding>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Text>
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="1" Color="#FF000000" />
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
+                                                            </Viewbox>
+                                                            <Viewbox MaxWidth="200" Margin="5,0,5,0">
+                                                                <TextBlock  FontWeight="Bold" Background="Transparent" Foreground="#FFEEEEEF" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                    <TextBlock.Text>
+                                                                        <MultiBinding StringFormat=" {0:HH:mm} - {1:HH:mm}  {2}">
+                                                                            <Binding Path="Start"></Binding>
+                                                                            <Binding Path="End"></Binding>
+                                                                            <Binding Path="ShortName"></Binding>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Text>
+                                                                <!--<TextBlock.Effect>
+                                                                    <DropShadowEffect ShadowDepth="0" BlurRadius="1" Color="#FF000000" />
+                                                                </TextBlock.Effect>-->
+                                                                </TextBlock>
+                                                            </Viewbox>
+                                                        </Grid>
 
-                                        </ItemsControl.ItemContainerStyle>
-                                    </ItemsControl>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.Resources>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="*"></RowDefinition>
+                                                            <RowDefinition Height="*"></RowDefinition>
+                                                            <RowDefinition Height="*"></RowDefinition>
+                                                            <RowDefinition Height="*"></RowDefinition>
+                                                            <RowDefinition Height="*"></RowDefinition>
+                                                            <RowDefinition Height="*"></RowDefinition>
+                                                        </Grid.RowDefinitions>
+                                                    </Grid>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemContainerStyle>
+                                                <Style>
+                                                    <Setter Property="Grid.Row" Value="{Binding Path=Row}"></Setter>
+                                                    <Setter Property="Grid.RowSpan" Value="{Binding Path=RowSpan}"></Setter>
+                                                </Style>
+
+                                            </ItemsControl.ItemContainerStyle>
+                                        </ItemsControl>
+                                    </Border>
                                 </Grid>
                             </Border>
                         </DataTemplate>

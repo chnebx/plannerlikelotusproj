@@ -232,5 +232,11 @@
   <ItemGroup>
     <Resource Include="Pictures\IconPaint.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Pictures\DownArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Pictures\UpArrow.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

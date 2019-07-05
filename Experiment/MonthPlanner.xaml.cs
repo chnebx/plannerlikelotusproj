@@ -330,7 +330,6 @@ namespace Experiment
                         
                         if (sender is Border)
                         {
-                            Console.WriteLine("?");
                             Event eventSelected = (Event)((Border)sender).DataContext;
 
                             // Initialize the drag & drop operation
@@ -351,6 +350,14 @@ namespace Experiment
                 }
             }
             
+        }
+
+        private void Border_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (_previousHoveredColumn != -1)
+            {
+                _dayHeaders[_previousHoveredColumn].Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8484AA"));
+            }
         }
     }
 }
