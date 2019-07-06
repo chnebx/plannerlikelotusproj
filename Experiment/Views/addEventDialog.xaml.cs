@@ -392,7 +392,7 @@ namespace Experiment.Views
             lengthMinutesOptionBinding.Mode = BindingMode.TwoWay;
             LengthOrEndHourControl.SetBinding(HourSelector.HourValueProperty, lengthHourOptionBinding);
             LengthOrEndHourControl.SetBinding(HourSelector.MinutesValueProperty, lengthMinutesOptionBinding);
-            EndLabel.Content = "     Durée :    ";
+            EndLabel.Content = "Durée";
         }
 
         private void EndHourSetting_Checked(object sender, RoutedEventArgs e)
@@ -405,7 +405,7 @@ namespace Experiment.Views
             lengthMinutesOptionBinding.Mode = BindingMode.TwoWay;
             LengthOrEndHourControl.SetBinding(HourSelector.HourValueProperty, lengthHourOptionBinding);
             LengthOrEndHourControl.SetBinding(HourSelector.MinutesValueProperty, lengthMinutesOptionBinding);
-            EndLabel.Content = "Heure de Fin : ";
+            EndLabel.Content = "Fin";
         }
 
         private void ToggleBtnDesigns(bool EmployerDefined)
