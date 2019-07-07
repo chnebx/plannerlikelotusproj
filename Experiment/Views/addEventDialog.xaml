@@ -142,20 +142,22 @@
         <conv:BrushToBrighterBrushConverter x:Key="BrushToBrighterBrushConverter" />
         <conv:SelectedEventToRadioButtonConverter x:Key="SelectedEventToRadioButtonConverter" />
         <conv:BooleanToVisibleConverter x:Key="BooleanToVisibleConverter" />
+        <conv:StringNullOrEmptyToVisibleConverter x:Key="StringNullOrEmptyToVisibleConverter" />
         <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16"></Setter>
+            <Setter Property="Foreground" Value="#FF666666" />
+            <Setter Property="FontSize" Value="17" />
         </Style>
 
         <Style TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="15"></Setter>
             <Setter Property="FontWeight" Value="DemiBold"></Setter>
+            <Setter Property="Foreground" Value="#FF666666" />
+            <Setter Property="FontSize" Value="17" />
         </Style>
 
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="FontSize" Value="14"></Setter>
         </Style>
-
-
 
         <Style x:Key="AddGreenBtn" TargetType="{x:Type Button}">
             <Setter Property="Foreground" Value="White"></Setter>
@@ -219,11 +221,11 @@
             <Setter Property="Background">
                 <Setter.Value>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FFC32F0E" Offset="0.137"/>
-                        <GradientStop Color="#FFA4361D" Offset="0.51"/>
-                        <GradientStop Color="#FFB61919" Offset="0.88"/>
-                        <GradientStop Color="#FFB64611" Offset="0.01"/>
-                        <GradientStop Color="#FFA23E20" Offset="0.96"/>
+                        <GradientStop Color="#FFF1856D" Offset="0.137"/>
+                        <GradientStop Color="#FFBD4C32" Offset="0.485"/>
+                        <GradientStop Color="#FFD84F26" Offset="0.883"/>
+                        <GradientStop Color="#FFF16725" Offset="0.01"/>
+                        <GradientStop Color="#FFA03819" Offset="0.96"/>
                     </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
@@ -263,13 +265,18 @@
         />
     </Window.Resources>
     <Border Background="White" CornerRadius="10">
+        <Border.Resources>
+            <Style TargetType="{x:Type RadioButton}">
+                <Setter Property="Foreground" Value="#FF666666" />
+            </Style>
+        </Border.Resources>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="35"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="400"></RowDefinition>
+                <RowDefinition Height="430"></RowDefinition>
                 <RowDefinition Height="60"></RowDefinition>
             </Grid.RowDefinitions>
 
@@ -285,7 +292,7 @@
                     <TextBlock Style="{StaticResource Header}" x:Name="startDateText"></TextBlock>
                 </StackPanel>
             </Border>
-            <TextBlock Margin="10,0,0,0" FontWeight="DemiBold" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Text="Liste des évènements du jour :"></TextBlock>
+            <TextBlock FontWeight="DemiBold" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Text="Liste des évènements du jour :"></TextBlock>
             <StackPanel Margin="0,0,10,0" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal">
                 <RadioButton x:Name="StandardModeBtn" GroupName="GraphicMode"  Margin="0,0,2,0" Content="Standard" ></RadioButton>
                 <RadioButton x:Name="AdvancedModeBtn" GroupName="GraphicMode"  Content="Avancé" ></RadioButton>
@@ -410,11 +417,11 @@
                 <StackPanel Background="White" x:Name="InfosPanel" DataContext="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem}" Visibility="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem, Converter={StaticResource SelectedItemToVisibilityConverter}}" Margin="10,0">
                     <DockPanel VerticalAlignment="Top" Height="30" Margin="0,10,0,10">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                            <Label Foreground="#FF666666" FontSize="15" FontWeight="DemiBold"  Content="Titre : "/>
+                            <Label  FontWeight="DemiBold"  Content="Titre : "/>
                             <TextBox x:Name="txtTitle" Text="{Binding Name, Mode=TwoWay}" HorizontalAlignment="Left" Width="180" FontSize="15" Height="24" MaxLines="1" ></TextBox>
                         </StackPanel>
                         <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right"  Orientation="Horizontal">
-                            <Label Foreground="#FF666666" Content="Couleur :"></Label>
+                            <Label Content="Couleur :"></Label>
                             <ColorPicker:ColorPicker
                             x:Name="EventColorPicker"
                             SelectedColor="{Binding ColorFill, Converter={StaticResource ColorToSolidBrushColorConverter}}"
@@ -440,7 +447,7 @@
                     <DockPanel Margin="0,0,0,5">
                         <Border Background="#FFF2F8FD" Width="150" CornerRadius="0,12,12,0">
                             <StackPanel DockPanel.Dock="Left" Margin="0,0,0,10">
-                                <Label Foreground="#FF666666" VerticalAlignment="Center" Width="110" HorizontalAlignment="Center" Content="Début"></Label>
+                                <Label VerticalAlignment="Center" Width="110" HorizontalAlignment="Center" Content="Début"></Label>
                                 <userControls:HourSelector 
                                 Width="100" 
                                 Height="70"
@@ -452,7 +459,7 @@
                         <Border Background="#FFF2F8FD" CornerRadius="12,0,0,12" Width="150" DockPanel.Dock="Right" >
 
                             <StackPanel Margin="0,0,0,10">
-                                <Label Foreground="#FF666666" x:Name="EndLabel" VerticalAlignment="Center" Width="110" Content="" HorizontalAlignment="Center"></Label>
+                                <Label x:Name="EndLabel" VerticalAlignment="Center" Width="110" Content="" HorizontalAlignment="Center"></Label>
                                 <userControls:HourSelector
                                     x:Name="LengthOrEndHourControl"
                                     Width="100" 
@@ -463,18 +470,20 @@
                             </StackPanel>
                         </Border>
                         <StackPanel Width="60" Height="40" VerticalAlignment="Center"  DockPanel.Dock="Right">
-                            <RadioButton Foreground="#FF666666" Checked="LengthSetting_Checked" GroupName="EndHourSetting" Content="Durée" Margin="0,0,0,10"></RadioButton>
-                            <RadioButton Foreground="#FF666666" Checked="EndHourSetting_Checked" GroupName="EndHourSetting"  IsChecked="True" Content="Fin"></RadioButton>
+                            <RadioButton Checked="LengthSetting_Checked" GroupName="EndHourSetting" Content="Durée" Margin="0,0,0,10"></RadioButton>
+                            <RadioButton Checked="EndHourSetting_Checked" GroupName="EndHourSetting"  IsChecked="True" Content="Fin"></RadioButton>
                         </StackPanel>
                     </DockPanel>
-                    <DockPanel Margin="0,10,0,10">
+                    <DockPanel Margin="0,15,0,15">
                         <StackPanel DockPanel.Dock="Left"  Orientation="Horizontal">
-                            <Label Foreground="#FF666666" Content="Employeur :"></Label>
+                            <Label Width="120" Content="Employeur :"></Label>
                             <!--<TextBlock Text=""></TextBlock>-->
                             <!--<TextBox x:Name="txtEmployerName" Text="{Binding ActualEmployer.LastName, Mode=TwoWay}" Height="24" Width="120"></TextBox>-->
                         </StackPanel>
                         <StackPanel DockPanel.Dock="Left"  Orientation="Horizontal">
                             <TextBlock x:Name="EmployerLabel"
+                                       FontWeight="Bold"
+                                       Foreground="#FF666666"
                                        VerticalAlignment="Center">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat=" {0} {1} ">
@@ -489,6 +498,7 @@
                                     FontSize="14" 
                                     Width="auto" 
                                     Height="22" 
+                                    Visibility="{Binding ElementName=EmployerLabel, Path=Text, Converter={StaticResource StringNullOrEmptyToVisibleConverter}}"
                                     Margin="0,0,5,0"
                                     Content="{Binding ActualEmployer, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
                                 <Button.Background>
@@ -500,6 +510,7 @@
                                         <GradientStop Color="#FF2067A2" Offset="0.96"/>
                                     </LinearGradientBrush>
                                 </Button.Background>
+                                
                             </Button>
                             <Button x:Name="RemoveEmployerBtn" 
                                     Click="RemoveEmployerBtn_Click"
@@ -515,9 +526,9 @@
                             <TextBox x:Name="txtEmployerTel" Text="{Binding ActualEmployer.PhoneNumber, Mode=TwoWay}" Height="24" Width="120"></TextBox>-->
                         </StackPanel>
                     </DockPanel>
-                    <DockPanel Margin="0,0,0,10">
+                    <DockPanel Margin="0,0,0,15">
                         <StackPanel Orientation="Horizontal">
-                            <Label Foreground="#FF666666" Content="Formule :" Margin="0,0,15,0"></Label>
+                            <Label Width="120" Content="Formule :" Margin="0,0,0,0"></Label>
                             <!--<TextBox x:Name="txtFormuleName" Text="{Binding CurrentFormule.Name, Mode=TwoWay}" Height="24" Width="120"></TextBox>-->
                             <ComboBox SelectedValue="{Binding CurrentFormule, Mode=TwoWay}" x:Name="comboFormule" ItemsSource="{Binding Band.Formules}" Width="120">
                                 <ComboBox.ItemTemplate>
@@ -532,10 +543,12 @@
                         
                     </DockPanel>
                     <DockPanel Margin="0,0,0,10">
-                        <Label Foreground="#FF666666" Margin="0,0,43,0" DockPanel.Dock="Left" Content="Lieu :"></Label>
+                        <Label Width="120" Margin="0,0,0,0" DockPanel.Dock="Left" Content="Lieu :"></Label>
                         <TextBlock x:Name="LocationLabel"
-                                       VerticalAlignment="Center"
-                                       >
+                                   FontWeight="Bold"
+                                   Foreground="#FF666666"
+                                   VerticalAlignment="Center"
+                                   >
                             <TextBlock.Text>
                                 <MultiBinding StringFormat=" {0} ">
                                     <Binding Path="LocationName.TownName"></Binding>
@@ -543,13 +556,14 @@
                             </TextBlock.Text>
                         </TextBlock>
                         <Button DockPanel.Dock="Left" x:Name="DefineLocationBtn" 
-                                    Click="DefineLocationBtn_Click" 
-                                    Style="{StaticResource AddGreenBtn}" 
-                                    FontSize="14" 
-                                    Width="auto" 
-                                    Height="22" 
-                                    Margin="0,0,5,0"
-                                    Content="{Binding LocationName, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
+                                Click="DefineLocationBtn_Click" 
+                                Style="{StaticResource AddGreenBtn}" 
+                                FontSize="14" 
+                                Width="auto" 
+                                Height="22"
+                                Visibility="{Binding ElementName=LocationLabel, Path=Text, Converter={StaticResource StringNullOrEmptyToVisibleConverter}}"
+                                Margin="0,0,5,0"
+                                Content="{Binding LocationName, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
                             <Button.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="#FF0E69C3" Offset="0.141"/>
@@ -571,7 +585,7 @@
                         </Button>
                     </DockPanel>
                     <DockPanel HorizontalAlignment="Left" Width="285">
-                        <Label Foreground="#FF666666" DockPanel.Dock="Top"  Content="Commentaires :">
+                        <Label DockPanel.Dock="Top"  Content="Commentaires :">
                         </Label>
                         <RichTextBox Margin="5,0,0,0" DockPanel.Dock="Left" Width="280" x:Name="RichTxtComment" Height="70">
                             <FlowDocument>
@@ -590,7 +604,7 @@
                     <Button DockPanel.Dock="Right" Width="140" Margin="10,5,10,0" Height="40" Click="BtnCancelConfirm_Click" Content="Retour"></Button>
                 </DockPanel>
             </Border>
-            <Border x:Name="DefaultDialogBtns" Margin="0,0,0,10" Visibility="Visible" Grid.Row="6" BorderBrush="LightGray">
+            <Border x:Name="DefaultDialogBtns" Margin="0,0,0,0" Visibility="Visible" Grid.Row="6" BorderBrush="LightGray">
                 <DockPanel VerticalAlignment="Bottom"  Margin="10,0,10,8" HorizontalAlignment="Stretch" LastChildFill="False">
                     <Button DockPanel.Dock="Left" IsDefault="True" x:Name="btnAjouter" Click="BtnAjouter_Click" Content="Ok" Width="140" Height="40"></Button>
                     <Button DockPanel.Dock="Right" IsCancel="True" x:Name="btnAnnuler" Click="BtnAnnuler_Click" Content="Annuler" Width="140" Height="40"></Button>

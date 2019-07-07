@@ -107,6 +107,7 @@
     <Compile Include="Converters\SearchStringToVisibleConverter.cs" />
     <Compile Include="Converters\SelectedEventToRadioButtonConverter.cs" />
     <Compile Include="Converters\SelectedItemToVisibilityConverter.cs" />
+    <Compile Include="Converters\StringNullOrEmptyToVisibleConverter.cs" />
     <Compile Include="CustomControls\DayScheduler.xaml.cs">
       <DependentUpon>DayScheduler.xaml</DependentUpon>
     </Compile>
