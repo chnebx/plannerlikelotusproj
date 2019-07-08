@@ -27,11 +27,14 @@ namespace Experiment
             DBHandler.DbInit();
             Planner actualPlanner = new Planner();
             MonthPlanner actualMonthPlanner = new MonthPlanner();
+            SearchFilterControl actualSearchFilter = new SearchFilterControl();
             actualMonthPlanner.BuildMonthPlanner(DateTime.Now);
             actualPlanner.BuildPlanner(DateTime.Now);
             DataContext = this;
+            //FilterModule filter = FilterModule.Instance;
             monthModeTab.Content = actualMonthPlanner;
             yearModeTab.Content = actualPlanner;
+            SearchModeTab.Content = actualSearchFilter;
             //Planner actualPlanner = Planner.Instance;
             //yearModeTab.Content = actualPlanner;
            

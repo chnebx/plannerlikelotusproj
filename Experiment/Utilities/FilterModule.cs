@@ -14,9 +14,12 @@ namespace Experiment.Utilities
         private GroupFilter _groupFilter = null;
         private bool _isFilterActive = false;
         private bool _areFiltersEmpty;
+        public bool connard = false;
         private ObservableCollection<Event> _results = null;
         private ObservableCollection<EventStack> _stacksResult = null;
         private ObservableCollection<EventStack> _providedEvtStackList = null;
+        private static FilterModule _instance = null;
+
 
         public FilterModule(ObservableCollection<EventStack> events)
         {
@@ -25,6 +28,30 @@ namespace Experiment.Utilities
             _areFiltersEmpty = true;
             _results = new ObservableCollection<Event>();
             _stacksResult = new ObservableCollection<EventStack>();
+        }
+
+        public FilterModule()
+        {
+            _groupFilter = new GroupFilter();
+            _providedEvtStackList = DBHandler.getEvents();
+            _areFiltersEmpty = true;
+            connard = true;
+            _results = new ObservableCollection<Event>();
+            _stacksResult = new ObservableCollection<EventStack>();
+        }
+
+        public static FilterModule Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new FilterModule();
+                    Console.WriteLine(_instance.connard);
+                }
+                return _instance;
+            }
+            
         }
 
         public GroupFilter GF
@@ -154,6 +181,29 @@ namespace Experiment.Utilities
             }
         }
 
+        public void UpdateListWithFilterResults(ObservableCollection<EventStack> events)
+        {
+            if (events.Count > 0)
+            {
+                for (int i = 0; i < events.Count; i++)
+                {
+                    events[i].IsFilterResult = false;
+                    events[i].clearFilter();
+                }
+            }
+            if (!GF.IsEmpty())
+            {
+                _stacksResult = new ObservableCollection<EventStack>(events.Where(x => x.FilterEvents(GF.Filter)));
+                foreach (EventStack evtStack in _stacksResult)
+                {
+                    evtStack.IsFilterResult = true;  
+                }
+            }
+            else
+            {
+                IsFilterActive = false;
+            }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

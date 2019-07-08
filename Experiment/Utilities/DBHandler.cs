@@ -98,7 +98,6 @@ namespace Experiment.Utilities
             evtno1Evt1.ActualEmployer = _employers[0];
             no1.AddEvent(evtno1Evt1);
             EventStack no2 = new EventStack(new Day(DateTime.Parse("08/05/19")));
-            Console.WriteLine(no2.Current.Date.Month);
             //var evtno2Evt1 = new Event(TC, 12, 00, 13, 18, "break", _locations[1]);
             var evtno2Evt1 = new Event(TC, new DateTime(2019, 05, 08, 12, 00, 0), new DateTime(2019, 05, 08, 13, 18, 0), "break", _locations[1]);
             evtno2Evt1.CurrentFormule = _formules[2];

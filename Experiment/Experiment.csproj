@@ -124,6 +124,9 @@
       <DependentUpon>MonthPlanner.xaml</DependentUpon>
     </Compile>
     <Compile Include="SchedulerGrid.cs" />
+    <Compile Include="SearchFilterControl.xaml.cs">
+      <DependentUpon>SearchFilterControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\DBHandler.cs" />
     <Compile Include="Utilities\EventsInfo.cs" />
     <Compile Include="Utilities\EventsUtilities.cs" />
@@ -172,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Planner.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchFilterControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

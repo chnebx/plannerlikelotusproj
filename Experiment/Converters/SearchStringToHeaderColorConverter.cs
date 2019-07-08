@@ -17,7 +17,7 @@ namespace Experiment.Converters
             {
                 if ((int)value == 0)
                 {
-                    return "#FF8484AA";
+                    return "#FF5C5CBB";
                 } else
                 {
                     return "#FFe7bf1d";
@@ -29,7 +29,7 @@ namespace Experiment.Converters
                 return "#FFe7bf1d";
             } else
             {
-                return "#FF8484AA";
+                return "#FF5C5CBB";
             }
         }
 

@@ -1,0 +1,263 @@
+﻿<UserControl x:Class="Experiment.SearchFilterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Experiment"
+             xmlns:conv="clr-namespace:Experiment.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="ColorFilterHeaderStyle" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="#FF5C5CBB"></Setter>
+        </Style>
+        <Style x:Key="FilterHeaderStyle" TargetType="{x:Type Border}" BasedOn="{StaticResource ColorFilterHeaderStyle}">
+            <Setter Property="Height" Value="18"></Setter>
+            <Setter Property="Margin" Value="10,0,10,0"></Setter>
+            <Setter Property="CornerRadius" Value="5,5,0,0"></Setter>
+
+        </Style>
+        <Style x:Key="FilterHeaderTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="FontWeight" Value="DemiBold"></Setter>
+            <Setter Property="Margin" Value="10,0,0,0"></Setter>
+            <Setter Property="FontSize" Value="13"></Setter>
+        </Style>
+
+        <CollectionViewSource x:Key="filteredResults" Source="{Binding FilterMod.EventsResults}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Start.Date.Year" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+
+        <conv:SearchStringToHeaderColorConverter x:Key="SearchStringToHeaderColorConverter" />
+        <conv:BrushToGradientConverter x:Key="BrushToGradientConverter" />
+
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#FFE1F3FB"/>
+        <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#A8C8E9F9"/>
+        <!--<SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#3DF9F5F5"/>-->
+        <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#FFF9F5F5"/>
+        <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA"/>
+        <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#FFD3F1FF"/>
+        <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FFC5EAFB"/>
+        <Style x:Key="ListBoxItemStyle1" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Padding" Value="4,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border CornerRadius="10" x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.MouseOver.Background}"/>
+                                <!--<Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.MouseOver.Border}"/>-->
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Border}"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Border}"/>
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF6456BD" Offset="0"/>
+                <GradientStop Color="#FF261974" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140"></ColumnDefinition>
+            <ColumnDefinition Width="8*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock 
+            Grid.Row="0" 
+            Grid.Column="0" 
+            Foreground="White" 
+            Text="Filtre"
+            FontWeight="Bold"
+            FontSize="35"
+            VerticalAlignment="Center"
+            Margin="10,0,0,0"
+            />
+
+        <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+            <StackPanel MinHeight="50" CanVerticallyScroll="True" Grid.Row="0">
+                <Border Style="{StaticResource FilterHeaderStyle}" Background="{Binding ElementName=txtBoxFilterEmployer, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}">
+                    <TextBlock Text="Employeur :" 
+                                    Style="{StaticResource FilterHeaderTextStyle}"
+                                    ></TextBlock>
+                </Border>
+                <TextBox x:Name="txtBoxFilterEmployer" Margin="10,0,10,10"></TextBox>
+
+                <Border Background="{Binding ElementName=comboBoxFormules, Path=SelectedIndex, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}">
+                    <TextBlock Text="Formule :" 
+                                        Style="{StaticResource FilterHeaderTextStyle}"
+                                        ></TextBlock>
+                </Border>
+                <!--<TextBox x:Name="txtBoxFilterFormule" Margin="10,0,10,10"></TextBox>-->
+                <!--<ComboBox 
+                                Height="24" 
+                                x:Name="comboBoxFormules"
+                                Margin="10,0,10,10"
+                                FontSize="15"
+                                ItemsSource="{Binding Path=formules}"
+                                >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"></TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ComboBox>-->
+
+                <Border Background="{Binding ElementName=txtBoxFilterLocation, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}" >
+                    <TextBlock Text="Lieu :" 
+                                        Style="{StaticResource FilterHeaderTextStyle}"
+                                        ></TextBlock>
+                </Border>
+                <TextBox x:Name="txtBoxFilterLocation" Margin="10,0,10,10"></TextBox>
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <Border Background="{Binding ElementName=txtBoxFilterLength, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}" Width="60">
+                            <TextBlock Text="Durée : " 
+                                        Style="{StaticResource FilterHeaderTextStyle}"
+                                        ></TextBlock>
+                        </Border>
+                        <TextBox Width="60" x:Name="txtBoxFilterLength" Margin="10,0,10,10"></TextBox>
+                    </StackPanel>
+                </StackPanel>
+                <Border Background="{Binding ElementName=txtBoxFilterTitle, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}">
+                    <TextBlock Text="Titre :" 
+                                        Style="{StaticResource FilterHeaderTextStyle}"
+                                        ></TextBlock>
+                </Border>
+                <TextBox x:Name="txtBoxFilterTitle" Margin="10,0,10,10"></TextBox>
+                <Border Background="{Binding ElementName=txtBoxFilterComment, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}">
+                    <TextBlock Text="Commentaire :" 
+                                        Style="{StaticResource FilterHeaderTextStyle}"
+                                        ></TextBlock>
+                </Border>
+                <TextBox x:Name="txtBoxFilterComment" Margin="10,0,10,0"></TextBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ListBox x:Name="FilterResultsListBox"
+                 ItemContainerStyle="{StaticResource ListBoxItemStyle1}"
+                 Grid.Row="1" 
+                 Grid.Column="1"
+                 ItemsSource="{Binding Source={StaticResource filteredResults}}"
+                 >
+            <ListBox.Resources>
+                <Style TargetType="ListBox">
+                    <Setter Property="Background" Value="#00FFFFFF" />
+                    <Setter Property="BorderThickness" Value="0" />
+                </Style>
+                <!--<Style TargetType="{x:Type ListBoxItem}">
+                    <Style.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10" />
+                        </Style>
+                    </Style.Resources>
+                    <Setter Property="Background" Value="#FFFBFBFB"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FFF08C29" />
+                            <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>-->
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,5,0,5">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Border 
+                                Width="15"
+                                Height="15"
+                                CornerRadius="2"
+                                Margin="8,3,5,0"
+                                Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}">
+                                </Border>
+                                <TextBlock FontSize="14" Foreground="#FF666666" FontWeight="Bold" Text="{Binding Name}"></TextBlock>
+                            </StackPanel>
+                            <TextBlock FontSize="12" Margin="8,0,0,2" Foreground="#FF666666" Text="{Binding parentStack.Current.DayTitle}"></TextBlock>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Margin" Value="0,0,0,5"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander BorderThickness="0" IsExpanded="True">
+                                            <Expander.Header>
+                                                <DockPanel>
+                                                    <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding Path=Name}" 
+                                 Margin="5,0,0,0" Width="100"/>
+                                                    <TextBlock Foreground="White" FontWeight="Bold" 
+                                 Text="{Binding Path=ItemCount}"/>
+                                                </DockPanel>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter />
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListBox.GroupStyle>
+        </ListBox>
+    </Grid>
+</UserControl>

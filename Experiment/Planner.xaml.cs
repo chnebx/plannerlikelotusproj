@@ -473,8 +473,7 @@ namespace Experiment
         private void Events_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             startPoint = e.GetPosition(null);
-
-            if (sender is Rectangle || sender is Grid)
+            if (sender is Rectangle || sender is Border)
             {
                 _isDraggingItem = true;
             }

@@ -21,6 +21,9 @@
             <TabItem x:Name="yearModeTab" Width="80" Header="Année">
                 <!--<local:Planner x:Name="actualPlanner"></local:Planner>-->
             </TabItem>
+            <TabItem x:Name="SearchModeTab" Width="80" Header="Recherche">
+                
+            </TabItem>
         </TabControl>
         
     </Grid>
