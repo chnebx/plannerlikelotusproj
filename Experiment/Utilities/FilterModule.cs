@@ -156,8 +156,8 @@ namespace Experiment.Utilities
             {
                 for (int i = 0; i < _stacksResult.Count; i++)
                 {
-                    _stacksResult[i].IsFilterResult = false;
-                   _stacksResult[i].clearFilter();
+                    //_stacksResult[i].IsFilterResult = false;
+                    _stacksResult[i].clearFilter();
                 }
             }
             _stacksResult.Clear();
@@ -167,7 +167,7 @@ namespace Experiment.Utilities
                 _stacksResult = new ObservableCollection<EventStack>(_providedEvtStackList.Where(x => x.FilterEvents(GF.Filter)));
                 foreach (EventStack evtStack in _stacksResult)
                 {
-                    evtStack.IsFilterResult = true;
+                    //evtStack.IsFilterResult = true;
                     //_stacksResult.Add(evtStack);
                     foreach(Event evt in evtStack.FilteredEvents)
                     {

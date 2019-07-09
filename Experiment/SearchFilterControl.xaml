@@ -138,7 +138,7 @@
                                         Style="{StaticResource FilterHeaderTextStyle}"
                                         ></TextBlock>
                 </Border>
-                <Grid>
+                <!--<Grid>-->
                     <ComboBox 
                         Height="24" 
                         x:Name="comboBoxFormules"
@@ -152,7 +152,7 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <TextBlock FontSize="15" Height="24" Margin="10,0,10,10" Text="(Aucune)" IsHitTestVisible="False">
+                    <!--<TextBlock FontSize="15" Height="24" Margin="10,0,10,10" Text="(Aucune)" IsHitTestVisible="False">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Collapsed"></Setter>
@@ -164,7 +164,7 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
-                </Grid>
+                </Grid>-->
                
                 <Border Background="{Binding ElementName=txtBoxFilterLocation, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}" >
                     <TextBlock Text="Lieu :" 

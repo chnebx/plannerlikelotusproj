@@ -70,7 +70,7 @@ namespace Experiment
             yearDays = new ObservableCollection<Day>();
             eventsInfo = new EventsInfo();
             eventsCollection = DBHandler.getEvents(DateTime.Now.Year);
-            filterModule = new FilterModule(eventsCollection);
+            //filterModule = new FilterModule(eventsCollection);
             FindNextEventFromNow();
             hoveredDate.Text = "(Aucune date)";
             formules = new ObservableCollection<Formule>();
@@ -148,8 +148,8 @@ namespace Experiment
             currentYear = targetTimer1.Year;
             eventsCollection = DBHandler.getEvents(currentYear);
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
-            filterModule.FilteredCollection = eventsCollection;
-            filterModule.RefreshFilter();
+            //filterModule.FilteredCollection = eventsCollection;
+            //filterModule.RefreshFilter();
             contentShow.ItemsSource = eventsCollection;
             if (evts.View != null)
             {

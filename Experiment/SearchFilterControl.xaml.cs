@@ -28,6 +28,7 @@ namespace Experiment
         public FilterModule FilterMod { get; set; }
         public ObservableCollection<Formule> formules { get; set; }
 
+
         public SearchFilterControl()
         {
             InitializeComponent();
@@ -36,6 +37,7 @@ namespace Experiment
             formules = new ObservableCollection<Formule>();
             formules.Add(new Formule("Non définie"));
             formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
+            comboBoxFormules.SelectedIndex = 0;
             
             var delay = 50;
             Observable.FromEventPattern<EventArgs>(txtBoxFilterEmployer, "TextChanged")
@@ -102,7 +104,7 @@ namespace Experiment
 
             if (element is ComboBox)
             {
-                if (((ComboBox)element).SelectedIndex == -1)
+                if (((ComboBox)element).SelectedIndex == 0)
                 {
                     FilterMod.RemoveFilter(filterFunc);
                 }
