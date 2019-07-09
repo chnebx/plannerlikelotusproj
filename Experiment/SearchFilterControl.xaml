@@ -138,21 +138,34 @@
                                         Style="{StaticResource FilterHeaderTextStyle}"
                                         ></TextBlock>
                 </Border>
-                <!--<TextBox x:Name="txtBoxFilterFormule" Margin="10,0,10,10"></TextBox>-->
-                <!--<ComboBox 
-                                Height="24" 
-                                x:Name="comboBoxFormules"
-                                Margin="10,0,10,10"
-                                FontSize="15"
-                                ItemsSource="{Binding Path=formules}"
-                                >
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"></TextBlock>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ComboBox>-->
-
+                <Grid>
+                    <ComboBox 
+                        Height="24" 
+                        x:Name="comboBoxFormules"
+                        Margin="10,0,10,10"
+                        FontSize="15"
+                        ItemsSource="{Binding formules}"
+                        >
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock FontSize="15" Height="24" Margin="10,0,10,10" Text="(Aucune)" IsHitTestVisible="False">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=comboBoxFormules,Path=SelectedItem}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+               
                 <Border Background="{Binding ElementName=txtBoxFilterLocation, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}" >
                     <TextBlock Text="Lieu :" 
                                         Style="{StaticResource FilterHeaderTextStyle}"
@@ -196,20 +209,6 @@
                     <Setter Property="Background" Value="#00FFFFFF" />
                     <Setter Property="BorderThickness" Value="0" />
                 </Style>
-                <!--<Style TargetType="{x:Type ListBoxItem}">
-                    <Style.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="10" />
-                        </Style>
-                    </Style.Resources>
-                    <Setter Property="Background" Value="#FFFBFBFB"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#FFF08C29" />
-                            <Setter Property="Opacity" Value="1" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>-->
             </ListBox.Resources>
             <ListBox.ItemTemplate>
                 <DataTemplate>

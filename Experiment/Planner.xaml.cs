@@ -36,13 +36,10 @@ namespace Experiment
         private bool _isDraggingItem = false;
         private Point startPoint;
         public FilterModule filterModule { get; set; }
-        public List<Event> selectedEvents { get; set; }
         public ObservableCollection<Formule> formules { get; set; }
         public Grid actual;
-        public GroupFilter gf;
         public EventsInfo eventsInfo { get; set; }
         public int distanceFromUpcomingEvent { get; set; }
-        public bool FormulefilterActive = false;
         private int hoveredMonth = -1;
         public CollectionViewSource evtsCvs = null;
         private static Planner _instance;
@@ -72,16 +69,13 @@ namespace Experiment
             monthNames = CalendarSource.getMonthNames();
             yearDays = new ObservableCollection<Day>();
             eventsInfo = new EventsInfo();
-            selectedEvents = new List<Event>();
-            //DBHandler.DbInit();
-            eventsCollection = DBHandler.getEvents();
+            eventsCollection = DBHandler.getEvents(DateTime.Now.Year);
             filterModule = new FilterModule(eventsCollection);
             FindNextEventFromNow();
             hoveredDate.Text = "(Aucune date)";
             formules = new ObservableCollection<Formule>();
             formules.Add(new Formule("Toutes"));
             formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
-            comboBoxFormules.SelectedIndex = 0;
             monthControls = new ObservableCollection<Border>()
             {
                 JanvierHeader,
@@ -98,62 +92,6 @@ namespace Experiment
                 DecembreHeader
             };
             evtsCvs = (CollectionViewSource)this.FindResource("EventsViewSource");
-
-            var delay = 50;
-            Observable.FromEventPattern<EventArgs>(txtBoxFilterEmployer, "TextChanged")
-                .Select(ea => ((TextBox)ea.Sender).Text)
-                .DistinctUntilChanged()
-                .Throttle(TimeSpan.FromMilliseconds(delay))
-                .Subscribe(text => {
-
-                    Predicate<Event> employerFilter = new Predicate<Event>((x) => x.ActualEmployer.FirstName.ToLower().StartsWith(txtBoxFilterEmployer.Text) || x.ActualEmployer.LastName.ToLower().StartsWith(txtBoxFilterEmployer.Text));
-                    this.Dispatcher.Invoke(new Action<Predicate<Event>, TextBox>((employer, element) => TextChangedHandler(employer, element)), new object[] { employerFilter, txtBoxFilterEmployer });
-                });
-
-            Observable.FromEventPattern<EventArgs>(comboBoxFormules, "SelectionChanged")
-             .Select(ea => ((ComboBox)ea.Sender).SelectedValue)
-             .DistinctUntilChanged()
-             .Throttle(TimeSpan.FromMilliseconds(delay))
-             .Subscribe(text =>
-             {
-                 Formule formule = (Formule)text;
-                 Predicate<Event> formulesFilter = null;
-                 formulesFilter = new Predicate<Event>((x) => x.CurrentFormule.Name == formule.Name);
-                 if (previousFormuleFilter != null)
-                 {
-                     filterModule.RemoveFilter(previousFormuleFilter);
-                 }
-                 this.Dispatcher.Invoke(new Action(() => TextChangedHandler(formulesFilter, comboBoxFormules)));
-                 previousFormuleFilter = formulesFilter;
-             });
-
-            Observable.FromEventPattern<EventArgs>(txtBoxFilterLocation, "TextChanged")
-                .Select(ea => ((TextBox)ea.Sender).Text)
-                .DistinctUntilChanged()
-                .Throttle(TimeSpan.FromMilliseconds(delay))
-                .Subscribe(text => {
-                    Predicate<Event> locationFilter = new Predicate<Event>((x) => x.LocationName.TownName.ToLower().Contains(txtBoxFilterLocation.Text.ToLower()));
-                    this.Dispatcher.Invoke(new Action(() => TextChangedHandler(locationFilter, txtBoxFilterLocation)));
-                });
-
-            Observable.FromEventPattern<EventArgs>(txtBoxFilterTitle, "TextChanged")
-                .Select(ea => ((TextBox)ea.Sender).Text)
-                .DistinctUntilChanged()
-                .Throttle(TimeSpan.FromMilliseconds(delay))
-                .Subscribe(text => {
-                    Predicate<Event> titleFilter = new Predicate<Event>((x) => x.Name.ToLower().Contains(txtBoxFilterTitle.Text.ToLower())); ;
-                    this.Dispatcher.Invoke(new Action<Predicate<Event>, TextBox>((title, element) => TextChangedHandler(title, element)), new object[] { titleFilter, txtBoxFilterTitle });
-                });
-
-            Observable.FromEventPattern<EventArgs>(txtBoxFilterComment, "TextChanged")
-                .Select(ea => ((TextBox)ea.Sender).Text)
-                .DistinctUntilChanged()
-                .Throttle(TimeSpan.FromMilliseconds(delay))
-                .Subscribe(text => {
-                   Predicate<Event> commentFilter = new Predicate<Event>((x) => x.Comment.ToLower().Contains(txtBoxFilterComment.Text.ToLower()));
-                   this.Dispatcher.Invoke(new Action<Predicate<Event>, TextBox>((comment, element) => TextChangedHandler(comment, element)), new object[] { commentFilter, txtBoxFilterComment });
-                });
-            //BuildPlanner(DateTime.Now);
         }
 
         public static Planner Instance
@@ -191,31 +129,6 @@ namespace Experiment
             TimeSpan distance = endTime.Subtract(startTime);
             distanceFromUpcomingEvent = (int)distance.TotalMinutes;
             */
-        }
-
-        public void TextChangedHandler(Predicate<Event> filterFunc, object element)
-        {
-            if (!filterModule.ContainsFilter(filterFunc))
-            {
-                filterModule.AddFilter(filterFunc);  
-            }
-
-            if (element is ComboBox)
-            {
-                if (((ComboBox)element).SelectedIndex == 0)
-                {
-                    filterModule.RemoveFilter(filterFunc);
-                }
-            }
-            else
-            {
-                if (String.IsNullOrEmpty(((TextBox)element).Text))
-                {
-                    filterModule.RemoveFilter(filterFunc);
-                }
-            }
-
-            filterModule.RefreshFilter();
         }
 
         public int currentYear
@@ -443,33 +356,6 @@ namespace Experiment
            
         }
 
-        private void EventRectangle_Click(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true;
-            var rectangle = (Rectangle)sender;
-            var eventSelected = (Event)rectangle.DataContext;
-            if (!selectedEvents.Contains(eventSelected))
-            {
-                if (selectedEvents.Count < 3)
-                {
-                    selectedEvents.Add(eventSelected);
-                    rectangle.Stroke = Brushes.White;
-                    rectangle.StrokeThickness = 0.8;
-                }
-            } else
-            {
-                selectedEvents.Remove(eventSelected);
-                rectangle.Stroke = Brushes.Black;
-                rectangle.StrokeThickness = 0.4;
-            }
-        }
-
-        private void EventRectangle_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var rectangle = (Rectangle)sender;
-            DragDrop.DoDragDrop(rectangle, selectedEvents, DragDropEffects.Move);
-        }
-
         private void Events_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             startPoint = e.GetPosition(null);
@@ -669,37 +555,37 @@ namespace Experiment
             }
         }
 
-        public bool EmployerFilter(object employer)
-        {
+        //public bool EmployerFilter(object employer)
+        //{
             
-            if (String.IsNullOrEmpty(txtBoxFilterEmployer.Text))
-                return true;
+        //    if (String.IsNullOrEmpty(txtBoxFilterEmployer.Text))
+        //        return true;
 
-            EventStack evtStack = (EventStack)employer;
+        //    EventStack evtStack = (EventStack)employer;
 
 
-            if (evtStack.containsEmployer(txtBoxFilterEmployer.Text))
-            {
-                return true;
-            }
-            return false;
-        }
+        //    if (evtStack.containsEmployer(txtBoxFilterEmployer.Text))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
-        public void Employer_Filter(object sender, FilterEventArgs e)
-        {
+        //public void Employer_Filter(object sender, FilterEventArgs e)
+        //{
 
-            if (String.IsNullOrEmpty(txtBoxFilterEmployer.Text))
-                e.Accepted = true;
+        //    if (String.IsNullOrEmpty(txtBoxFilterEmployer.Text))
+        //        e.Accepted = true;
 
-            EventStack evtStack = (EventStack)e.Item;
+        //    EventStack evtStack = (EventStack)e.Item;
 
-            if (evtStack.containsEmployer(txtBoxFilterEmployer.Text))
-            {
-                e.Accepted = true;
-            }
+        //    if (evtStack.containsEmployer(txtBoxFilterEmployer.Text))
+        //    {
+        //        e.Accepted = true;
+        //    }
            
 
-        }
+        //}
 
         private void filteredEvent_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -714,18 +600,18 @@ namespace Experiment
             }
         }
 
-        private void Reset_Click(object sender, RoutedEventArgs e)
-        {
-            txtBoxFilterComment.Clear();
-            txtBoxFilterEmployer.Clear();
-            txtBoxFilterLength.Clear();
-            txtBoxFilterLocation.Clear();
-            txtBoxFilterTitle.Clear();
-            if (comboBoxFormules.SelectedIndex != 0)
-            {
-                comboBoxFormules.SelectedIndex = 0;     
-            }
-        }
+        //private void Reset_Click(object sender, RoutedEventArgs e)
+        //{
+        //    txtBoxFilterComment.Clear();
+        //    txtBoxFilterEmployer.Clear();
+        //    txtBoxFilterLength.Clear();
+        //    txtBoxFilterLocation.Clear();
+        //    txtBoxFilterTitle.Clear();
+        //    if (comboBoxFormules.SelectedIndex != 0)
+        //    {
+        //        comboBoxFormules.SelectedIndex = 0;     
+        //    }
+        //}
 
         private void BackwardBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -745,7 +631,7 @@ namespace Experiment
 
         private void Planner_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            Console.WriteLine("loaded");
         }
     }
 }

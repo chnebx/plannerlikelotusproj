@@ -163,7 +163,6 @@ namespace Experiment.Models
                 LengthHour = (int)(diffTime - Start).TotalMinutes / 60;
                 LengthMinutes = (int)(diffTime - Start).TotalMinutes % 60;
                 End = diffTime;
-                Console.WriteLine("hey");
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
@@ -414,7 +413,6 @@ namespace Experiment.Models
                 {
                     if (End.Hour == 12 && endMinutesValue > 0)
                     {
-                        Console.WriteLine("happened");
                         endMinutesValue = 0;
                     }
                 }

@@ -64,7 +64,6 @@ namespace Experiment.Views
                 .DistinctUntilChanged()
                 .Throttle(TimeSpan.FromMilliseconds(delay))
                 .Subscribe(text => {
-                    Console.WriteLine(text);
                     this.Dispatcher.Invoke(new Action(() => handleFilters())); ;
                 });
         }

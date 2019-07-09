@@ -11,7 +11,8 @@ namespace Experiment.Utilities
 {
     public class DBHandler: INotifyPropertyChanged
     {
-        public static ObservableCollection<EventStack> _events = null;
+        //public static ObservableCollection<EventStack> _events = null;
+        public static List<EventStack> _events = null;
         public static ObservableCollection<Employer> _employers = null;
         public static ObservableCollection<Formule> _formules = null;
         public static ObservableCollection<Band> _bands = null;
@@ -90,7 +91,7 @@ namespace Experiment.Utilities
             TC.addFormule(_formules[0]);
             TC.addFormule(_formules[1]);
             TC.addFormule(_formules[2]);
-            _events = new ObservableCollection<EventStack>();
+            _events = new List<EventStack>();
             EventStack no1 = new EventStack(new Day(DateTime.Parse("12/10/19")));
             //var evtno1Evt1 = new Event(TC, 10, 05, 11, 08, "anniv", _locations[0]);
             var evtno1Evt1 = new Event(TC, new DateTime(2019, 10, 12, 10, 05, 0), new DateTime(2019, 10, 12, 11, 08, 0), "anniv", _locations[0]);
@@ -170,7 +171,20 @@ namespace Experiment.Utilities
             _events.Add(no8);
         }
 
-        public ObservableCollection<EventStack> Events
+        //public ObservableCollection<EventStack> Events
+        //{
+        //    get
+        //    {
+        //        return _events;
+        //    }
+        //    set
+        //    {
+        //        _events = value;
+        //        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("getEvents"));
+        //    }
+        //}
+
+        public List<EventStack> Events
         {
             get
             {
@@ -179,13 +193,12 @@ namespace Experiment.Utilities
             set
             {
                 _events = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("getEvents"));
             }
         }
-
+            
         public static ObservableCollection<EventStack> getEvents()
         {
-            return _events;
+            return new ObservableCollection<EventStack>(_events);
         }
 
         public static ObservableCollection<EventStack> getEvents(int year)

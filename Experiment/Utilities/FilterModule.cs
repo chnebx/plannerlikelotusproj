@@ -47,7 +47,6 @@ namespace Experiment.Utilities
                 if (_instance == null)
                 {
                     _instance = new FilterModule();
-                    Console.WriteLine(_instance.connard);
                 }
                 return _instance;
             }
@@ -76,7 +75,7 @@ namespace Experiment.Utilities
             set
             {
                 _providedEvtStackList = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("FilteredCollection"));
+                //if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("FilteredCollection"));
             }
         }
 
@@ -89,7 +88,7 @@ namespace Experiment.Utilities
             set
             {
                 _results = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventsResults"));
+                //if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventsResults"));
             }
         }
 
@@ -203,6 +202,7 @@ namespace Experiment.Utilities
             {
                 IsFilterActive = false;
             }
+
         }
 
 

@@ -15,7 +15,7 @@ namespace Experiment.Converters
         {
             if (value is int)
             {
-                if ((int)value == 0)
+                if ((int)value <= 0 )
                 {
                     return "#FF5C5CBB";
                 } else
