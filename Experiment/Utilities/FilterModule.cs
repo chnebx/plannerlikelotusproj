@@ -192,8 +192,8 @@ namespace Experiment.Utilities
             }
             if (!GF.IsEmpty())
             {
-                _stacksResult = new ObservableCollection<EventStack>(events.Where(x => x.FilterEvents(GF.Filter)));
-                foreach (EventStack evtStack in _stacksResult)
+                ObservableCollection<EventStack> results = new ObservableCollection<EventStack>(events.Where(x => x.FilterEvents(GF.Filter)));
+                foreach (EventStack evtStack in results)
                 {
                     evtStack.IsFilterResult = true;  
                 }

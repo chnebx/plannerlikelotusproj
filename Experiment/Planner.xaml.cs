@@ -150,6 +150,7 @@ namespace Experiment
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
             //filterModule.FilteredCollection = eventsCollection;
             //filterModule.RefreshFilter();
+            FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             contentShow.ItemsSource = eventsCollection;
             if (evts.View != null)
             {
@@ -631,7 +632,11 @@ namespace Experiment
 
         private void Planner_Loaded(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("loaded");
+            if (FilterModule.Instance != null)
+            {
+                FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
+            }
+            
         }
     }
 }

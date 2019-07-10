@@ -359,5 +359,14 @@ namespace Experiment
                 _dayHeaders[_previousHoveredColumn].Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8484AA"));
             }
         }
+
+        private void MonthPlanner_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (FilterModule.Instance != null)
+            {
+                FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
+            }
+
+        }
     }
 }
