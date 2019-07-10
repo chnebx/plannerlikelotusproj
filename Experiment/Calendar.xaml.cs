@@ -31,7 +31,7 @@ namespace Experiment
             actualMonthPlanner.BuildMonthPlanner(DateTime.Now);
             actualPlanner.BuildPlanner(DateTime.Now);
             DataContext = this;
-            //FilterModule filter = FilterModule.Instance;
+          
             monthModeTab.Content = actualMonthPlanner;
             yearModeTab.Content = actualPlanner;
             SearchModeTab.Content = actualSearchFilter;

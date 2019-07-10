@@ -75,7 +75,7 @@ namespace Experiment.Utilities
             set
             {
                 _providedEvtStackList = value;
-                //if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("FilteredCollection"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("FilteredCollection"));
             }
         }
 
@@ -88,7 +88,7 @@ namespace Experiment.Utilities
             set
             {
                 _results = value;
-                //if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventsResults"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventsResults"));
             }
         }
 
@@ -152,26 +152,20 @@ namespace Experiment.Utilities
 
         public void RefreshFilter()
         {
-            if (_stacksResult.Count > 0)
-            {
-                for (int i = 0; i < _stacksResult.Count; i++)
-                {
-                    //_stacksResult[i].IsFilterResult = false;
-                    _stacksResult[i].clearFilter();
-                }
-            }
             _stacksResult.Clear();
             EventsResults.Clear();
+            List<int> attempts = new List<int>();
             if (!GF.IsEmpty())
             {
-                _stacksResult = new ObservableCollection<EventStack>(_providedEvtStackList.Where(x => x.FilterEvents(GF.Filter)));
-                foreach (EventStack evtStack in _stacksResult)
+                for (int i = 0; i < _providedEvtStackList.Count; i++)
                 {
-                    //evtStack.IsFilterResult = true;
-                    //_stacksResult.Add(evtStack);
-                    foreach(Event evt in evtStack.FilteredEvents)
+                    attempts = _providedEvtStackList[i].Filter(GF.Filter);
+                    if (attempts != null)
                     {
-                        EventsResults.Add(evt);
+                        for (int j = 0; j < attempts.Count; j++)
+                        {
+                            EventsResults.Add(_providedEvtStackList[i].Events[attempts[j]]);
+                        }
                     }
                 }
             } else
@@ -182,20 +176,20 @@ namespace Experiment.Utilities
 
         public void UpdateListWithFilterResults(ObservableCollection<EventStack> events)
         {
-            if (events.Count > 0)
+            List<int> attempts = new List<int>();
+            if (!GF.IsEmpty())
             {
                 for (int i = 0; i < events.Count; i++)
                 {
-                    events[i].IsFilterResult = false;
-                    events[i].clearFilter();
-                }
-            }
-            if (!GF.IsEmpty())
-            {
-                ObservableCollection<EventStack> results = new ObservableCollection<EventStack>(events.Where(x => x.FilterEvents(GF.Filter)));
-                foreach (EventStack evtStack in results)
-                {
-                    evtStack.IsFilterResult = true;  
+                    attempts = events[i].Filter(GF.Filter);
+                    if (attempts != null)
+                    {
+                        events[i].IsFilterResult = true;
+                        for (int j = 0; j < attempts.Count; j++)
+                        {
+                            events[i].Events[attempts[j]].IsFilterResult = true;
+                        }
+                    }
                 }
             }
             else
@@ -205,6 +199,17 @@ namespace Experiment.Utilities
 
         }
 
+        public void clearFilterResults(ObservableCollection<EventStack> events)
+        {
+            if (events.Count > 0)
+            {
+                for (int i = 0; i < events.Count; i++)
+                {
+                    events[i].IsFilterResult = false;
+                    events[i].clearFilter();
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

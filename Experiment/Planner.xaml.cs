@@ -146,6 +146,10 @@ namespace Experiment
         public void BuildPlanner(DateTime targetTimer1)
         {
             currentYear = targetTimer1.Year;
+            if (eventsCollection != null || eventsCollection.Count > 0)
+            {
+                FilterModule.Instance.clearFilterResults(eventsCollection);
+            }
             eventsCollection = DBHandler.getEvents(currentYear);
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
             //filterModule.FilteredCollection = eventsCollection;
@@ -634,6 +638,7 @@ namespace Experiment
         {
             if (FilterModule.Instance != null)
             {
+                FilterModule.Instance.clearFilterResults(eventsCollection);
                 FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             }
             

@@ -226,21 +226,35 @@ namespace Experiment.Models
             {
                 if (filterFunc(Events[i]))
                 {
-                    FilteredEvents.Add(Events[i]);
-                    Events[i].IsFilterResult = true;
                     return true;
                 }
             }
             return false;
         }
 
+        public List<int> Filter(Predicate<Event> filterFunc)
+        {
+            List<int> resultsIndices = new List<int>();
+            for (int i = 0; i < Events.Count; i++)
+            {
+                if (filterFunc(Events[i]))
+                {
+                    resultsIndices.Add(i);
+                }
+            }
+            if (resultsIndices.Count > 0)
+            {
+                return resultsIndices;
+            }
+            return null;
+        }
+
         public void clearFilter()
         {
-            for(int i = 0; i < FilteredEvents.Count; i++)
+            for (int i = 0; i < Events.Count; i++)
             {
-                FilteredEvents[i].IsFilterResult = false;
+                Events[i].IsFilterResult = false;
             }
-            _filteredEvents.Clear();
         }
 
         public void RemoveEvent(int index)

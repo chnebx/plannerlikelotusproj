@@ -331,12 +331,15 @@
                                                                     <Trigger Property="IsMouseOver" Value="False">
                                                                         <Setter Property="BorderBrush" Value="Transparent"/>
                                                                     </Trigger>
+                                                                    <DataTrigger Binding="{Binding IsFilterResult}" Value="true">
+                                                                        <Setter Property="BorderBrush" Value="#FFFBF008"/>
+                                                                    </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Border.Style>
                                                         <Grid>
                                                             <Viewbox MaxWidth="200" Margin="4,0,4,0">
-                                                                <TextBlock FontWeight="Bold" Background="Transparent" Foreground="#FFFFFFEF" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                <TextBlock FontWeight="Bold" Foreground="#FFFFFFEF" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     <TextBlock.Text>
                                                                         <MultiBinding StringFormat=" {0:HH:mm} - {1:HH:mm}  {2}">
                                                                             <Binding Path="Start"></Binding>

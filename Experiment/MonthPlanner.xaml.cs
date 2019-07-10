@@ -101,9 +101,14 @@ namespace Experiment
         {
             ActualMonth = date.Month;
             ActualYear = date.Year;
+            if (eventsCollection != null || eventsCollection.Count > 0)
+            {
+                FilterModule.Instance.clearFilterResults(eventsCollection);
+            }
             MonthDays.Clear();
             eventsCollection.Clear();
             eventsCollection = DBHandler.getEvents(date.Year, date.Month);
+            FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             eventsShow.ItemsSource = eventsCollection;
             DateTime d = new DateTime(date.Year, date.Month, 1);
             int offset = ((int)d.DayOfWeek == 0) ? 6 : (int)d.DayOfWeek - 1;
@@ -364,9 +369,9 @@ namespace Experiment
         {
             if (FilterModule.Instance != null)
             {
+                FilterModule.Instance.clearFilterResults(eventsCollection);
                 FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             }
-
         }
     }
 }
