@@ -32,6 +32,8 @@ namespace Experiment.CustomControls
         private bool IsResizing;
         private bool IsDragging;
         private string _scrollInfo;
+        private DateTime LowerLimit;
+        private DateTime UpperLimit;
 
         public DayScheduler()
         {

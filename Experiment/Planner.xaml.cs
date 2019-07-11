@@ -341,7 +341,7 @@ namespace Experiment
             Point pointToWindow = Mouse.GetPosition(this);
             Point pointToScreen = PointToScreen(pointToWindow);
             EventStack freshEvent = new EventStack(selectedDay);
-            EventsUtilities.UpdateCrossingEvts(eventsCollection, freshEvent, selectedDay);
+            EventsUtilities.UpdateLimits(freshEvent);
             addEventDialog addDialog = new addEventDialog(freshEvent, pointToScreen, true);
             if (addDialog.ShowDialog() == true)
             {

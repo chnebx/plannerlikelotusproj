@@ -23,6 +23,8 @@ namespace Experiment.Models
         private string _dayNumber;
         private Event _crossingEvt = null;
         private bool _isFilterResult;
+        private DateTime _lowerLimitHour;
+        private DateTime _upperLimitHour;
         private List<Event> _filteredEvents;
         
         private ObservableCollection<Event> _events;
@@ -62,6 +64,33 @@ namespace Experiment.Models
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("DayNum"));
             }
         }
+
+        public DateTime LowerLimitHour
+        {
+            get
+            {
+                return _lowerLimitHour;
+            }
+            set
+            {
+                _lowerLimitHour = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitHour"));
+            }
+        }
+
+        public DateTime UpperLimitHour
+        {
+            get
+            {
+                return _upperLimitHour;
+            }
+            set
+            {
+                _upperLimitHour = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitHour"));
+            }
+        }
+
 
         public int Row
         {
@@ -338,8 +367,17 @@ namespace Experiment.Models
             set
             {
                 _events = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EvtStackEvts"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
             }
+        }
+
+        public bool IsOver2Days()
+        {
+            if (Events.Last().End.Day > Events.Last().Start.Day)
+            {
+                return true;
+            }
+            return false;
         }
 
         public void sortEvents()

@@ -104,13 +104,24 @@ namespace Experiment.Views
             
             //Day actualDay = null;
             DateTime val;
-            if (parameterProvided is Day)
+            //if (parameterProvided is Day)
+            //{
+            //    Console.WriteLine("day");
+            //    actualDay = (Day)parameterProvided;
+            //    val = actualDay.Date;
+            //} else 
+            if (parameterProvided is EventStack)
             {
-                actualDay = (Day)parameterProvided;
-                val = actualDay.Date;
-            } else if (parameterProvided is EventStack)
-            {
+                
                 actualEventStack = (EventStack)parameterProvided;
+                if (actualEventStack.LowerLimitHour != null)
+                {
+                    Console.WriteLine(" lower limit hour : " + actualEventStack.LowerLimitHour.Hour);
+                }
+                if (actualEventStack.UpperLimitHour != null)
+                {
+                    Console.WriteLine(" upper limit hour : " + actualEventStack.UpperLimitHour.Hour);
+                }
                 val = actualEventStack.Current.Date;
                 actualDay = actualEventStack.Current;
                 eventsFromStack = actualEventStack.Events;
@@ -127,6 +138,7 @@ namespace Experiment.Views
                 }
             } else //if parameterProvided isEvent
             {
+                Console.WriteLine("event");
                 actualEventStack = (EventStack)((Event)parameterProvided).parentStack;
                 val = actualEventStack.Current.Date;
                 actualDay = actualEventStack.Current;
@@ -170,13 +182,13 @@ namespace Experiment.Views
             //fillFormules();
         }
 
-        public addEventDialog(Day actualDay, Point mouseLocation)
-        {
-            InitializeComponent();
-            DataContext = this;
-            initDialog(actualDay, mouseLocation, false);
+        //public addEventDialog(Day actualDay, Point mouseLocation)
+        //{
+        //    InitializeComponent();
+        //    DataContext = this;
+        //    initDialog(actualDay, mouseLocation, false);
             
-        }
+        //}
 
         public addEventDialog(EventStack currentEvts, Point mouseLocation, bool automaticSelection)
         {
@@ -226,8 +238,9 @@ namespace Experiment.Views
 
         private void BtnAjouter_Click(object sender, RoutedEventArgs e)
         {
-
             actualEventStack.updateEvts();
+            //EventsUtilities.UpdateLimits(actualEventStack);
+            EventsUtilities.UpdateNeighborsLimits(actualEventStack);
             this.DialogResult = true;
             //Close();
 
