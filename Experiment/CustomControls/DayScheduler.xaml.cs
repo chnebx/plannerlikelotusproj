@@ -497,11 +497,6 @@ namespace Experiment.CustomControls
                 infoPopup.VerticalOffset = canvasRelativePosition.Y;
                 int hours = (int)length / 50;
                 int minutes = (int)((length - (hours * 50)) * 60/50);
-                int end = (int)((length + registeredSize) / 50) % 24;
-                int endMin = (int)(((length + registeredSize) - (end * 50)) * 60 / 50) % 60;
-                double EndLength = (canvasRelativePosition.Y - itemRelativePosition.Y) + registeredSize;
-                int endHour = ((int)EndLength / 50);
-                int endMinutes = (int)((EndLength - (endHour * 50)) * 60 / 50);
                 Canvas.SetZIndex(draggedItem, 100);
                 if (hours < LowerLimit.Hour || LowerLimit.Hour == hours && minutes < LowerLimit.Minute) // < 0
                 {
@@ -529,22 +524,25 @@ namespace Experiment.CustomControls
                     
                 if (IsDragging)
                 {
-                    debutLabel.Text = hours.ToString("00") + " : " + minutes.ToString("00");
-                    finLabel.Text = end.ToString("00") + " : " + endMin.ToString("00");
+                    
                     draggedItem.Opacity = 0.5;
-                    DateTime compareStart = new DateTime(actualDraggedEvent.Start.Year, actualDraggedEvent.Start.Month, actualDraggedEvent.Start.Day, hours % 24, minutes % 60, 0); ;
-                    if (compareStart.Add(new TimeSpan(actualDraggedEvent.LengthHour, actualDraggedEvent.LengthMinutes, 0)) >= UpperLimit)
+                    DateTime compareStart = new DateTime(actualDraggedEvent.Start.Year, actualDraggedEvent.Start.Month, actualDraggedEvent.Start.Day, hours % 24, minutes % 60, 0);
+                    DateTime endStart = compareStart.Add(new TimeSpan(actualDraggedEvent.LengthHour, actualDraggedEvent.LengthMinutes, 0));
+                    if (endStart >= UpperLimit)
                     {
                         compareStart = UpperLimit.Subtract(new TimeSpan(actualDraggedEvent.LengthHour, actualDraggedEvent.LengthMinutes, 0));
-                    } else
-                    {
-                        compareStart = new DateTime(actualDraggedEvent.Start.Year, actualDraggedEvent.Start.Month, actualDraggedEvent.Start.Day, hours % 24, minutes % 60, 0);
+                        endStart = UpperLimit;
                     }
+                    debutLabel.Text = compareStart.Hour.ToString("00") + " : " + compareStart.Minute.ToString("00");
+                    finLabel.Text = endStart.Hour.ToString("00") + " : " + endStart.Minute.ToString("00");
                     actualDraggedEvent.Start = compareStart;
 
                 } else if (IsResizing)
                 {
                     ((Border)sender).Cursor = Cursors.SizeNS;
+                    double EndLength = (canvasRelativePosition.Y - itemRelativePosition.Y) + registeredSize;
+                    int endHour = ((int)EndLength / 50);
+                    int endMinutes = (int)((EndLength - (endHour * 50)) * 60 / 50);
                     if (OnEventPosition.Y < 5)
                     {
                         DateTime compare = new DateTime(actualDraggedEvent.Start.Year, actualDraggedEvent.Start.Month, actualDraggedEvent.Start.Day, hours % 24, minutes % 60, 0);
