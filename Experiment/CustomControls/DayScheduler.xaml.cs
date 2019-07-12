@@ -497,21 +497,25 @@ namespace Experiment.CustomControls
                 infoPopup.VerticalOffset = canvasRelativePosition.Y;
                 int hours = (int)length / 50;
                 int minutes = (int)((length - (hours * 50)) * 60/50);
-                
+                int end = (int)((length + registeredSize) / 50) % 24;
+                int endMin = (int)(((length + registeredSize) - (end * 50)) * 60 / 50) % 60;
+                double EndLength = (canvasRelativePosition.Y - itemRelativePosition.Y) + registeredSize;
+                int endHour = ((int)EndLength / 50);
+                int endMinutes = (int)((EndLength - (endHour * 50)) * 60 / 50);
                 Canvas.SetZIndex(draggedItem, 100);
-                if (hours < 0 || minutes < 0)
+                if (hours < LowerLimit.Hour || LowerLimit.Hour == hours && minutes < LowerLimit.Minute) // < 0
                 {
-                    hours = 0;
-                    minutes = 0;
+                    hours = LowerLimit.Hour;
+                    minutes = LowerLimit.Minute;
                     length = 0;
-                } else if (hours > 23 || minutes > 59)
+                }
+                else if (hours > 23 || hours == 23 && minutes > 59)
                 {
                     hours = 23;
                     minutes = 59;
                     length = 1199.5; // 23 * 50(var) + ( ( 59 * 50(var) ) / 60 )
+                    
                 }
-                int end = (int)((length + registeredSize) / 50) % 24;
-                int endMin = (int)(((length + registeredSize) - (end * 50)) * 60 / 50) % 60;
 
                 if (viewerLocationPoint.Y < 30)
                 {
@@ -528,7 +532,16 @@ namespace Experiment.CustomControls
                     debutLabel.Text = hours.ToString("00") + " : " + minutes.ToString("00");
                     finLabel.Text = end.ToString("00") + " : " + endMin.ToString("00");
                     draggedItem.Opacity = 0.5;
-                    actualDraggedEvent.Start = new DateTime(actualDraggedEvent.Start.Year, actualDraggedEvent.Start.Month, actualDraggedEvent.Start.Day, hours % 24, minutes % 60, 0);  
+                    DateTime compareStart = new DateTime(actualDraggedEvent.Start.Year, actualDraggedEvent.Start.Month, actualDraggedEvent.Start.Day, hours % 24, minutes % 60, 0); ;
+                    if (compareStart.Add(new TimeSpan(actualDraggedEvent.LengthHour, actualDraggedEvent.LengthMinutes, 0)) >= UpperLimit)
+                    {
+                        compareStart = UpperLimit.Subtract(new TimeSpan(actualDraggedEvent.LengthHour, actualDraggedEvent.LengthMinutes, 0));
+                    } else
+                    {
+                        compareStart = new DateTime(actualDraggedEvent.Start.Year, actualDraggedEvent.Start.Month, actualDraggedEvent.Start.Day, hours % 24, minutes % 60, 0);
+                    }
+                    actualDraggedEvent.Start = compareStart;
+
                 } else if (IsResizing)
                 {
                     ((Border)sender).Cursor = Cursors.SizeNS;
@@ -548,17 +561,14 @@ namespace Experiment.CustomControls
                         finLabel.Text = actualDraggedEvent.End.Hour.ToString("00") + " : " + actualDraggedEvent.End.Minute.ToString("00");
                     } else if (OnEventPosition.Y > registeredSize - 5)
                     {
-                        double EndLength = (canvasRelativePosition.Y - itemRelativePosition.Y) + registeredSize;
-                        int endHour = ((int)EndLength / 50);
-                        int endMinutes = (int)((EndLength - (endHour * 50)) * 60 / 50);
 
                         if (endMinutes < 0 || endHour < 0)
                         {
                             return;
                         }
-                        if (endHour >= 36)
+                        if (endHour >= 24 + UpperLimit.Hour) // > 36
                         {
-                            endHour = 36;
+                            endHour = 24 + UpperLimit.Hour;
                             endMinutes = 0;
                         }
 

@@ -155,7 +155,7 @@ namespace Experiment.Models
             //DateTime compare = new DateTime(End.Year, End.Month, End.Day, End.Hour, End.Minute, 0);
             double length = (End - Start).TotalMinutes;
 
-            if (length < 20 || (End.Day > Start.Day && End.Month == Start.Month && End.Hour > 12))
+            if (length < 20 || (End.Day != Start.Day && End.Hour > 12)) 
             {
                 TimeSpan add20 = new TimeSpan(0, 20, 0);
                 DateTime diffTime = Start.Add(add20);
@@ -296,9 +296,9 @@ namespace Experiment.Models
                     hourValue = 24 + hourValue;
                 }
                 hourValue = hourValue % 24;
-                Start = new DateTime(Start.Year, Start.Month, Start.Day, hourValue, Start.Minute, Start.Second);
-                //updateFinalHour();
+                DateTime newStart = new DateTime(Start.Year, Start.Month, Start.Day, hourValue, Start.Minute, Start.Second);
                 TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
+                Start = newStart;
                 End = Start.Add(inc);
                 updateDuration();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowHour"));
@@ -360,15 +360,15 @@ namespace Experiment.Models
 
                 if ((endHourValue < Start.Hour || (endHourValue == Start.Hour && End.Minute <= Start.Minute)))
                 {
-                    if (endHourValue >= 12)
+                    if (endHourValue >= parentStack.UpperLimitHour.Hour) // >= 12
                     {
                         if (End.Minute > 0)
                         {
-                            endHourValue = 11;
+                            endHourValue = parentStack.UpperLimitHour.AddHours(-1).Hour;
                         }
                         else
                         {
-                            endHourValue = 12;
+                            endHourValue = parentStack.UpperLimitHour.Hour;
                         }
                     }
 
