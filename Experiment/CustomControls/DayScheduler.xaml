@@ -15,7 +15,11 @@
     <UserControl.Resources>
         <global:SchedulerGrid x:Key="SchedulerGrid" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"></global:SchedulerGrid>
         <Style TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#FF999999" />
+            <Setter Property="FontWeight" Value="DemiBold" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="0,-5,0,0" />
         </Style>
         <Style TargetType="{x:Type TextBlock}" x:Key="popupText">
             <Setter Property="FontSize" Value="13" />

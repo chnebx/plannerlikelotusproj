@@ -17,6 +17,7 @@
         Background="Transparent"
         Closing="OnClosing"
         SizeToContent="Height"
+        xml:lang="fr-FR"
         >
     <Window.Resources>
         <userControls:HourSelector x:Key="HourSelector"></userControls:HourSelector>
@@ -165,11 +166,11 @@
             <Setter Property="Background">
                 <Setter.Value>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF2FC30E" Offset="0.137"/>
+                        <GradientStop Color="#FF95F081" Offset="0.1"/>
                         <GradientStop Color="#FF35A41D" Offset="0.51"/>
-                        <GradientStop Color="#FF36B619" Offset="0.88"/>
-                        <GradientStop Color="#FF30B611" Offset="0.01"/>
-                        <GradientStop Color="#FF38A220" Offset="0.96"/>
+                        <GradientStop Color="#FF47B82E" Offset="0.887"/>
+                        <GradientStop Color="#FF82E06C" Offset="0.01"/>
+                        <GradientStop Color="#FF2C8119" Offset="0.983"/>
                     </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
@@ -276,7 +277,7 @@
                 <RowDefinition Height="35"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="430"></RowDefinition>
+                <RowDefinition Height="440"></RowDefinition>
                 <RowDefinition Height="60"></RowDefinition>
             </Grid.RowDefinitions>
 
@@ -371,7 +372,16 @@
                         Click="BtnAddEvent_Click"
                         IsEnabled="{Binding ElementName=eventsList, Path=Items.Count, Converter={StaticResource CountToBoolConverter}}"
                         Style="{StaticResource AddGreenBtn}" 
-                        Margin="0,1,5,1">Ajouter</Button>
+                        Margin="0,1,5,1">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FFA2EC91" Offset="0.099"/>
+                            <GradientStop Color="#FF35A41D" Offset="0.51"/>
+                            <GradientStop Color="#FF47B82E" Offset="0.887"/>
+                            <GradientStop Color="#FFB2DEA8" Offset="0.01"/>
+                            <GradientStop Color="#FF2C8119" Offset="0.983"/>
+                        </LinearGradientBrush>
+                    </Button.Background> Ajouter</Button>
                 <Button x:Name="redDeleteBtn"
                         FontSize="15" 
                         HorizontalAlignment="Left" 
@@ -415,8 +425,8 @@
             </DockPanel>
             <Border Grid.Row="4" >
                 <!--<StackPanel Background="White" x:Name="InfosPanel" DataContext="{Binding ElementName=eventsList, Path=SelectedItem}" Visibility="{Binding ElementName=eventsList, Path=SelectedItem, Converter={StaticResource SelectedItemToVisibilityConverter}}" Margin="10,0">-->
-                <StackPanel Background="White" x:Name="InfosPanel" DataContext="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem}" Visibility="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem, Converter={StaticResource SelectedItemToVisibilityConverter}}" Margin="10,0">
-                    <DockPanel VerticalAlignment="Top" Height="30" Margin="0,10,0,10">
+                <StackPanel Background="White" x:Name="InfosPanel" DataContext="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem}" Visibility="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem, Converter={StaticResource SelectedItemToVisibilityConverter}}" Margin="0,0">
+                    <DockPanel VerticalAlignment="Top" Height="30" Margin="10,10,10,10">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                             <Label  FontWeight="DemiBold" Padding="0" Margin="0,3,0,0" Content="Titre : "/>
                             <TextBox x:Name="txtTitle" Text="{Binding Name, Mode=TwoWay}" HorizontalAlignment="Left" Width="160" FontSize="15" Height="24" MaxLines="1" ></TextBox>
@@ -445,29 +455,40 @@
                         </Button>-->
                         </StackPanel>
                     </DockPanel>
-                    <DockPanel Margin="0,0,0,5">
-                        <Border Background="#FFF2F8FD" Width="150" CornerRadius="0,12,12,0">
-                            <StackPanel DockPanel.Dock="Left" Margin="0,0,0,10">
-                                <Label VerticalAlignment="Center" Width="110" HorizontalAlignment="Center" Content="Début"></Label>
+                    <DockPanel Height="140" Margin="0,0,0,5">
+                        <Border Background="#FFF2F8FD" Width="150" Height="145" CornerRadius="0,12,12,0">
+                            <StackPanel Height="145" Margin="20,0,0,10">
+                                <Label Padding="0,5,0,5" 
+                                       HorizontalAlignment="Left" 
+                                       Width="110" 
+                                       Content="Début"></Label>
                                 <userControls:HourSelector 
                                 Width="100" 
                                 Height="70"
+                                HorizontalAlignment="Left"
                                 HourValue="{Binding ShowHour, Mode=TwoWay}"
                                 MinutesValue="{Binding ShowMinutes, Mode=TwoWay}"
                                 ></userControls:HourSelector>
+                                <TextBlock Margin="0,8,0,0" FontWeight="DemiBold" Foreground="#FF909090" Text="{Binding Start, StringFormat={}{0:dd MMMM}}">
+                                    
+                                </TextBlock>
                             </StackPanel>
                         </Border>
-                        <Border Background="#FFF2F8FD" CornerRadius="12,0,0,12" Width="150" DockPanel.Dock="Right" >
-
-                            <StackPanel Margin="0,0,0,10">
-                                <Label x:Name="EndLabel" VerticalAlignment="Center" Width="110" Content="" HorizontalAlignment="Center"></Label>
+                        <Border Height="145" Background="#FFF2F8FD" CornerRadius="12,0,0,12" Width="150" DockPanel.Dock="Right" >
+                            <StackPanel Height="145" Margin="0,0,20,10">
+                                <Label Padding="0,5,0,5" 
+                                       x:Name="EndLabel"
+                                       Content="" 
+                                       HorizontalAlignment="Right"></Label>
                                 <userControls:HourSelector
                                     x:Name="LengthOrEndHourControl"
                                     Width="100" 
                                     Height="70"
+                                    HorizontalAlignment="Right"
                                     HourValue="{Binding ShowLengthHour, Mode=TwoWay}"
                                     MinutesValue="{Binding ShowLengthMinutes, Mode=TwoWay}"
                                     ></userControls:HourSelector>
+                                <TextBlock Margin="0,8,0,0" FontWeight="DemiBold" Foreground="#FF909090" HorizontalAlignment="Right" Text="{Binding End, StringFormat={}{0:dd MMMM}}" />
                             </StackPanel>
                         </Border>
                         <StackPanel Width="60" Height="40" VerticalAlignment="Center"  DockPanel.Dock="Right">
@@ -476,8 +497,8 @@
                         </StackPanel>
                     </DockPanel>
                     <DockPanel Margin="0,15,0,15">
-                        <StackPanel DockPanel.Dock="Left"  Orientation="Horizontal">
-                            <Label Width="120" Content="Employeur :"></Label>
+                        <StackPanel Margin="10,0,0,0" DockPanel.Dock="Left"  Orientation="Horizontal">
+                            <Label Width="120" Padding="0" Content="Employeur :"></Label>
                             <!--<TextBlock Text=""></TextBlock>-->
                             <!--<TextBox x:Name="txtEmployerName" Text="{Binding ActualEmployer.LastName, Mode=TwoWay}" Height="24" Width="120"></TextBox>-->
                         </StackPanel>
@@ -504,11 +525,11 @@
                                     Content="{Binding ActualEmployer, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
                                 <Button.Background>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                        <GradientStop Color="#FF0E69C3" Offset="0.141"/>
-                                        <GradientStop Color="#FF1D48A4" Offset="0.51"/>
-                                        <GradientStop Color="#FF1960B6" Offset="0.88"/>
-                                        <GradientStop Color="#FF115CB6" Offset="0.01"/>
-                                        <GradientStop Color="#FF2067A2" Offset="0.96"/>
+                                        <GradientStop Color="#FF9DB3E2" Offset="0.095"/>
+                                        <GradientStop Color="#FF204DB0" Offset="0.405"/>
+                                        <GradientStop Color="#FF3B64BB" Offset="0.888"/>
+                                        <GradientStop Color="#FF8CA6DE" Offset="0.01"/>
+                                        <GradientStop Color="#FF1D3893" Offset="1"/>
                                     </LinearGradientBrush>
                                 </Button.Background>
                                 
@@ -528,10 +549,10 @@
                         </StackPanel>
                     </DockPanel>
                     <DockPanel Margin="0,0,0,15">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Width="120" Content="Formule :" Margin="0,0,0,0"></Label>
+                        <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                            <Label Width="120" Padding="0, 5" Content="Formule :" Margin="0,0,0,0"></Label>
                             <!--<TextBox x:Name="txtFormuleName" Text="{Binding CurrentFormule.Name, Mode=TwoWay}" Height="24" Width="120"></TextBox>-->
-                            <ComboBox SelectedValue="{Binding CurrentFormule, Mode=TwoWay}" x:Name="comboFormule" ItemsSource="{Binding Band.Formules}" Width="120">
+                            <ComboBox Height="30" SelectedValue="{Binding CurrentFormule, Mode=TwoWay}" x:Name="comboFormule" ItemsSource="{Binding Band.Formules}" Width="120">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>
@@ -544,19 +565,20 @@
                         
                     </DockPanel>
                     <DockPanel Margin="0,0,0,10">
-                        <Label Width="120" Margin="0,0,0,0" DockPanel.Dock="Left" Content="Lieu :"></Label>
-                        <TextBlock x:Name="LocationLabel"
+                        <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                            <Label Padding="0" Width="120" Margin="0,0,0,0" DockPanel.Dock="Left" Content="Lieu :"></Label>
+                            <TextBlock x:Name="LocationLabel"
                                    FontWeight="Bold"
                                    Foreground="#FF666666"
                                    VerticalAlignment="Center"
                                    >
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat=" {0} ">
-                                    <Binding Path="LocationName.TownName"></Binding>
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                        <Button DockPanel.Dock="Left" x:Name="DefineLocationBtn" 
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat=" {0} ">
+                                        <Binding Path="LocationName.TownName"></Binding>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <Button DockPanel.Dock="Left" x:Name="DefineLocationBtn" 
                                 Click="DefineLocationBtn_Click" 
                                 Style="{StaticResource AddGreenBtn}" 
                                 FontSize="14" 
@@ -565,17 +587,17 @@
                                 Visibility="{Binding ElementName=LocationLabel, Path=Text, Converter={StaticResource StringNullOrEmptyToVisibleConverter}}"
                                 Margin="0,0,5,0"
                                 Content="{Binding LocationName, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
-                            <Button.Background>
-                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                    <GradientStop Color="#FF0E69C3" Offset="0.141"/>
-                                    <GradientStop Color="#FF1D48A4" Offset="0.51"/>
-                                    <GradientStop Color="#FF1960B6" Offset="0.88"/>
-                                    <GradientStop Color="#FF115CB6" Offset="0.01"/>
-                                    <GradientStop Color="#FF2067A2" Offset="0.96"/>
-                                </LinearGradientBrush>
-                            </Button.Background>
-                        </Button>
-                        <Button HorizontalAlignment="Left" x:Name="RemoveLocationBtn" 
+                                <Button.Background>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF9DB3E2" Offset="0.095"/>
+                                        <GradientStop Color="#FF204DB0" Offset="0.405"/>
+                                        <GradientStop Color="#FF3B64BB" Offset="0.888"/>
+                                        <GradientStop Color="#FF8CA6DE" Offset="0.01"/>
+                                        <GradientStop Color="#FF1D3893" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Button.Background>
+                            </Button>
+                            <Button HorizontalAlignment="Left" x:Name="RemoveLocationBtn" 
                                     Click="RemoveLocationBtn_Click"
                                     Style="{StaticResource RemoveRedBtn}"
                                     FontSize="14"
@@ -583,7 +605,8 @@
                                     Width="22"
                                     Height="22"
                             >
-                        </Button>
+                            </Button>
+                        </StackPanel>
                     </DockPanel>
                     <DockPanel HorizontalAlignment="Left" Width="285">
                         <Label DockPanel.Dock="Top"  Content="Commentaires :">

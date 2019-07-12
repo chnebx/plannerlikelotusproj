@@ -71,8 +71,8 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="HourFirstDigitIncreaseBtn" Grid.Row="0" Grid.Column="0" FontSize="8"></Button>
-        <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="HourSecondDigitIncreaseBtn" Grid.Row="0" Grid.Column="1" FontSize="8"></Button>
+        <!--<Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="HourFirstDigitIncreaseBtn" Grid.Row="0" Grid.Column="0" FontSize="8"></Button>-->
+        <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="HourSecondDigitIncreaseBtn" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" FontSize="8"></Button>
         <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="MinutesFirstDigitIncreaseBtn" Grid.Row="0" Grid.Column="3" FontSize="8"></Button>
         <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="MinutesSecondDigitIncreaseBtn" Grid.Row="0" Grid.Column="4" FontSize="8"></Button>
         <TextBox Foreground="gray"  FontSize="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid},  Path=ActualHeight, Converter={StaticResource HourControlFontsizeConverter}}" 
@@ -97,8 +97,8 @@
                  PreviewTextInput="TxtHour_PreviewTextInput"
                  TextChanged="TxtMinutes_TextChanged"
                  ></TextBox>
-        <Button Style="{StaticResource DownArrowBtn}" Click="DigitBtns_Click" x:Name="HourFirstDigitDecreaseBtn" Content="^" Grid.Row="2" Grid.Column="0" FontSize="8"></Button>
-        <Button Style="{StaticResource DownArrowBtn}" Click="DigitBtns_Click" x:Name="HourSecondDigitDecreaseBtn"  Content="^" Grid.Row="2" Grid.Column="1" FontSize="8"></Button>
+        <!--<Button Style="{StaticResource DownArrowBtn}" Click="DigitBtns_Click" x:Name="HourFirstDigitDecreaseBtn" Content="^" Grid.Row="2" Grid.Column="0" FontSize="8"></Button>-->
+        <Button Style="{StaticResource DownArrowBtn}" Click="DigitBtns_Click" x:Name="HourSecondDigitDecreaseBtn"  Content="^" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" FontSize="8"></Button>
         <Button Style="{StaticResource DownArrowBtn}" Click="DigitBtns_Click" x:Name="MinutesFirstDigitDecreaseBtn"  Content="^" Grid.Row="2" Grid.Column="3" FontSize="8"></Button>
         <Button Style="{StaticResource DownArrowBtn}" Click="DigitBtns_Click" x:Name="MinutesSecondDigitDecreaseBtn"  Content="^" Grid.Row="2" Grid.Column="4" FontSize="8"></Button>
     </Grid>
