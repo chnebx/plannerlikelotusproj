@@ -38,6 +38,8 @@ namespace Experiment.Models
             _monthColumn = current.MonthColumn;
             _rowSpan = 2;
             _colSpan = 1;
+            _lowerLimitHour = new DateTime(_current.Date.Year, _current.Date.Month, _current.Date.Day, 0, 0, 0);
+            _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
             _events = new ObservableCollection<Event>();
             _dayNumber = current.Date.Day.ToString();
             _filteredEvents = new List<Event>();
@@ -55,6 +57,8 @@ namespace Experiment.Models
                 _column = _current.Column;
                 _monthRow = _current.MonthRow;
                 _monthColumn = _current.MonthColumn;
+                _lowerLimitHour = new DateTime(_current.Date.Year, _current.Date.Month, _current.Date.Day, 0, 0, 0);
+                _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
                 _dayNumber = _current.Date.Day.ToString();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Current"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Row"));
@@ -373,7 +377,7 @@ namespace Experiment.Models
 
         public bool IsOver2Days()
         {
-            if (Events.Last().End.Day > Events.Last().Start.Day)
+            if (Events.Last().End.Day != Events.Last().Start.Day)
             {
                 return true;
             }

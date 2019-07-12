@@ -167,7 +167,12 @@
                     <TextBlock Style="{StaticResource backgroundText}" Grid.Column="1" Grid.Row="23" Grid.RowSpan="8" Text="MIDI" />
                     <TextBlock Style="{StaticResource backgroundText}" Grid.Column="1" Grid.Row="35" Grid.RowSpan="8" Text="SOIR" />
                     <TextBlock Style="{StaticResource backgroundText}" Grid.Column="1" Grid.Row="47" Grid.RowSpan="8" Text="NUIT" />
-                    <Canvas x:Name="column" Grid.Column="1" Grid.Row="0" Grid.RowSpan="74" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Canvas x:Name="column"
+                            Grid.Column="1" 
+                            Grid.Row="0" 
+                            Grid.RowSpan="74" 
+                            VerticalAlignment="Stretch" 
+                            HorizontalAlignment="Stretch">
                         <Popup IsOpen="False"
                                x:Name="infoPopup"
                                Placement="Relative"
@@ -185,6 +190,20 @@
                                 </StackPanel>
                             </Border>
                         </Popup>
+                        <!--<Line
+                            X1="0" Y1="{Binding LowerLimitMarginTop}"
+                            X2="300" Y2="{Binding LowerLimitMarginTop}"
+                            Stroke="Red"
+                            StrokeThickness="2"
+                            >
+                        </Line>-->
+                        <!--<Line
+                            X1="0" Y1="{Binding UpperLimitMarginTop}"
+                            X2="{Binding ElementName=column, Path=ActualWidth}" Y2="{Binding UpperLimitMarginTop}"
+                            Stroke="Red"
+                            StrokeThickness="2"
+                            >
+                        </Line>-->
                     </Canvas >
                 </global:SchedulerGrid>
             </ScrollViewer>

@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Experiment.CustomControls
 {
@@ -32,8 +33,11 @@ namespace Experiment.CustomControls
         private bool IsResizing;
         private bool IsDragging;
         private string _scrollInfo;
-        private DateTime LowerLimit;
-        private DateTime UpperLimit;
+        private DateTime _lowerLimit;
+        private DateTime _upperLimit;
+        public DateTime CurrentDay;
+        public double LowerLimitMarginTop { get; set; }
+        public double UpperLimitMarginTop { get; set; }
 
         public DayScheduler()
         {
@@ -42,7 +46,34 @@ namespace Experiment.CustomControls
             DrawnEventsList = new ObservableCollection<Event>();
             DrawnEventsList.CollectionChanged += new NotifyCollectionChangedEventHandler(DrawnEventsList_CollectionChanged);
             IsDragging = false;
+            CurrentDay = new DateTime();
             //DrawEvents();
+        }
+
+        public DateTime LowerLimit
+        {
+            get
+            {
+                return _lowerLimit;
+            }
+            set
+            {
+                _lowerLimit = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimit"));
+            }
+        }
+
+        public DateTime UpperLimit
+        {
+            get
+            {
+                return _upperLimit;
+            }
+            set
+            {
+                _upperLimit = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("UpperLimit"));
+            }
         }
 
         public DateTime ActualGridDay
@@ -66,17 +97,20 @@ namespace Experiment.CustomControls
 
         // Using a DependencyProperty as the backing store for ActualGridDay.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ActualGridDayProperty =
-            DependencyProperty.Register("ActualGridDay", typeof(DateTime), typeof(DayScheduler), new PropertyMetadata(DateTime.Now, new PropertyChangedCallback(OnDayChanged)));
+            DependencyProperty.Register("ActualGridDay", typeof(DateTime), typeof(DayScheduler), new PropertyMetadata(new PropertyChangedCallback(OnDayChanged)));
 
         private static void OnDayChanged(DependencyObject d,
          DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue != null)
             {
-                DayTitle = ((DateTime)e.NewValue).ToLongDateString(); 
+                var instance = d as DayScheduler;
+                //DayTitle = ((DateTime)e.NewValue).ToLongDateString();
+                instance.CurrentDay = (DateTime)e.NewValue;
+                instance.DrawLimits();
             }
         }
-        
+
 
         public Event SelectedEventItem
         {
@@ -229,13 +263,54 @@ namespace Experiment.CustomControls
             }
         }
 
+        private void DrawLimits()
+        {
+            if (LowerLimit != null)
+            {
+                LowerLimitMarginTop = 50 * (LowerLimit.Hour + (LowerLimit.Minute / 60.0));
+            } else
+            {
+                LowerLimitMarginTop = 0.0;
+            }
+
+            if (UpperLimit != null)
+            {
+                UpperLimitMarginTop = 50 * (UpperLimit.Hour + (UpperLimit.Minute / 60.0));
+                if (UpperLimit.Day > CurrentDay.Day)
+                {
+                    UpperLimitMarginTop += 1199.55;
+                }
+            }
+            else
+            {
+                UpperLimitMarginTop = 1199.5;
+            }
+            Line lower = new Line();
+            lower.Stroke = Brushes.Red;
+            lower.X1 = 0;
+            lower.Y1 = LowerLimitMarginTop;
+            lower.X2 = 320;
+            lower.Y2 = LowerLimitMarginTop;
+            lower.StrokeThickness = 2;
+
+            Line upper = new Line();
+            upper.Stroke = Brushes.Red;
+            upper.X1 = 0;
+            upper.Y1 = UpperLimitMarginTop;
+            upper.X2 = 320;
+            upper.Y2 = UpperLimitMarginTop;
+            upper.StrokeThickness = 2;
+            column.Children.Add(lower);
+            column.Children.Add(upper);
+        }
+
         private void DrawEvents()
         {
             //IEnumerable<Event> eventList = TodayEvents.Where(ev => ev.Start.Date == ev.End.Date && !ev.AllDay).OrderBy(ev => ev.Start);
             
             column.Children.Clear();
             double columnWidth = EventsGrid.ColumnDefinitions[1].Width.Value;
-            
+            DrawLimits();
             foreach (Event e in DrawnEventsList)
             {
                 //column.Width = columnWidth;
@@ -410,8 +485,13 @@ namespace Experiment.CustomControls
             Point canvasRelativePosition = Mouse.GetPosition(column);
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+                if (draggedItem == null)
+                {
+                    return;
+                }
                 infoPopup.IsOpen = true;
-                Point viewerLocationPoint = Mouse.GetPosition(SchedulerContainerGrid); 
+                Point viewerLocationPoint = Mouse.GetPosition(SchedulerContainerGrid);
+                
                 Event actualDraggedEvent = (Event)draggedItem.DataContext;
                 double length = (canvasRelativePosition.Y - itemRelativePosition.Y);
                 infoPopup.VerticalOffset = canvasRelativePosition.Y;

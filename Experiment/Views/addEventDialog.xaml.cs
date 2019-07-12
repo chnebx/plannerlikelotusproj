@@ -33,7 +33,7 @@ namespace Experiment.Views
         public ObservableCollection<Event> eventsFromStack { get; set; }
         public EventStack actualEventStack;
         private Event _selectedEvent;
-        public Day actualDay;
+        public Day actualDay { get; set; }
         private Event crossingEvt = null;
         private bool creatingMode = false;
         private bool EventStackDidntExist = false;
@@ -114,14 +114,6 @@ namespace Experiment.Views
             {
                 
                 actualEventStack = (EventStack)parameterProvided;
-                if (actualEventStack.LowerLimitHour != null)
-                {
-                    Console.WriteLine(" lower limit hour : " + actualEventStack.LowerLimitHour.Hour);
-                }
-                if (actualEventStack.UpperLimitHour != null)
-                {
-                    Console.WriteLine(" upper limit hour : " + actualEventStack.UpperLimitHour.Hour);
-                }
                 val = actualEventStack.Current.Date;
                 actualDay = actualEventStack.Current;
                 eventsFromStack = actualEventStack.Events;
@@ -172,6 +164,10 @@ namespace Experiment.Views
                 StandardModeBtn.IsChecked = true;
             }
             ActualDayScheduler.SetBinding(DayScheduler.DrawnEventsListProperty, CanvasGridBinding);
+            ActualDayScheduler.CurrentDay = actualDay.Date;
+            ActualDayScheduler.LowerLimit = actualEventStack.LowerLimitHour;
+            ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;
+            Console.WriteLine(actualEventStack.UpperLimitHour);
             ActualDayScheduler.Refresh();
             ActualDayScheduler.SelectDefault();
             /*

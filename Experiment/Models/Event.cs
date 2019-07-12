@@ -155,7 +155,7 @@ namespace Experiment.Models
             //DateTime compare = new DateTime(End.Year, End.Month, End.Day, End.Hour, End.Minute, 0);
             double length = (End - Start).TotalMinutes;
 
-            if (length < 20 || (End.Day > Start.Day && End.Hour > 12))
+            if (length < 20 || (End.Day > Start.Day && End.Month == Start.Month && End.Hour > 12))
             {
                 TimeSpan add20 = new TimeSpan(0, 20, 0);
                 DateTime diffTime = Start.Add(add20);
@@ -352,13 +352,14 @@ namespace Experiment.Models
                 endHourValue = endHourValue % 24;
                 int currentEndDay = End.Day;
 
+                //if (currentEndDay == Start.Day && endHourValue < Start.Hour)
+                //{
+                //    currentEndDay = Start.AddDays(1).Day;
+                //    Console.WriteLine(currentEndDay);
+                //}
+
                 if ((endHourValue < Start.Hour || (endHourValue == Start.Hour && End.Minute <= Start.Minute)))
                 {
-                    if (currentEndDay == Start.Day)
-                    {
-                        currentEndDay += 1;
-                    } 
-                    
                     if (endHourValue >= 12)
                     {
                         if (End.Minute > 0)
@@ -370,16 +371,19 @@ namespace Experiment.Models
                             endHourValue = 12;
                         }
                     }
-                    
-                    
-                } else
-                {
+
+                    if (currentEndDay == Start.Day)
+                    {
+
+                        currentEndDay = Start.AddDays(1).Day;
+                        End = Start.AddDays(1);
+                    }
+                } else {
                     if (currentEndDay > Start.Day)
                     {
                         currentEndDay = Start.Day;
                     }
                 }
-                
                 End = new DateTime(End.Year, End.Month, currentEndDay, endHourValue, End.Minute, End.Second);
                 //if ((End -Start).TotalMinutes < 20)
                 //{

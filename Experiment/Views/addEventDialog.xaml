@@ -355,6 +355,7 @@
                         </ListBox.ItemContainerStyle>
                     </ListBox>
                     <userControls:DayScheduler 
+                        
                         Visibility="{Binding ElementName=AdvancedModeBtn, Path=IsChecked, Converter={StaticResource BooleanToVisibleConverter}}" 
                         SelectedEventItem="{Binding SelectedEvent, Mode=TwoWay}" 
                         Width="380" 
