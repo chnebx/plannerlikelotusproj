@@ -96,34 +96,16 @@ namespace Experiment.Models
 
         public Event(Band band, DateTime start, DateTime end, string name, Location locationName = null)
         {
-            /*
-            _hour = (int)hour;
-            _minutes = (int)minutes;
-            _endHour = (int)endHour;
-            _endMinutes = (int)endMinutes;
-            */
             _band = band;
             _eventStart = start;
             _eventEnd = end;
             TimeSpan diff = _eventEnd - _eventStart;
             _lengthHour = (int)diff.TotalMinutes / 60;
             _lengthMinutes = (int)diff.TotalMinutes % 60;
-            /*
-            int totalAmount = (_endHour * 60 + _endMinutes) - (_hour * 60 + _minutes);
-            _lengthHour = totalAmount / 60;
-            _lengthMinutes = totalAmount - ((totalAmount / 60) * 60);
-            */
             _name = name;
             _rowSpan = 6;
             _row = 0;
             _shortName = ShortNameMaker(_name);
-            //_employer = actualEmployer;
-            /*
-            if (actualEmployer == null)
-            {
-                _employer = new Employer("", "", "");
-            }
-            */
             colorRect = new SolidColorBrush(Color.FromRgb(
                         (byte)randomColor.Next(0, 255),
                         (byte)randomColor.Next(0, 255),
@@ -133,12 +115,6 @@ namespace Experiment.Models
             {
                 _location = locationName;
             }
-            /*
-            _showHour = hour.ToString("00");
-            _showMinutes = minutes.ToString("00");
-            _showEndHour = endHour.ToString("00");
-            _showEndMinutes = endMinutes.ToString("00");
-            */
             _formule = new Formule("");
             _over2Days = false;
             comment = "";
@@ -289,21 +265,31 @@ namespace Experiment.Models
             }
             set
             {
-                _showHour = value;
-                int hourValue = Int32.Parse(value);
-                if (hourValue < 0)
+                if (!String.IsNullOrWhiteSpace(value))
                 {
-                    hourValue = 24 + hourValue;
+                    int hourValue = Int32.Parse(value);
+                    //if (hourValue < parentStack.LowerLimitHour.Hour)
+                    //{
+                    //    hourValue = 24 + hourValue;
+                    //}
+                    if (hourValue < 0)
+                    {
+                        hourValue = 0;
+                    }
+                    hourValue = hourValue % 24;
+                    DateTime newStart = new DateTime(Start.Year, Start.Month, Start.Day, hourValue, Start.Minute, Start.Second);
+                    TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
+                    if (newStart >= parentStack.LowerLimitHour && newStart.Add(inc) <= parentStack.UpperLimitHour)
+                    {
+                        _showHour = value;
+                        Start = newStart;
+                        End = Start.Add(inc);
+                        updateDuration();
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
+                    }
                 }
-                hourValue = hourValue % 24;
-                DateTime newStart = new DateTime(Start.Year, Start.Month, Start.Day, hourValue, Start.Minute, Start.Second);
-                TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
-                Start = newStart;
-                End = Start.Add(inc);
-                updateDuration();
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
             }
         }
 
@@ -317,21 +303,27 @@ namespace Experiment.Models
             }
             set
             {
-                _showMinutes = value;
-                int minutesValue = Int32.Parse(value);
-                if (minutesValue < 0)
+                if (!String.IsNullOrWhiteSpace(value))
                 {
-                    minutesValue = 60 + minutesValue;
+                    int minutesValue = Int32.Parse(value);
+                    if (minutesValue < 0)
+                    {
+                        minutesValue = 60 + minutesValue;
+                    }
+                    minutesValue = minutesValue % 60;
+                    DateTime newStart = new DateTime(Start.Year, Start.Month, Start.Day, Start.Hour, minutesValue, Start.Second);
+                    TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
+                    if (newStart >= parentStack.LowerLimitHour && newStart.Add(inc) <= parentStack.UpperLimitHour)
+                    {
+                        _showMinutes = value;
+                        Start = newStart;
+                        End = Start.Add(inc);
+                        updateDuration();
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowMinutes"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
+                    }
                 }
-                minutesValue = minutesValue % 60;
-                Start = new DateTime(Start.Year, Start.Month, Start.Day, Start.Hour, minutesValue, Start.Second);
-                //updateFinalHour();
-                TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
-                End = Start.Add(inc);
-                updateDuration();
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowMinutes"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
             }
         }
 
@@ -343,58 +335,39 @@ namespace Experiment.Models
             }
             set
             {
-                _showEndHour = value;
-                int endHourValue = Int32.Parse(value);
-                if (endHourValue < 0)
+                if (!String.IsNullOrWhiteSpace(value))
                 {
-                    endHourValue = 24 + endHourValue;
-                }
-                endHourValue = endHourValue % 24;
-                int currentEndDay = End.Day;
-
-                //if (currentEndDay == Start.Day && endHourValue < Start.Hour)
-                //{
-                //    currentEndDay = Start.AddDays(1).Day;
-                //    Console.WriteLine(currentEndDay);
-                //}
-
-                if ((endHourValue < Start.Hour || (endHourValue == Start.Hour && End.Minute <= Start.Minute)))
-                {
-                    if (endHourValue >= parentStack.UpperLimitHour.Hour) // >= 12
+                    int endHourValue = Int32.Parse(value);
+                    if (endHourValue < 0)
                     {
-                        if (End.Minute > 0)
+                        endHourValue = 24 + endHourValue;
+                    }
+                    endHourValue = endHourValue % 24;
+                    int currentEndDay = End.Day;
+                    DateTime newEnd = new DateTime(End.Year, End.Month, End.Day, endHourValue, End.Minute, End.Second);
+                    if (newEnd < Start)
+                    {
+                        if (newEnd.Day == Start.Day)
                         {
-                            endHourValue = parentStack.UpperLimitHour.AddHours(-1).Hour;
+                            newEnd = newEnd.AddDays(1);
                         }
-                        else
+                    } else
+                    {
+                        if (newEnd.Day > Start.Day)
                         {
-                            endHourValue = parentStack.UpperLimitHour.Hour;
+                            newEnd.AddDays(-1);
                         }
                     }
-
-                    if (currentEndDay == Start.Day)
+                    if (newEnd <= parentStack.UpperLimitHour)
                     {
-
-                        currentEndDay = Start.AddDays(1).Day;
-                        End = Start.AddDays(1);
-                    }
-                } else {
-                    if (currentEndDay > Start.Day)
-                    {
-                        currentEndDay = Start.Day;
+                        End = newEnd;
+                        _showEndHour = value;
+                        updateDuration();
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
                     }
                 }
-                End = new DateTime(End.Year, End.Month, currentEndDay, endHourValue, End.Minute, End.Second);
-                //if ((End -Start).TotalMinutes < 20)
-                //{
-                //    Console.WriteLine("hello");
-                //}
-                //updateLength();
-                updateDuration();
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
-
             }
         }
 
@@ -406,27 +379,25 @@ namespace Experiment.Models
             }
             set
             {
-                _showEndMinutes = value;
-                int endMinutesValue = Int32.Parse(value);
-                if (endMinutesValue < 0)
+                if (!String.IsNullOrWhiteSpace(value))
                 {
-                    endMinutesValue = 60 + endMinutesValue;
-                }
-                endMinutesValue = endMinutesValue % 60;
-                if (End.Day > Start.Day)
-                {
-                    if (End.Hour == 12 && endMinutesValue > 0)
+                    int endMinutesValue = Int32.Parse(value);
+                    if (endMinutesValue < 0)
                     {
-                        endMinutesValue = 0;
+                        endMinutesValue = 60 + endMinutesValue;
                     }
-                }
-                End = new DateTime(End.Year, End.Month, End.Day, End.Hour, endMinutesValue, End.Second);
-                updateDuration();
-                //updateLength();
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
-
+                    endMinutesValue = endMinutesValue % 60;
+                    DateTime newEnd = new DateTime(End.Year, End.Month, End.Day, End.Hour, endMinutesValue, End.Second);
+                    if (newEnd <= parentStack.UpperLimitHour)
+                    {
+                        _showEndMinutes = value;
+                        End = newEnd;
+                        updateDuration();
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
+                    }
+                } 
             }
         }
 
@@ -439,21 +410,26 @@ namespace Experiment.Models
             }
             set
             {
-                _showLengthHour = value;
-                LengthHour = Int32.Parse(value);
-                if (LengthHour < 0)
+                if (!String.IsNullOrWhiteSpace(value))
                 {
-                    LengthHour = 24 + LengthHour;
-                }
-
-                LengthHour = LengthHour % 24;
-                TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
-                End = Start.Add(inc);
-                updateDuration();
-                //updateFinalHour();
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
+                    int lengthHourValue = Int32.Parse(value);
+                    if (lengthHourValue < 0)
+                    {
+                        lengthHourValue = 0;
+                    }
+                    lengthHourValue = lengthHourValue % 24;
+                    TimeSpan inc = new TimeSpan(lengthHourValue, LengthMinutes, 0);
+                    if (Start.Add(inc) <= parentStack.UpperLimitHour)
+                    {
+                        _showLengthHour = value;
+                        //LengthHour = lengthHourValue;
+                        End = Start.Add(inc);
+                        updateDuration();
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
+                    }
+                } 
             }
         }
 
@@ -465,20 +441,26 @@ namespace Experiment.Models
             }
             set
             {
-                _showLengthMinutes = value;
-                LengthMinutes = Int32.Parse(value);
-                if (LengthMinutes < 0)
+                if (!String.IsNullOrWhiteSpace(value))
                 {
-                    LengthMinutes = 60 + LengthMinutes;
+                    int lengthMinutesValue = Int32.Parse(value);
+                    if (lengthMinutesValue < 0)
+                    {
+                        lengthMinutesValue = 60 + LengthMinutes;
+                    }
+                    lengthMinutesValue = lengthMinutesValue % 60;
+                    TimeSpan inc = new TimeSpan(LengthHour, lengthMinutesValue, 0);
+                    if (Start.Add(inc) <= parentStack.UpperLimitHour)
+                    {
+                        _showLengthMinutes = value;
+                        //LengthMinutes = lengthMinutesValue;
+                        End = Start.Add(inc);
+                        updateDuration();
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
+                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
+                    }
                 }
-                LengthMinutes = LengthMinutes % 60;
-                TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
-                End = Start.Add(inc);
-                updateDuration();
-                //updateFinalHour();
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndMinutes"));
             }
         }
 
