@@ -631,20 +631,7 @@
             </Border>
             <Border x:Name="DefaultDialogBtns" Margin="0,0,0,0" Visibility="Visible" Grid.Row="6" BorderBrush="LightGray">
                 <DockPanel VerticalAlignment="Bottom"  Margin="10,0,10,8" HorizontalAlignment="Stretch" LastChildFill="False">
-                    <Button DockPanel.Dock="Left" IsDefault="True" x:Name="btnAjouter" Click="BtnAjouter_Click" Content="Ok" Width="140" Height="40">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=EmployerLabel, Path=Text.Length}" Value="0">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding ElementName=LocationLabel, Path=Text.Length}" Value="0">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
+                    <Button DockPanel.Dock="Left" IsDefault="True" x:Name="btnAjouter" Click="BtnAjouter_Click" Content="Ok" Width="140" Height="40"/>
                     <Button DockPanel.Dock="Right" IsCancel="True" x:Name="btnAnnuler" Click="BtnAnnuler_Click" Content="Annuler" Width="140" Height="40"></Button>
                 </DockPanel>
             </Border>

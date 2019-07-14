@@ -45,11 +45,12 @@ namespace Experiment.Models
         private DateTime _eventStart;
         private DateTime _eventEnd;
         private double _duration;
-
         private SolidColorBrush colorRect;
         private static Random randomColor = new Random();
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsValid { get; set; }
 
         public Event(Band band, uint hour, uint minutes, uint endHour, uint endMinutes, string name, Location locationName = null)
         {

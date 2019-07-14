@@ -46,7 +46,7 @@ namespace Experiment
                 .Throttle(TimeSpan.FromMilliseconds(delay))
                 .Subscribe(text => {
 
-                    Predicate<Event> employerFilter = new Predicate<Event>((x) => x.ActualEmployer.FirstName.ToLower().StartsWith(txtBoxFilterEmployer.Text) || x.ActualEmployer.LastName.ToLower().StartsWith(txtBoxFilterEmployer.Text));
+                    Predicate<Event> employerFilter = new Predicate<Event>((x) => x.ActualEmployer != null && (x.ActualEmployer.FirstName.ToLower().StartsWith(txtBoxFilterEmployer.Text) || x.ActualEmployer.LastName.ToLower().StartsWith(txtBoxFilterEmployer.Text)));
                     this.Dispatcher.Invoke(new Action<Predicate<Event>, TextBox>((employer, element) => TextChangedHandler(employer, element)), new object[] { employerFilter, txtBoxFilterEmployer });
                 });
 
@@ -72,7 +72,7 @@ namespace Experiment
                 .DistinctUntilChanged()
                 .Throttle(TimeSpan.FromMilliseconds(delay))
                 .Subscribe(text => {
-                    Predicate<Event> locationFilter = new Predicate<Event>((x) => x.LocationName.TownName.ToLower().Contains(txtBoxFilterLocation.Text.ToLower()));
+                    Predicate<Event> locationFilter = new Predicate<Event>((x) => x.LocationName != null && x.LocationName.TownName.ToLower().Contains(txtBoxFilterLocation.Text.ToLower()));
                     this.Dispatcher.Invoke(new Action(() => TextChangedHandler(locationFilter, txtBoxFilterLocation)));
                 });
 
