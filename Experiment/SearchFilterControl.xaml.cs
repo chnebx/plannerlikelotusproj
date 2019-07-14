@@ -58,7 +58,7 @@ namespace Experiment
              {
                  Formule formule = (Formule)text;
                  Predicate<Event> formulesFilter = null;
-                 formulesFilter = new Predicate<Event>((x) => x.CurrentFormule.Name == formule.Name);
+                 formulesFilter = new Predicate<Event>((x) => x.CurrentFormule != null && x.CurrentFormule.Name == formule.Name);
                  if (previousFormuleFilter != null)
                  {
                      FilterModule.Instance.RemoveFilter(previousFormuleFilter);
