@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Experiment.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,6 +14,8 @@ namespace Experiment
     /// </summary>
     public partial class App : Application
     {
-        
+        public static string DatabaseName = "Narnya.DB";
+        public static string FolderPath = GlobalSettings.DefaultDBFolder;
+        public static string DatabasePath = System.IO.Path.Combine(FolderPath, DatabaseName);
     }
 }

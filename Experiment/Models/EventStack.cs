@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -29,19 +30,20 @@ namespace Experiment.Models
         
         private ObservableCollection<Event> _events;
 
-        public EventStack(Day current)
+        public EventStack()
         {
-            _current = current;
-            _row = current.Row;
-            _column = current.Column;
-            _monthRow = current.MonthRow;
-            _monthColumn = current.MonthColumn;
+
+            //_current = current;
+            //_row = current.Row;
+            //_column = current.Column;
+            //_monthRow = current.MonthRow;
+            //_monthColumn = current.MonthColumn;
             _rowSpan = 2;
             _colSpan = 1;
             _lowerLimitHour = new DateTime(_current.Date.Year, _current.Date.Month, _current.Date.Day, 0, 0, 0);
             _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
             _events = new ObservableCollection<Event>();
-            _dayNumber = current.Date.Day.ToString();
+            //_dayNumber = current.Date.Day.ToString();
             _filteredEvents = new List<Event>();
         }
 

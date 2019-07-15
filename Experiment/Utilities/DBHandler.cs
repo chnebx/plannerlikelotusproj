@@ -198,7 +198,13 @@ namespace Experiment.Utilities
             
         public static ObservableCollection<EventStack> getEvents()
         {
-            return new ObservableCollection<EventStack>(_events);
+            //return new ObservableCollection<EventStack>(_events);
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DatabasePath))
+            {
+                conn.CreateTable<EventStack>();
+                var eventstacks = new ObservableCollection<EventStack>(conn.Table<EventStack>().ToList<EventStack>());
+
+            }
         }
 
         public static ObservableCollection<EventStack> getEvents(int year)
