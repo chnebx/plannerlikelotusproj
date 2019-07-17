@@ -153,7 +153,10 @@ namespace Experiment.Views
             if (!String.IsNullOrEmpty(txtLocationTownName.Text) &&
                 !String.IsNullOrEmpty(txtLocationAddress.Text))
             {
-                Location newLocation = new Location(txtLocationTownName.Text, txtLocationAddress.Text);
+                Location newLocation = new Location {
+                    PlaceName = txtLocationTownName.Text,
+                    Address = txtLocationAddress.Text
+                };
                 newLocation.PlaceType = comboLocationPlaceType.SelectedItem.ToString();
                 DBHandler.AddLocation(newLocation);
                 txtLocationTownName.Clear();

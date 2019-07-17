@@ -9,7 +9,7 @@ namespace Experiment.Utilities
     public class GlobalSettings
     {
         private static bool _isGraphModeAdvancedByDefault = false;
-        private static string _DefaultDBFolder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "NarnyaDB");
+        private static string _DefaultDBFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles);
 
 
         public GlobalSettings()

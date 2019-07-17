@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,18 +13,14 @@ namespace Experiment.Models
         private string _firstName;
         private string _lastName;
         private string _phoneNumber;
-        public Employer(string firstName, string lastName, string phone)
+
+        public Employer()
         {
-            _firstName = firstName;
-            _lastName = lastName;
-            _phoneNumber = phone;
+           
         }
 
-        public Employer DeepCopy()
-        {
-            Employer copiedEmployer = (Employer)this.MemberwiseClone();
-            return copiedEmployer;
-        }
+        [PrimaryKey, AutoIncrement]
+        public int ID { get; set; }
 
         public string FirstName
         {
@@ -51,17 +48,6 @@ namespace Experiment.Models
             }
         }
 
-        private string formatPhoneNumber(string phoneNumber)
-        {
-            return String.Format("{0} {1} {2} {3} {4}",
-                phoneNumber.Substring(0, 2),
-                phoneNumber.Substring(2, 2),
-                phoneNumber.Substring(4, 2),
-                phoneNumber.Substring(6, 2),
-                phoneNumber.Substring(8, 2)
-                );
-        }
-
         public string PhoneNumber
         {
             get
@@ -74,6 +60,23 @@ namespace Experiment.Models
                 _phoneNumber = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("PhoneNumber"));
             }
+        }
+
+        public Employer DeepCopy()
+        {
+            Employer copiedEmployer = (Employer)this.MemberwiseClone();
+            return copiedEmployer;
+        }
+
+        private string formatPhoneNumber(string phoneNumber)
+        {
+            return String.Format("{0} {1} {2} {3} {4}",
+                phoneNumber.Substring(0, 2),
+                phoneNumber.Substring(2, 2),
+                phoneNumber.Substring(4, 2),
+                phoneNumber.Substring(6, 2),
+                phoneNumber.Substring(8, 2)
+                );
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

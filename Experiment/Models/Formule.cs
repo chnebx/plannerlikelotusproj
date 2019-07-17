@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,23 +15,13 @@ namespace Experiment.Models
         private string _name;
         private ObservableCollection<Musician> _musicians;
         private bool _isDefault;
-        public Formule(string name)
+        public Formule()
         {
-            _name = name;
             _musicians = new ObservableCollection<Musician>();
-
         }
 
-        public Formule DeepCopy()
-        {
-            Formule copiedFormule = (Formule)this.MemberwiseClone();
-            ObservableCollection<Musician> newMusicianList = new ObservableCollection<Musician>();
-            for (int i = 0; i < Musicians.Count; i++)
-            {
-                newMusicianList.Add(Musicians[i]);
-            }
-            return copiedFormule;
-        }
+        [PrimaryKey, AutoIncrement]
+        public int ID { get; set; }
 
         public string Name
         {
@@ -44,6 +36,7 @@ namespace Experiment.Models
             }
         }
 
+        [OneToMany]
         public ObservableCollection<Musician> Musicians
         {
             get
@@ -68,6 +61,17 @@ namespace Experiment.Models
                 _isDefault = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("IsDefault"));
             }
+        }
+
+        public Formule DeepCopy()
+        {
+            Formule copiedFormule = (Formule)this.MemberwiseClone();
+            ObservableCollection<Musician> newMusicianList = new ObservableCollection<Musician>();
+            for (int i = 0; i < Musicians.Count; i++)
+            {
+                newMusicianList.Add(Musicians[i]);
+            }
+            return copiedFormule;
         }
 
 

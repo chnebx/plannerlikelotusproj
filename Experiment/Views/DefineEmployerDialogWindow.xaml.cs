@@ -137,7 +137,11 @@ namespace Experiment.Views
                 !String.IsNullOrEmpty(txtEmployerPrenom.Text) &&
                 !String.IsNullOrEmpty(txtEmployerPhone.Text))
             {
-                Employer newEmployer = new Employer(txtEmployerPrenom.Text, txtEmployerName.Text, txtEmployerPhone.Text);
+                Employer newEmployer = new Employer {
+                    FirstName = txtEmployerPrenom.Text,
+                    LastName = txtEmployerName.Text,
+                    PhoneNumber = txtEmployerPhone.Text
+                };
                 DBHandler.AddEmployer(newEmployer);
                 txtEmployerName.Clear();
                 txtEmployerPrenom.Clear();

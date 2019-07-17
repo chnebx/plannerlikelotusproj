@@ -35,8 +35,7 @@ namespace Experiment
             FilterMod = FilterModule.Instance;
             DataContext = this;
             formules = new ObservableCollection<Formule>();
-            formules.Add(new Formule("Non définie"));
-            formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
+            //formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
             comboBoxFormules.SelectedIndex = 0;
             
             var delay = 50;

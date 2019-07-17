@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,7 +28,6 @@ namespace Experiment.Models
         private DateTime _lowerLimitHour;
         private DateTime _upperLimitHour;
         private List<Event> _filteredEvents;
-        
         private ObservableCollection<Event> _events;
 
         public EventStack()
@@ -38,15 +38,41 @@ namespace Experiment.Models
             //_column = current.Column;
             //_monthRow = current.MonthRow;
             //_monthColumn = current.MonthColumn;
-            _rowSpan = 2;
-            _colSpan = 1;
-            _lowerLimitHour = new DateTime(_current.Date.Year, _current.Date.Month, _current.Date.Day, 0, 0, 0);
-            _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
+            //_rowSpan = 2;
+            //_colSpan = 1;
+            //_lowerLimitHour = new DateTime(_current.Date.Year, _current.Date.Month, _current.Date.Day, 0, 0, 0);
+            //_upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
             _events = new ObservableCollection<Event>();
             //_dayNumber = current.Date.Day.ToString();
             _filteredEvents = new List<Event>();
         }
 
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+
+        public bool IsFull
+        {
+            get
+            {
+                return Events.Count >= 3;
+            }
+        }
+
+        [OneToMany]
+        public ObservableCollection<Event> Events
+        {
+            get
+            {
+                return _events;
+            }
+            set
+            {
+                _events = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
+            }
+        }
+
+        [Ignore]
         public Day Current {
             get
             {
@@ -71,6 +97,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public DateTime LowerLimitHour
         {
             get
@@ -84,6 +111,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public DateTime UpperLimitHour
         {
             get
@@ -97,7 +125,7 @@ namespace Experiment.Models
             }
         }
 
-
+        [Ignore]
         public int Row
         {
             get
@@ -112,6 +140,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public Event CrossingEvt
         {
             get
@@ -125,6 +154,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public bool IsFilterResult
         {
             get
@@ -138,6 +168,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public List<Event> FilteredEvents
         {
             get
@@ -151,6 +182,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public string DayNum
         {
             get
@@ -164,6 +196,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public int RowSpan
         {
             get
@@ -177,6 +210,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public int Column
         {
             get
@@ -190,6 +224,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public int MonthRow
         {
             get
@@ -203,6 +238,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public int MonthColumn
         {
             get
@@ -213,14 +249,6 @@ namespace Experiment.Models
             {
                 _monthColumn = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MonthColumn"));
-            }
-        }
-
-        public bool IsFull
-        {
-            get
-            {
-                return Events.Count >= 3;
             }
         }
 
@@ -361,19 +389,6 @@ namespace Experiment.Models
             {
                 Events[0].RowSpan = 6;
                 Events[0].Row = 0;
-            }
-        }
-
-        public ObservableCollection<Event> Events
-        {
-            get
-            {
-                return _events;
-            }
-            set
-            {
-                _events = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
             }
         }
 

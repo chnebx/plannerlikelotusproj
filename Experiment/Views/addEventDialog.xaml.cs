@@ -88,12 +88,14 @@ namespace Experiment.Views
 
         private Event initializeNewEvent()
         {
-            Event newEvt = new Event(DBHandler.getDefaultBand(), 
-                new DateTime(actualDay.Date.Year, actualDay.Date.Month, actualDay.Date.Day, 19, 00, 0), 
-                new DateTime(actualDay.Date.Year, actualDay.Date.Month, actualDay.Date.Day, 20, 00, 0),
-                "Aucun Titre",
-                null
-                );
+            Event newEvt = new Event
+            {
+                Band = DBHandler.getDefaultBand(),
+                Start = new DateTime(actualDay.Date.Year, actualDay.Date.Month, actualDay.Date.Day, 19, 00, 0),
+                End = new DateTime(actualDay.Date.Year, actualDay.Date.Month, actualDay.Date.Day, 20, 00, 0),
+                Name = "Aucun Titre",
+                LocationName = null
+            };
             return newEvt;
             //SelectedEvent = newEvt;
             //actualEventStack.AddEvent(SelectedEvent);

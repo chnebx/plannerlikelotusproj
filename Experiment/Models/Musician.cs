@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,17 +8,19 @@ using System.Threading.Tasks;
 
 namespace Experiment.Models
 {
-    public class Musician:INotifyPropertyChanged
+    public class Musician : INotifyPropertyChanged
     {
         private string _firstName;
         private string _lastName;
         private int _phoneNumber;
-        private int _idNumber;
-        public Musician(string firstName, string lastName)
+
+        public Musician()
         {
-            _firstName = firstName;
-            _lastName = lastName;
+
         }
+
+        [PrimaryKey, AutoIncrement]
+        public int ID { get; set; }
 
         public string FirstName
         {
@@ -55,19 +58,6 @@ namespace Experiment.Models
             {
                 _phoneNumber = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("PhoneNumber"));
-            }
-        }
-
-        public int IDNumber
-        {
-            get
-            {
-                return _idNumber;
-            }
-            set
-            {
-                _idNumber = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("IDNumber"));
             }
         }
 

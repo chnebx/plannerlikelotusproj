@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,25 +17,13 @@ namespace Experiment.Models
         private string _placeName;
         public static ObservableCollection<string> PlaceTypes = new ObservableCollection<string> { "Salle des fêtes", "Salles de concert", "Exterieur", "Autre" };
 
-        public Location(string townName, string addressName)
+        public Location()
         {
-            _townName = townName;
-            _address = addressName;
-            _placeType = PlaceTypes.First();
+
         }
 
-        public void AddPlaceType(string placeTypeName)
-        {
-            PlaceTypes.Add(placeTypeName);
-        }
-
-        public void RemovePlaceType(string placeTypeName)
-        {
-            if (PlaceTypes.Contains(placeTypeName))
-            {
-                PlaceTypes.Remove(placeTypeName);
-            }
-        }
+        [PrimaryKey, AutoIncrement]
+        public int ID { get; set; }
 
         public string PlaceType
         {
@@ -88,6 +77,19 @@ namespace Experiment.Models
             {
                 _address = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Address"));
+            }
+        }
+
+        public static void AddPlaceType(string placeTypeName)
+        {
+            PlaceTypes.Add(placeTypeName);
+        }
+
+        public static void RemovePlaceType(string placeTypeName)
+        {
+            if (PlaceTypes.Contains(placeTypeName))
+            {
+                PlaceTypes.Remove(placeTypeName);
             }
         }
 

@@ -74,8 +74,7 @@ namespace Experiment
             FindNextEventFromNow();
             hoveredDate.Text = "(Aucune date)";
             formules = new ObservableCollection<Formule>();
-            formules.Add(new Formule("Toutes"));
-            formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
+            //formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
             monthControls = new ObservableCollection<Border>()
             {
                 JanvierHeader,
@@ -340,7 +339,9 @@ namespace Experiment
             DateTime current = selectedDay.Date;
             Point pointToWindow = Mouse.GetPosition(this);
             Point pointToScreen = PointToScreen(pointToWindow);
-            EventStack freshEvent = new EventStack(selectedDay);
+            EventStack freshEvent = new EventStack {
+                Current = selectedDay
+            };
             EventsUtilities.UpdateLimits(freshEvent);
             addEventDialog addDialog = new addEventDialog(freshEvent, pointToScreen, true);
             if (addDialog.ShowDialog() == true)
@@ -426,7 +427,9 @@ namespace Experiment
 
                     Event evt = e.Data.GetData("EventFormat") as Event;
                     Day droppedOnDay = (Day)((Border)sender).DataContext;
-                    EventStack newEvtStack = new EventStack(droppedOnDay);
+                    EventStack newEvtStack = new EventStack {
+                        Current = droppedOnDay
+                    };
                     if(!Keyboard.IsKeyDown(Key.RightCtrl))
                     {
                         EventStack previousStack = evt.parentStack;
@@ -457,7 +460,9 @@ namespace Experiment
                     }
                     else
                     {
-                        EventStack newEvtStack = new EventStack(droppedOnDay);
+                        EventStack newEvtStack = new EventStack {
+                            Current = droppedOnDay
+                        };
                         for(int i = 0; i < evtStack.Events.Count; i++)
                         {
                             newEvtStack.AddEvent(evtStack.Events[i].DeepCopy());
