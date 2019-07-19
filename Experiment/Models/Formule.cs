@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Experiment.Models
 {
+    [Table("Formules")]
     public class Formule : INotifyPropertyChanged
     {
         private string _name;
@@ -22,6 +23,9 @@ namespace Experiment.Models
 
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
+
+        [ForeignKey(typeof(Band))]
+        public int BandID { get; set; }
 
         public string Name
         {
@@ -36,7 +40,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToMany]
+        [ManyToMany(typeof(FormulesMusicians))]
         public ObservableCollection<Musician> Musicians
         {
             get

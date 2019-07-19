@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Experiment.Models
 {
+    [Table("Employers")]
     public class Employer: INotifyPropertyChanged
     {
         private string _firstName;

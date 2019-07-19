@@ -10,20 +10,25 @@ using System.Threading.Tasks;
 
 namespace Experiment.Models
 {
+    [Table("Bands")]
     public class Band : INotifyPropertyChanged
     {
         private string _name;
         private ObservableCollection<Musician> _musicians;
         private ObservableCollection<Formule> _formules;
+        private ObservableCollection<Event> _events;
 
         public Band()
         {
             _musicians = new ObservableCollection<Musician>();
+            _formules = new ObservableCollection<Formule>();
+            _events = new ObservableCollection<Event>();
         }
 
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey, AutoIncrement, Unique, NotNull]
         public int ID { get; set; }
 
+        [Unique, NotNull]
         public string Name
         {
             get
@@ -62,6 +67,20 @@ namespace Experiment.Models
             {
                 _formules = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Formules"));
+            }
+        }
+
+        [OneToMany]
+        public ObservableCollection<Event> Events
+        {
+            get
+            {
+                return _events;
+            }
+            set
+            {
+                _events = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
             }
         }
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Experiment.Models
 {
+    [Table("Locations")]
     public class Location : INotifyPropertyChanged
     {
         private string _townName;

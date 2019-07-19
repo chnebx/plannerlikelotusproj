@@ -142,6 +142,7 @@
     <Compile Include="Models\Employer.cs" />
     <Compile Include="Models\EventStack.cs" />
     <Compile Include="Models\Formule.cs" />
+    <Compile Include="Models\FormulesMusicians.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Musician.cs" />
     <Compile Include="MonthPlanner.xaml.cs">
@@ -252,7 +253,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Narnya.db">
+    <Content Include="DB\Narnya.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
@@ -273,6 +274,7 @@
   <ItemGroup>
     <Resource Include="Pictures\UpArrow.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.14\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.14\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

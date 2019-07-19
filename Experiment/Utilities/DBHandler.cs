@@ -1,9 +1,12 @@
 ﻿using Experiment.Models;
+using SQLite;
+using SQLiteNetExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,8 +36,59 @@ namespace Experiment.Utilities
             }
         }
 
+        private static void FillDB()
+        {
+            InitMusicans();
+            InitEmployers();
+            InitFormules();
+            InitLocations();
+        }
+
+        private static void loadDB()
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var formules = conn.Table<Formule>().ToList();
+                Console.WriteLine("Formules : " + formules.Count);
+                var employers = conn.Table<Employer>().ToList();
+                Console.WriteLine("Employers : " + employers.Count);
+                var locations = conn.Table<Location>().ToList();
+                Console.WriteLine("Employers : " + locations.Count);
+            }
+        }
+
         public static void InitEmployers()
         {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+
+                var EmployersTable = conn.CreateTable<Employer>();
+                SQLiteCommand cmd = new SQLiteCommand(conn);
+                cmd.CommandText = "SELECT Count(*) FROM Employers";
+                int rowCount = (cmd.ExecuteScalar<int>());
+                if (rowCount == 0)
+                {
+                    conn.Insert(new Employer
+                    {
+                        FirstName = "Marc",
+                        LastName = "Barbaud",
+                        PhoneNumber = "0546841224"
+                    });
+                    conn.Insert(new Employer
+                    {
+                        FirstName = "Julien",
+                        LastName = "Chard",
+                        PhoneNumber = "0546285314"
+                    });
+                    conn.Insert(new Employer
+                    {
+                        FirstName = "Auguste",
+                        LastName = "Delanoe",
+                        PhoneNumber = "0525445201"
+                    });
+                }
+            }
+
             //_employers = new ObservableCollection<Employer>();
             //_employers.Add(new Employer("Marc", "Barbaud", "0546841224"));
             //_employers.Add(new Employer("Julien", "Chard", "0546285314"));
@@ -52,8 +106,46 @@ namespace Experiment.Utilities
             //_employers.Add(new Employer("Julie", "Hazard", "0511227853"));
         }
 
+        public static void InitMusicans()
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var musicians = conn.CreateTable<Musician>();
+            }
+        }
+
         public static void InitFormules()
         {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var FormulesTable = conn.CreateTable<Formule>();
+                conn.CreateTable<FormulesMusicians>();
+                //SQLiteCommand cmd = new SQLiteCommand(conn);
+                //cmd.CommandText = "SELECT Count(*) FROM Formules";
+                //int rowCount = (cmd.ExecuteScalar<int>());
+                //if (rowCount == 0)
+                //{
+                //    conn.Insert(new Formule
+                //    {
+                //        Name = "( Non Définie )"
+                //    });
+                //    conn.Insert(new Formule
+                //    {
+                //        Name = "Thé Dansant"
+                //    });
+
+                //    conn.Insert(new Formule
+                //    {
+                //        Name = "Mariage"
+                //    });
+
+                //    conn.Insert(new Formule
+                //    {
+                //        Name = "Anniversaire"
+                //    });
+                //}
+
+            }
             //_formules = new ObservableCollection<Formule>();
             //_formules.Add(new Formule("Thé Dansant"));
             //_formules.Add(new Formule("Mariage"));
@@ -62,6 +154,41 @@ namespace Experiment.Utilities
 
         public static void InitLocations()
         {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var EmployersTable = conn.CreateTable<Location>();
+                SQLiteCommand cmd = new SQLiteCommand(conn);
+                cmd.CommandText = "SELECT Count(*) FROM Locations";
+                int rowCount = (cmd.ExecuteScalar<int>());
+                if (rowCount == 0)
+                {
+                    conn.Insert(new Location
+                    {
+                        TownName = "Châtellereau",
+                        Address = "5 Rue du Bois"
+                    });
+                    conn.Insert(new Location
+                    {
+                        TownName = "Savinien",
+                        Address = "Venelle du Marechal"
+                    });
+                    conn.Insert(new Location
+                    {
+                        TownName = "St Georges du Bois",
+                        Address = "Avenue de Georges"
+                    });
+                    conn.Insert(new Location
+                    {
+                        TownName = "Marans",
+                        Address = "10 rue Savigneau"
+                    });
+                    conn.Insert(new Location
+                    {
+                        TownName = "La Rochelle",
+                        Address = "Rue de la plèbe"
+                    });
+                }
+            }
             //_locations = new ObservableCollection<Location>();
             //_locations.Add(new Location("Châtellereau", "5 rue du Bois"));
             //_locations.Add(new Location("Savinien", "Venelle du Marechal"));
@@ -81,6 +208,16 @@ namespace Experiment.Utilities
 
         public static void DbInit()
         {
+            //ClearBand();
+            Band TC = new Band
+            {
+                Name = "Orchestre Thierry Coudret"
+            };
+            FillDB();
+            InsertBand(TC);
+            //ClearEvtStacks();
+            //loadDB();
+            //ClearEvtStacks();
             //Band TC = new Band("Orchestre Thierry Coudret");
             //InitEmployers();
             //InitFormules();
@@ -214,34 +351,154 @@ namespace Experiment.Utilities
 
         }
 
-        public static ObservableCollection<EventStack> getEvents(int year)
+        public static void InsertBand(Band newBand)
         {
-            Console.WriteLine();
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<Band>();
+                conn.CreateTable<Event>();
+                SQLiteCommand cmd = new SQLiteCommand(conn);
+                cmd.CommandText = "SELECT Count(*) FROM Bands";
+                int rowCount = (cmd.ExecuteScalar<int>());
+                if (rowCount == 0)
+                {
+                    conn.Insert(newBand);
+                    ObservableCollection<Musician> musicians = new ObservableCollection<Musician>();
+                    musicians.Add(new Musician
+                    {
+                        FirstName = "John",
+                        LastName = "Lambda",
+                        PhoneNumber = "0745848425"
+                    });
+                    musicians.Add(new Musician
+                    {
+                        FirstName = "Marc",
+                        LastName = "Chaba",
+                        PhoneNumber = "0620103040"
+                    });
+                    conn.InsertAll(musicians);
+                    newBand.Musicians = musicians;
+                    ObservableCollection<Formule> formules = new ObservableCollection<Formule>();
+                    formules.Add(new Formule
+                    {
+                        Name = "( Non définie )",
+                    });
+                    formules.Add(new Formule
+                    {
+                        Name = "Thé Dansant",
+                        Musicians = musicians
 
+                    });
+                    formules.Add(new Formule
+                    {
+                        Name = "Mariage",
+                        Musicians = new ObservableCollection<Musician>
+                        {
+                            musicians[0]
+                        }
+                    });
+                    formules.Add(new Formule
+                    {
+                        Name = "Anniversaire",
+                        Musicians = new ObservableCollection<Musician>
+                        {
+                            musicians[1]
+                        }
+
+                    });
+                    conn.InsertAllWithChildren(formules);
+                    newBand.Formules = formules;
+                    conn.UpdateWithChildren(newBand);
+                }
+            }
+        }
+
+        public static void ClearBand()
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<Band>();
+                SQLiteCommand cmd = new SQLiteCommand(conn);
+                cmd.CommandText = "DELETE FROM Band";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+        public static void ClearEvtStacks()
+        {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.CreateTable<EventStack>();
-                var eventstacks = new ObservableCollection<EventStack>(conn.Table<EventStack>()
+                SQLiteCommand cmd = new SQLiteCommand(conn);
+                cmd.CommandText = "DELETE FROM EventStack";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static ObservableCollection<EventStack> getEvents(int year)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<EventStack>();
+                var eventstacks = new ObservableCollection<EventStack>(conn.Table<EventStack>().Where<EventStack>((x) => x.EventStackDay.Year == year)
                     .ToList<EventStack>());
-                return eventstacks;
+                if (eventstacks.Count() > 0)
+                {
+                    return eventstacks;
+                } else
+                {
+                    return new ObservableCollection<EventStack>();
+                }
+                
             }
             //return new ObservableCollection<EventStack>(_events.Where<EventStack>((x) => x.Current.Date.Year == year).ToList());
         }
 
         public static ObservableCollection<EventStack> getEvents(int year, int month)
         {
-            if (_isLoaded)
+            //if (_isLoaded)
+            //{
+            //    return new ObservableCollection<EventStack>(_events.Where<EventStack>((x) => x.Current.Date.Year == year && x.Current.Date.Month == month).ToList());
+            //}
+            //return new ObservableCollection<EventStack>();
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                return new ObservableCollection<EventStack>(_events.Where<EventStack>((x) => x.Current.Date.Year == year && x.Current.Date.Month == month).ToList());
+                var connection = conn.CreateTable<EventStack>();
+                var events = conn.GetAllWithChildren<EventStack>()
+                    .Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
+                    .ToList<EventStack>();
+                if (events.Count > 0)
+                {
+                    return new ObservableCollection<EventStack>(events);
+                }
+                return new ObservableCollection<EventStack>();
+                //var eventstacks = new ObservableCollection<EventStack>(conn.Table<EventStack>().Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
+                //    .ToList<EventStack>());
+                //if (eventstacks.Count() > 0)
+                //{
+                //    return eventstacks;
+                //}
+                //else
+                //{
+                //    return new ObservableCollection<EventStack>();
+                //}
+
             }
-            return new ObservableCollection<EventStack>();
 
         }
 
 
         public static void AddEventStack(EventStack evt)
         {
-            _events.Add(evt);
+            //_events.Add(evt);
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<EventStack>();
+                conn.Insert(evt);
+                conn.InsertAll(evt.Events);
+                conn.UpdateWithChildren(evt);
+            }
         }
 
         public static void UpdateEventStack(EventStack evt)
@@ -285,7 +542,13 @@ namespace Experiment.Utilities
 
         public static Band getDefaultBand()
         {
-            return _bands[0];
+            //return _bands[0];
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<Band>();
+                Band defaultBand = conn.Table<Band>().FirstOrDefault<Band>();
+                return defaultBand;
+            }
         }
 
         public static ObservableCollection<Formule> getFormules()

@@ -70,7 +70,6 @@ namespace Experiment
             yearDays = new ObservableCollection<Day>();
             eventsInfo = new EventsInfo();
             eventsCollection = DBHandler.getEvents(DateTime.Now.Year);
-            //filterModule = new FilterModule(eventsCollection);
             FindNextEventFromNow();
             hoveredDate.Text = "(Aucune date)";
             formules = new ObservableCollection<Formule>();
@@ -107,22 +106,24 @@ namespace Experiment
 
         private void FindNextEventFromNow()
         {
-            if (currentYear != DateTime.Now.Year)
-            {
-                return;
-            }
-            List<EventStack> results = eventsCollection.OrderBy((x) => x.Current.Date)
-                .Where((x) => DateTime.Compare(x.Current.Date, DateTime.Now.Date) >= 0).ToList<EventStack>();
-            if (results.Count > 0)
-            {
-                eventsInfo.UpcomingEvent = results.FirstOrDefault<EventStack>();
-            } else
-            {
-                eventsInfo.UpcomingEvent = null;
-                eventsInfo.Header = "( aucune date )";
-            }
+            //if (currentYear != DateTime.Now.Year)
+            //{
+            //    return;
+            //}
+            //List<EventStack> results = eventsCollection.OrderBy((x) => x.Current.Date)
+            //    .Where((x) => DateTime.Compare(x.Current.Date, DateTime.Now.Date) >= 0).ToList<EventStack>();
+            //if (results.Count > 0)
+            //{
+            //    eventsInfo.UpcomingEvent = results.FirstOrDefault<EventStack>();
+            //} else
+            //{
+            //    eventsInfo.UpcomingEvent = null;
+            //    eventsInfo.Header = "( aucune date )";
+            //}
             
-            DateTime startTime = DateTime.Now;
+            //DateTime startTime = DateTime.Now;
+
+
             /*
             DateTime endTime = eventsInfo.UpcomingEvent.Current.Date;
             TimeSpan distance = endTime.Subtract(startTime);
@@ -149,7 +150,7 @@ namespace Experiment
             {
                 FilterModule.Instance.clearFilterResults(eventsCollection);
             }
-            eventsCollection = DBHandler.getEvents(currentYear);
+            //eventsCollection = DBHandler.getEvents(currentYear);
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
             //filterModule.FilteredCollection = eventsCollection;
             //filterModule.RefreshFilter();
@@ -549,7 +550,7 @@ namespace Experiment
             EventStack evtStack = (EventStack)(((Grid)sender).DataContext);
             
             handleMonthHover(evtStack.Current);
-            hoveredDate.Text = evtStack.Current.DayFullName;
+            //hoveredDate.Text = evtStack.Current.DayFullName;
         }
 
         private void EventStack_FullMouseLeave(object sender, MouseEventArgs e)

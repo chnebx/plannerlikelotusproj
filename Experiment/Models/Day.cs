@@ -153,6 +153,30 @@ namespace Experiment.Models
             }
         }
 
+        public static int CalculateYearRow(DateTime current)
+        {
+            return current.Month - 1;
+        } 
+
+        public static int CalculateYearColumn(DateTime current)
+        {
+            DateTime firstDay = new DateTime(current.Year, current.Month, 1);
+            int offset = ((int)firstDay.DayOfWeek == 0) ? 6 : (int)firstDay.DayOfWeek - 1;
+            return offset + current.Day - 1;
+        }
+
+        public static int CalculateMonthRow(DateTime current)
+        {
+            DateTime firstDay = new DateTime(current.Year, current.Month, 1);
+            int offset = ((int)firstDay.DayOfWeek == 0) ? 6 : (int)firstDay.DayOfWeek - 1;
+            return (offset + current.Day - 1) / 7; ;
+        }
+
+        public static int CalculateMonthColumn(DateTime current)
+        {
+            return ((int)current.DayOfWeek == 0) ? 6 : (int)current.DayOfWeek - 1;
+        }
+
         public int Row
         {
             get {

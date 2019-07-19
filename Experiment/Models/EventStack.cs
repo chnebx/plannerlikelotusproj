@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Experiment.Models
 {
+    [Table("EventStacks")]
     public class EventStack : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -30,6 +31,7 @@ namespace Experiment.Models
         private List<Event> _filteredEvents;
         private ObservableCollection<Event> _events;
 
+        
         public EventStack()
         {
 
@@ -50,13 +52,8 @@ namespace Experiment.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public bool IsFull
-        {
-            get
-            {
-                return Events.Count >= 3;
-            }
-        }
+        [NotNull]
+        public DateTime EventStackDay { get; set; }
 
         [OneToMany]
         public ObservableCollection<Event> Events
@@ -69,6 +66,15 @@ namespace Experiment.Models
             {
                 _events = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
+            }
+        }
+
+        [Ignore]
+        public bool IsFull
+        {
+            get
+            {
+                return Events.Count >= 3;
             }
         }
 
@@ -87,6 +93,7 @@ namespace Experiment.Models
                 _monthColumn = _current.MonthColumn;
                 _lowerLimitHour = new DateTime(_current.Date.Year, _current.Date.Month, _current.Date.Day, 0, 0, 0);
                 _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
+                EventStackDay = _current.Date;
                 _dayNumber = _current.Date.Day.ToString();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Current"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Row"));
@@ -122,21 +129,6 @@ namespace Experiment.Models
             {
                 _upperLimitHour = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitHour"));
-            }
-        }
-
-        [Ignore]
-        public int Row
-        {
-            get
-            {
-                return _row;
-                //return Current.Row;
-            }
-            set
-            {
-                _row = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Row"));
             }
         }
 
@@ -211,11 +203,28 @@ namespace Experiment.Models
         }
 
         [Ignore]
+        public int Row
+        {
+            get
+            {
+                
+                return Day.CalculateYearRow(EventStackDay);
+                //return Current.Row;
+            }
+            set
+            {
+                _row = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Row"));
+            }
+        }
+
+        [Ignore]
         public int Column
         {
             get
             {
-                return _column;
+                //return _column;
+                return Day.CalculateYearColumn(EventStackDay);
             }
             set
             {
@@ -229,7 +238,8 @@ namespace Experiment.Models
         {
             get
             {
-                return _monthRow;
+                //return _monthRow;
+                return Day.CalculateMonthRow(EventStackDay);
             }
             set
             {
@@ -243,7 +253,7 @@ namespace Experiment.Models
         {
             get
             {
-                return _monthColumn;
+                return Day.CalculateMonthColumn(EventStackDay); ;
             }
             set
             {

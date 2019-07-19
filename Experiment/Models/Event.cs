@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-
 namespace Experiment.Models
 {
+    [Table("Events")]
     public class Event : INotifyPropertyChanged
     {
         private int _hour;
@@ -55,6 +55,7 @@ namespace Experiment.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [Ignore]
         public bool IsValid { get; set; }
 
         //public Event(Band band, DateTime start, DateTime end, string name, Location locationName = null)
@@ -70,10 +71,10 @@ namespace Experiment.Models
             //_rowSpan = 6;
             //_row = 0;
             //_shortName = ShortNameMaker(_name);
-            //colorRect = new SolidColorBrush(Color.FromRgb(
-            //            (byte)randomColor.Next(0, 255),
-            //            (byte)randomColor.Next(0, 255),
-            //            (byte)randomColor.Next(0, 255)));
+            colorRect = new SolidColorBrush(Color.FromRgb(
+                        (byte)randomColor.Next(0, 255),
+                        (byte)randomColor.Next(0, 255),
+                        (byte)randomColor.Next(0, 255)));
             //employerID = 1;
             //if (locationName != null)
             //{
@@ -87,6 +88,12 @@ namespace Experiment.Models
 
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
+
+        [ForeignKey(typeof(Band))]
+        public int BandID { get; set; }
+
+        [ForeignKey(typeof(EventStack))]
+        public int EventStackID { get; set; }
 
         [ManyToOne]
         public EventStack parentStack { get; set; }
@@ -126,17 +133,6 @@ namespace Experiment.Models
             {
                 _over2Days = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Over2Days"));
-            }
-        }
-
-        [ForeignKey(typeof(Band))]
-        public int BandID
-        {
-            get {
-                return bandID;
-            }
-            set {
-                bandID = value;
             }
         }
 
