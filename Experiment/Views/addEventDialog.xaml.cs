@@ -116,8 +116,8 @@ namespace Experiment.Views
             {
                 
                 actualEventStack = (EventStack)parameterProvided;
-                val = actualEventStack.Current.Date;
-                actualDay = actualEventStack.Current;
+                val = actualEventStack.EventStackDay;
+                actualDay = new Day(val);
                 eventsFromStack = actualEventStack.Events;
                 if (eventsFromStack.Count == 0)
                 {
@@ -134,8 +134,8 @@ namespace Experiment.Views
             {
                 Console.WriteLine("event");
                 actualEventStack = (EventStack)((Event)parameterProvided).parentStack;
-                val = actualEventStack.Current.Date;
-                actualDay = actualEventStack.Current;
+                val = actualEventStack.EventStackDay;
+                actualDay = new Day(val);
                 eventsFromStack = actualEventStack.Events;
                 eventsList.SelectedValue = (Event)parameterProvided;
                 refreshVisibilityBinding("SelectedItem");

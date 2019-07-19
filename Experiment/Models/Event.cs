@@ -95,7 +95,7 @@ namespace Experiment.Models
         [ForeignKey(typeof(EventStack))]
         public int EventStackID { get; set; }
 
-        [ManyToOne]
+        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public EventStack parentStack { get; set; }
 
         public string Comment
@@ -175,7 +175,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToOne]
+        [ManyToOne]
         public Band Band
         {
             get
@@ -189,7 +189,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToOne]
+        [ManyToOne]
         public Employer ActualEmployer
         {
             get
@@ -203,7 +203,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToOne]
+        [ManyToOne]
         public Location LocationName
         {
             get
@@ -570,7 +570,7 @@ namespace Experiment.Models
             }
         }
 
-        [Ignore]
+        //[Ignore]
         public int Row
         {
             get { return _row; }
@@ -603,7 +603,7 @@ namespace Experiment.Models
             }
         }
 
-        [Ignore]
+        //[Ignore]
         public int RowSpan
         {
             get { return _rowSpan; }

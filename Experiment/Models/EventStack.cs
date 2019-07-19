@@ -55,7 +55,7 @@ namespace Experiment.Models
         [NotNull]
         public DateTime EventStackDay { get; set; }
 
-        [OneToMany]
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
         public ObservableCollection<Event> Events
         {
             get
@@ -272,8 +272,8 @@ namespace Experiment.Models
             if (!IsFull)
             {
                 newEvent.parentStack = this;
-                newEvent.Column = Events.Count;
-                newEvent.updateDates(Current.Date.Year, Current.Date.Month, Current.Date.Day);
+                //newEvent.Column = Events.Count;
+                newEvent.updateDates(EventStackDay.Year, EventStackDay.Month, EventStackDay.Day);
                 Events.Add(newEvent);
                 updateEvts();
             }

@@ -495,9 +495,11 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.CreateTable<EventStack>();
-                conn.Insert(evt);
-                conn.InsertAll(evt.Events);
-                conn.UpdateWithChildren(evt);
+                conn.CreateTable<Event>();
+                conn.InsertWithChildren(evt, recursive:true);
+                //conn.Insert(evt);
+                //conn.InsertAll(evt.Events);
+                //conn.UpdateWithChildren(evt);
             }
         }
 
@@ -512,10 +514,22 @@ namespace Experiment.Utilities
 
         public static void DeleteEventStack(EventStack evt)
         {
-            var item = _events.FirstOrDefault<EventStack>((x) => x.Current.Date == evt.Current.Date);
-            if (item != null)
+            //var item = _events.FirstOrDefault<EventStack>((x) => x.Current.Date == evt.Current.Date);
+            //if (item != null)
+            //{
+            //    _events.Remove(item);
+            //}
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                _events.Remove(item);
+                var deleteQuery = "DELETE FROM Events WHERE EventStackId == ?";
+                conn.Execute(deleteQuery, evt.Id);
+                conn.Delete<EventStack>(evt.Id);
+                //conn.CreateTable<EventStack>();
+                //conn.CreateTable<Event>();
+                //conn.DeleteAllIds
+                //var retrieved = conn.GetWithChildren<EventStack>(evt.Id);
+                //retrieved.Events.Clear();
+                //conn.UpdateWithChildren(retrieved);
             }
         }
 
