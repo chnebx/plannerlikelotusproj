@@ -55,16 +55,6 @@ namespace Experiment.Models
         [NotNull]
         public DateTime EventStackDay { get; set; }
 
-        [Ignore]
-        public string DayNumber
-        {
-            get
-            {
-                return EventStackDay.Date.Day.ToString();
-            }
-
-        }
-
         [OneToMany(CascadeOperations = CascadeOperation.All)]
         public ObservableCollection<Event> Events
         {
@@ -86,6 +76,17 @@ namespace Experiment.Models
             {
                 return Events.Count >= 3;
             }
+        }
+
+
+        [Ignore]
+        public string DayNumber
+        {
+            get
+            {
+                return EventStackDay.Date.Day.ToString();
+            }
+
         }
 
         [Ignore]

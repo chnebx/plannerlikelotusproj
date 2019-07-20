@@ -431,20 +431,13 @@ namespace Experiment.Utilities
                 conn.CreateTable<Event>();
                 conn.CreateTable<Employer>();
                 conn.CreateTable<Location>();
+                conn.CreateTable<Formule>();
                 var events = conn.GetAllWithChildren<EventStack>(recursive: true)
                     .Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
                     .ToList<EventStack>();
                 if (events.Count > 0)
                 {
-                    foreach (EventStack stack in events)
-                    {
-                        foreach(Event e in stack.Events)
-                        {
-                            Console.WriteLine(e.ActualEmployer);
-                        }
-                    }
                     return new ObservableCollection<EventStack>(events);
-                    
                 }
                 return new ObservableCollection<EventStack>();
             }
@@ -481,9 +474,21 @@ namespace Experiment.Utilities
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                var deleteQuery = "DELETE FROM Events WHERE EventStackId == ?";
+                var deleteQuery = "DELETE FROM Events WHERE EventStackID = ?";
                 conn.Execute(deleteQuery, evt.Id);
                 conn.Delete<EventStack>(evt.Id);
+                //var results = conn.Query<Event>("SELECT * FROM Events WHERE EventStackId IS NULL"); 
+                //Console.WriteLine(results.Count);
+                //for (int i = 0; i < results.Count; i++)
+                //{
+                //    Console.WriteLine(results[i].Name);
+                //}
+                //var deleteQuery = "DELETE FROM Events";
+                //var secondQuery = "DELETE FROM EventStacks";
+                //conn.Execute(deleteQuery);
+                //conn.Execute(secondQuery);
+                //Console.WriteLine(conn.GetAllWithChildren<Event>().Count);
+
             }
         }
 

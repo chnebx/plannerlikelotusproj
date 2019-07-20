@@ -111,7 +111,7 @@ namespace Experiment.Views
             //    Console.WriteLine("day");
             //    actualDay = (Day)parameterProvided;
             //    val = actualDay.Date;
-            //} else 
+            //} else  
             if (parameterProvided is EventStack)
             {
                 
@@ -171,6 +171,7 @@ namespace Experiment.Views
             ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;
             ActualDayScheduler.Refresh();
             ActualDayScheduler.SelectDefault();
+            //Console.WriteLine(actualEventStack.Events[0].Band.Formules.Count);
             /*
             ActualDayScheduler.DrawnEventsList = actualEventStack.Events;
             ActualDayScheduler.ActualGridDay = val;

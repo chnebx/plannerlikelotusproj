@@ -26,7 +26,7 @@ namespace Experiment.Models
         }
 
         [PrimaryKey, AutoIncrement, Unique, NotNull]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [Unique, NotNull]
         public string Name
@@ -42,7 +42,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToMany]
+        [OneToMany(CascadeOperations = CascadeOperation.CascadeRead)]
         public ObservableCollection<Musician> Musicians
         {
             get
@@ -56,7 +56,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToMany]
+        [OneToMany(CascadeOperations = CascadeOperation.CascadeRead)]
         public ObservableCollection<Formule> Formules
         {
             get
@@ -70,7 +70,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToMany]
+        [OneToMany(CascadeOperations = CascadeOperation.CascadeRead)]
         public ObservableCollection<Event> Events
         {
             get

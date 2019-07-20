@@ -154,7 +154,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nom" Width="*" Binding="{Binding LastName}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Prénom" Width="*" Binding="{Binding FirstName}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Télephone" Width="*" Binding="{Binding PhoneNumber}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Télephone" Width="*" Binding="{Binding FormattedNum}"></DataGridTextColumn>
                 </DataGrid.Columns>
                 
             </DataGrid>

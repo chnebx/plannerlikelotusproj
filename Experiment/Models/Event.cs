@@ -89,13 +89,13 @@ namespace Experiment.Models
         }
 
         [PrimaryKey, AutoIncrement]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey(typeof(Band))]
-        public int BandID { get; set; }
+        public int BandId { get; set; }
 
         [ForeignKey(typeof(EventStack))]
-        public int EventStackID { get; set; }
+        public int EventStackId { get; set; }
 
         [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public EventStack parentStack { get; set; }
@@ -195,7 +195,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne]
+        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Band Band
         {
             get
@@ -209,7 +209,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne(CascadeOperations = CascadeOperation.All)]
+        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Employer ActualEmployer
         {
             get
@@ -223,7 +223,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne(CascadeOperations = CascadeOperation.All)]
+        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Location LocationName
         {
             get
@@ -237,7 +237,7 @@ namespace Experiment.Models
             }
         }
 
-        [OneToOne]
+        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Formule CurrentFormule
         {
             get

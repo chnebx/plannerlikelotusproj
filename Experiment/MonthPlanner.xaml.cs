@@ -168,10 +168,15 @@ namespace Experiment
             addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
             if (addDialog.ShowDialog() == true)
             {
-                DBHandler.UpdateEventStack(evtStack);
+                if (evtStack.Events.Count > 0)
+                {
+                    Console.WriteLine("dialog true and update");
+                    DBHandler.UpdateEventStack(evtStack);
+                }
             }
             if (evtStack.Events.Count <= 0)
             {
+                Console.WriteLine("check deletion");
                 eventsCollection.Remove(evtStack);
                 DBHandler.DeleteEventStack(evtStack);
                 //if (evtStack == eventsInfo.UpcomingEvent)

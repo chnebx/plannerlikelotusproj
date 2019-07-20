@@ -22,10 +22,10 @@ namespace Experiment.Models
         }
 
         [PrimaryKey, AutoIncrement]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey(typeof(Band))]
-        public int BandID { get; set; }
+        public int BandId { get; set; }
 
         public string Name
         {

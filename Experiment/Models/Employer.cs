@@ -21,7 +21,7 @@ namespace Experiment.Models
         }
 
         [PrimaryKey, AutoIncrement]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         public string FirstName
         {
@@ -54,12 +54,22 @@ namespace Experiment.Models
             get
             {
 
-                return formatPhoneNumber(_phoneNumber);
+                return _phoneNumber;
             }
             set
             {
                 _phoneNumber = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("PhoneNumber"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("FormattedNum"));
+            }
+        }
+
+        [Ignore]
+        public string FormattedNum
+        {
+            get
+            {
+                return formatPhoneNumber(PhoneNumber);
             }
         }
 
