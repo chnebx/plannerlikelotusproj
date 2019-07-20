@@ -120,36 +120,7 @@ namespace Experiment.Utilities
             {
                 var FormulesTable = conn.CreateTable<Formule>();
                 conn.CreateTable<FormulesMusicians>();
-                //SQLiteCommand cmd = new SQLiteCommand(conn);
-                //cmd.CommandText = "SELECT Count(*) FROM Formules";
-                //int rowCount = (cmd.ExecuteScalar<int>());
-                //if (rowCount == 0)
-                //{
-                //    conn.Insert(new Formule
-                //    {
-                //        Name = "( Non Définie )"
-                //    });
-                //    conn.Insert(new Formule
-                //    {
-                //        Name = "Thé Dansant"
-                //    });
-
-                //    conn.Insert(new Formule
-                //    {
-                //        Name = "Mariage"
-                //    });
-
-                //    conn.Insert(new Formule
-                //    {
-                //        Name = "Anniversaire"
-                //    });
-                //}
-
             }
-            //_formules = new ObservableCollection<Formule>();
-            //_formules.Add(new Formule("Thé Dansant"));
-            //_formules.Add(new Formule("Mariage"));
-            //_formules.Add(new Formule("Anniversaire"));
         }
 
         public static void InitLocations()
@@ -215,6 +186,7 @@ namespace Experiment.Utilities
             };
             FillDB();
             InsertBand(TC);
+
             //ClearEvtStacks();
             //loadDB();
             //ClearEvtStacks();
@@ -404,7 +376,6 @@ namespace Experiment.Utilities
                         {
                             musicians[1]
                         }
-
                     });
                     conn.InsertAllWithChildren(formules);
                     newBand.Formules = formules;
@@ -440,50 +411,42 @@ namespace Experiment.Utilities
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                conn.CreateTable<EventStack>();
-                var eventstacks = new ObservableCollection<EventStack>(conn.Table<EventStack>().Where<EventStack>((x) => x.EventStackDay.Year == year)
-                    .ToList<EventStack>());
-                if (eventstacks.Count() > 0)
-                {
-                    return eventstacks;
-                } else
-                {
-                    return new ObservableCollection<EventStack>();
-                }
-                
-            }
-            //return new ObservableCollection<EventStack>(_events.Where<EventStack>((x) => x.Current.Date.Year == year).ToList());
-        }
-
-        public static ObservableCollection<EventStack> getEvents(int year, int month)
-        {
-            //if (_isLoaded)
-            //{
-            //    return new ObservableCollection<EventStack>(_events.Where<EventStack>((x) => x.Current.Date.Year == year && x.Current.Date.Month == month).ToList());
-            //}
-            //return new ObservableCollection<EventStack>();
-            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
-            {
                 var connection = conn.CreateTable<EventStack>();
                 var events = conn.GetAllWithChildren<EventStack>()
-                    .Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
+                    .Where<EventStack>((x) => x.EventStackDay.Year == year)
                     .ToList<EventStack>();
                 if (events.Count > 0)
                 {
                     return new ObservableCollection<EventStack>(events);
                 }
                 return new ObservableCollection<EventStack>();
-                //var eventstacks = new ObservableCollection<EventStack>(conn.Table<EventStack>().Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
-                //    .ToList<EventStack>());
-                //if (eventstacks.Count() > 0)
-                //{
-                //    return eventstacks;
-                //}
-                //else
-                //{
-                //    return new ObservableCollection<EventStack>();
-                //}
+            }
+        }
 
+        public static ObservableCollection<EventStack> getEvents(int year, int month)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var connection = conn.CreateTable<EventStack>();
+                conn.CreateTable<Event>();
+                conn.CreateTable<Employer>();
+                conn.CreateTable<Location>();
+                var events = conn.GetAllWithChildren<EventStack>(recursive: true)
+                    .Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
+                    .ToList<EventStack>();
+                if (events.Count > 0)
+                {
+                    foreach (EventStack stack in events)
+                    {
+                        foreach(Event e in stack.Events)
+                        {
+                            Console.WriteLine(e.ActualEmployer);
+                        }
+                    }
+                    return new ObservableCollection<EventStack>(events);
+                    
+                }
+                return new ObservableCollection<EventStack>();
             }
 
         }
@@ -491,56 +454,55 @@ namespace Experiment.Utilities
 
         public static void AddEventStack(EventStack evt)
         {
-            //_events.Add(evt);
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.CreateTable<EventStack>();
                 conn.CreateTable<Event>();
                 conn.InsertWithChildren(evt, recursive:true);
-                //conn.Insert(evt);
-                //conn.InsertAll(evt.Events);
-                //conn.UpdateWithChildren(evt);
             }
         }
 
         public static void UpdateEventStack(EventStack evt)
         {
-            var item = _events.FirstOrDefault<EventStack>((x) => x.Current.Date == evt.Current.Date);
-            if (item != null)
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                item = evt;
+                conn.CreateTable<EventStack>();
+                conn.CreateTable<Event>();
+                conn.InsertOrReplaceWithChildren(evt, recursive:true);
             }
+            //var item = _events.FirstOrDefault<EventStack>((x) => x.Current.Date == evt.Current.Date);
+            //if (item != null)
+            //{
+            //    item = evt;
+            //}
         }
 
         public static void DeleteEventStack(EventStack evt)
         {
-            //var item = _events.FirstOrDefault<EventStack>((x) => x.Current.Date == evt.Current.Date);
-            //if (item != null)
-            //{
-            //    _events.Remove(item);
-            //}
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 var deleteQuery = "DELETE FROM Events WHERE EventStackId == ?";
                 conn.Execute(deleteQuery, evt.Id);
                 conn.Delete<EventStack>(evt.Id);
-                //conn.CreateTable<EventStack>();
-                //conn.CreateTable<Event>();
-                //conn.DeleteAllIds
-                //var retrieved = conn.GetWithChildren<EventStack>(evt.Id);
-                //retrieved.Events.Clear();
-                //conn.UpdateWithChildren(retrieved);
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        /*
-        public void AddEvent(EventStack item)
+
+        public ObservableCollection<Location> Locations
         {
-            _events.Add(item);
+            get
+            {
+                return _locations;
+            }
+            set
+            {
+                _locations = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Locations"));
+            }
         }
-        */
+
         public ObservableCollection<Formule> Formules
         {
             get
@@ -567,40 +529,51 @@ namespace Experiment.Utilities
 
         public static ObservableCollection<Formule> getFormules()
         {
-            return _formules;
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<Band>();
+                conn.CreateTable<Formule>();
+                Band actualBand = conn.GetWithChildren<Band>(1);
+                return actualBand.Formules;
+            }
         }
 
         public static ObservableCollection<Employer> getEmployers()
         {
-            return _employers;
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<Employer>();
+                var employers = conn.GetAllWithChildren<Employer>().ToList<Employer>();
+                return new ObservableCollection<Employer>(employers);
+            }
         }
 
         public static void AddEmployer(Employer employer)
         {
-            _employers.Add(employer);
-        }
-
-        public ObservableCollection<Location> Locations
-        {
-            get
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                return _locations;
-            }
-            set
-            {
-                _locations = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Locations"));
+                conn.CreateTable<Employer>();
+                conn.Insert(employer);
             }
         }
 
         public static ObservableCollection<Location> getLocations()
         {
-            return _locations;
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<Location>();
+                var locations = conn.GetAllWithChildren<Location>().ToList<Location>();
+                return new ObservableCollection<Location>(locations);
+            }
         }
 
         public static void AddLocation(Location newLocation)
         {
-            _locations.Add(newLocation);
-        }
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.CreateTable<Location>();
+                conn.Insert(newLocation);
+            }
+        }   
     }
 }

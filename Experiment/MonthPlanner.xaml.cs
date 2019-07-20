@@ -168,7 +168,7 @@ namespace Experiment
             addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
             if (addDialog.ShowDialog() == true)
             {
-
+                DBHandler.UpdateEventStack(evtStack);
             }
             if (evtStack.Events.Count <= 0)
             {

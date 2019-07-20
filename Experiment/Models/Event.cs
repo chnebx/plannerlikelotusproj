@@ -51,6 +51,7 @@ namespace Experiment.Models
         private DateTime _eventEnd;
         private double _duration;
         private SolidColorBrush colorRect;
+        private string _SelectedColor;
         private static Random randomColor = new Random();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -75,6 +76,7 @@ namespace Experiment.Models
                         (byte)randomColor.Next(0, 255),
                         (byte)randomColor.Next(0, 255),
                         (byte)randomColor.Next(0, 255)));
+            SelectedColor = String.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", colorRect.Color.A, colorRect.Color.R, colorRect.Color.G, colorRect.Color.B);
             //employerID = 1;
             //if (locationName != null)
             //{
@@ -105,6 +107,24 @@ namespace Experiment.Models
             {
                 comment = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Comment"));
+            }
+        }
+
+        public string SelectedColor
+        {
+            get
+            {
+                return _SelectedColor;
+            }
+            set
+            {
+                _SelectedColor = value;
+                if (!string.IsNullOrEmpty(_SelectedColor))
+                {
+                    ColorFill = (SolidColorBrush)(new BrushConverter().ConvertFrom(_SelectedColor));
+                    if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ColorFill"));
+                }
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("SelectedColor"));
             }
         }
 
@@ -189,7 +209,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne]
+        [ManyToOne(CascadeOperations = CascadeOperation.All)]
         public Employer ActualEmployer
         {
             get
@@ -203,7 +223,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne]
+        [ManyToOne(CascadeOperations = CascadeOperation.All)]
         public Location LocationName
         {
             get
@@ -231,7 +251,6 @@ namespace Experiment.Models
             }
         }
 
-        [Ignore]
         public DateTime Start
         {
             get
@@ -245,7 +264,6 @@ namespace Experiment.Models
             }
         }
 
-        [Ignore]
         public DateTime End
         {
             get
@@ -256,6 +274,26 @@ namespace Experiment.Models
             {
                 _eventEnd = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("End"));
+            }
+        }
+
+        public int Row
+        {
+            get { return _row; }
+            set
+            {
+                _row = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Row"));
+            }
+        }
+
+        public int RowSpan
+        {
+            get { return _rowSpan; }
+            set
+            {
+                _rowSpan = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("RowSpan"));
             }
         }
 
@@ -548,11 +586,16 @@ namespace Experiment.Models
         [Ignore]
         public SolidColorBrush ColorFill
         {
-            get { return colorRect; }
+            get
+            {
+                return colorRect; 
+            }
             set
             {
                 colorRect = value;
+                _SelectedColor = ConvertBrushToHex(colorRect);
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ColorFill"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("SelectedColor"));
             }
         }
 
@@ -567,17 +610,6 @@ namespace Experiment.Models
             {
                 _shortName = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShortName"));
-            }
-        }
-
-        //[Ignore]
-        public int Row
-        {
-            get { return _row; }
-            set
-            {
-                _row = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Row"));
             }
         }
 
@@ -603,21 +635,15 @@ namespace Experiment.Models
             }
         }
 
-        //[Ignore]
-        public int RowSpan
-        {
-            get { return _rowSpan; }
-            set
-            {
-                _rowSpan = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("RowSpan"));
-            }
-        }
-
         public void updateDates(int year, int month, int day)
         {
             this.Start = new DateTime(year, month, day, Start.Hour, Start.Minute, Start.Second);
             this.End = Start.AddMinutes(_lengthHour * 60 + _lengthMinutes);
+        }
+
+        private string ConvertBrushToHex(SolidColorBrush brush)
+        {
+           return String.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", brush.Color.A, brush.Color.R, brush.Color.G, brush.Color.B);
         }
 
         public Event DeepCopy()

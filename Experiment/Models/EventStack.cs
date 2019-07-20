@@ -55,6 +55,16 @@ namespace Experiment.Models
         [NotNull]
         public DateTime EventStackDay { get; set; }
 
+        [Ignore]
+        public string DayNumber
+        {
+            get
+            {
+                return EventStackDay.Date.Day.ToString();
+            }
+
+        }
+
         [OneToMany(CascadeOperations = CascadeOperation.All)]
         public ObservableCollection<Event> Events
         {
@@ -187,6 +197,9 @@ namespace Experiment.Models
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("DayNum"));
             }
         }
+
+        
+        
 
         [Ignore]
         public int RowSpan

@@ -491,7 +491,7 @@
                                         PreviewMouseMove="Events_PreviewMouseMove"
                                         >
                                         <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                            <TextBlock Foreground="white" FontWeight="DemiBold" Text="{Binding DayNum}"></TextBlock>
+                                            <TextBlock Foreground="white" FontWeight="DemiBold" Text="{Binding DayNumber}"></TextBlock>
                                         </Viewbox>
                                     </Border>
                                     <Popup 
@@ -514,7 +514,7 @@
                                                     <RowDefinition Height="*"></RowDefinition>
                                                 </Grid.RowDefinitions>
                                                 <Border CornerRadius="10,10,0,0" Grid.Row="0" Background="#EE7070BE">
-                                                    <TextBlock Text="{Binding Current.DayTitle}"
+                                                    <TextBlock Text="{Binding DayNumber}"
                                                            Foreground="White"
                                                            FontSize="13"
                                                            FontWeight="Bold"

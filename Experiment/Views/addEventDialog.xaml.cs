@@ -169,7 +169,6 @@ namespace Experiment.Views
             ActualDayScheduler.CurrentDay = actualDay.Date;
             ActualDayScheduler.LowerLimit = actualEventStack.LowerLimitHour;
             ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;
-            Console.WriteLine(actualEventStack.UpperLimitHour);
             ActualDayScheduler.Refresh();
             ActualDayScheduler.SelectDefault();
             /*
@@ -237,7 +236,6 @@ namespace Experiment.Views
         private void BtnAjouter_Click(object sender, RoutedEventArgs e)
         {
             actualEventStack.updateEvts();
-            //EventsUtilities.UpdateLimits(actualEventStack);
             List<Event> invalids = new List<Event>();
             for (int i = 0; i < actualEventStack.Events.Count; i++)
             {
@@ -530,7 +528,8 @@ namespace Experiment.Views
             var result = colorDialogBox.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                SelectedEvent.ColorFill = new SolidColorBrush(Color.FromArgb(colorDialogBox.Color.A, colorDialogBox.Color.R, colorDialogBox.Color.G, colorDialogBox.Color.B));
+                SelectedEvent.SelectedColor = String.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", colorDialogBox.Color.A, colorDialogBox.Color.R, colorDialogBox.Color.G, colorDialogBox.Color.B);
+                //SelectedEvent.ColorFill = new SolidColorBrush(Color.FromArgb(colorDialogBox.Color.A, colorDialogBox.Color.R, colorDialogBox.Color.G, colorDialogBox.Color.B));
             }
         }
 

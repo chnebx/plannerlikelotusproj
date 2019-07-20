@@ -201,7 +201,7 @@
                                                 </Style>
                                             </Border.Style>
                                             <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                <TextBlock Foreground="white" FontWeight="Bold" Text="{Binding DayNum}"></TextBlock>
+                                                <TextBlock Foreground="white" FontWeight="Bold" Text="{Binding DayNumber}"></TextBlock>
                                             </Viewbox>
                                         </Border>
                                         <Popup
