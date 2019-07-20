@@ -298,7 +298,6 @@ namespace Experiment.Models
         }
 
 
-        [Ignore]
         public int LengthHour
         {
             get
@@ -312,7 +311,7 @@ namespace Experiment.Models
             }
         }
 
-        [Ignore]
+
         public int LengthMinutes
         {
             get
@@ -323,6 +322,19 @@ namespace Experiment.Models
             {
                 _lengthMinutes = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LengthMinutes"));
+            }
+        }
+
+        public double Duration
+        {
+            get
+            {
+                return _duration;
+            }
+            set
+            {
+                _duration = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Duration"));
             }
         }
 
@@ -337,20 +349,6 @@ namespace Experiment.Models
             {
                 _isFilterResult = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("IsFilterResult"));
-            }
-        }
-
-        [Ignore]
-        public double Duration
-        {
-            get
-            {
-                return _duration;
-            }
-            set
-            {
-                _duration = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Duration"));
             }
         }
 

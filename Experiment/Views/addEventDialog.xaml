@@ -552,7 +552,7 @@
                         <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                             <Label Width="120" Padding="0, 5" Content="Formule :" Margin="0,0,0,0"></Label>
                             <!--<TextBox x:Name="txtFormuleName" Text="{Binding CurrentFormule.Name, Mode=TwoWay}" Height="24" Width="120"></TextBox>-->
-                            <ComboBox Height="30" SelectedValue="{Binding CurrentFormule, Mode=TwoWay}" x:Name="comboFormule" ItemsSource="{Binding Band}" Width="120">
+                            <ComboBox Height="30" SelectedValue="{Binding CurrentFormule, Mode=TwoWay}" x:Name="comboFormule" ItemsSource="{Binding Band.Formules}" Width="120">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>

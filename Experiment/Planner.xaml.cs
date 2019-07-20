@@ -150,7 +150,7 @@ namespace Experiment
             {
                 FilterModule.Instance.clearFilterResults(eventsCollection);
             }
-            //eventsCollection = DBHandler.getEvents(currentYear);
+            eventsCollection = DBHandler.getEvents(currentYear);
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
             //filterModule.FilteredCollection = eventsCollection;
             //filterModule.RefreshFilter();

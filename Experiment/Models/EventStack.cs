@@ -30,6 +30,7 @@ namespace Experiment.Models
         private DateTime _upperLimitHour;
         private List<Event> _filteredEvents;
         private ObservableCollection<Event> _events;
+        private DateTime _EventStackDay;
 
         
         public EventStack()
@@ -53,7 +54,18 @@ namespace Experiment.Models
         public int Id { get; set; }
 
         [NotNull]
-        public DateTime EventStackDay { get; set; }
+        public DateTime EventStackDay {
+            get
+            {
+                return _EventStackDay;
+            }
+            set
+            {
+                _EventStackDay = value;
+                _current = new Day(_EventStackDay);
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Current"));
+            }
+        }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
         public ObservableCollection<Event> Events
@@ -66,6 +78,32 @@ namespace Experiment.Models
             {
                 _events = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
+            }
+        }
+
+        public DateTime LowerLimitHour
+        {
+            get
+            {
+                return _lowerLimitHour;
+            }
+            set
+            {
+                _lowerLimitHour = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitHour"));
+            }
+        }
+
+        public DateTime UpperLimitHour
+        {
+            get
+            {
+                return _upperLimitHour;
+            }
+            set
+            {
+                _upperLimitHour = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitHour"));
             }
         }
 
@@ -112,34 +150,6 @@ namespace Experiment.Models
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MonthRow"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MonthColumn"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("DayNum"));
-            }
-        }
-
-        [Ignore]
-        public DateTime LowerLimitHour
-        {
-            get
-            {
-                return _lowerLimitHour;
-            }
-            set
-            {
-                _lowerLimitHour = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitHour"));
-            }
-        }
-
-        [Ignore]
-        public DateTime UpperLimitHour
-        {
-            get
-            {
-                return _upperLimitHour;
-            }
-            set
-            {
-                _upperLimitHour = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitHour"));
             }
         }
 

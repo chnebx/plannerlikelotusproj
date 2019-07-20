@@ -334,7 +334,6 @@ namespace Experiment.Utilities
                 int rowCount = (cmd.ExecuteScalar<int>());
                 if (rowCount == 0)
                 {
-                    conn.Insert(newBand);
                     ObservableCollection<Musician> musicians = new ObservableCollection<Musician>();
                     musicians.Add(new Musician
                     {
@@ -377,9 +376,10 @@ namespace Experiment.Utilities
                             musicians[1]
                         }
                     });
-                    conn.InsertAllWithChildren(formules);
+                    conn.InsertAll(formules);
                     newBand.Formules = formules;
-                    conn.UpdateWithChildren(newBand);
+                    conn.InsertWithChildren(newBand, recursive:true);
+                    //conn.UpdateWithChildren(newBand);
                 }
             }
         }
@@ -412,7 +412,7 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 var connection = conn.CreateTable<EventStack>();
-                var events = conn.GetAllWithChildren<EventStack>()
+                var events = conn.GetAllWithChildren<EventStack>(recursive: true)
                     .Where<EventStack>((x) => x.EventStackDay.Year == year)
                     .ToList<EventStack>();
                 if (events.Count > 0)
@@ -463,11 +463,6 @@ namespace Experiment.Utilities
                 conn.CreateTable<Event>();
                 conn.InsertOrReplaceWithChildren(evt, recursive:true);
             }
-            //var item = _events.FirstOrDefault<EventStack>((x) => x.Current.Date == evt.Current.Date);
-            //if (item != null)
-            //{
-            //    item = evt;
-            //}
         }
 
         public static void DeleteEventStack(EventStack evt)
@@ -477,18 +472,6 @@ namespace Experiment.Utilities
                 var deleteQuery = "DELETE FROM Events WHERE EventStackID = ?";
                 conn.Execute(deleteQuery, evt.Id);
                 conn.Delete<EventStack>(evt.Id);
-                //var results = conn.Query<Event>("SELECT * FROM Events WHERE EventStackId IS NULL"); 
-                //Console.WriteLine(results.Count);
-                //for (int i = 0; i < results.Count; i++)
-                //{
-                //    Console.WriteLine(results[i].Name);
-                //}
-                //var deleteQuery = "DELETE FROM Events";
-                //var secondQuery = "DELETE FROM EventStacks";
-                //conn.Execute(deleteQuery);
-                //conn.Execute(secondQuery);
-                //Console.WriteLine(conn.GetAllWithChildren<Event>().Count);
-
             }
         }
 
@@ -527,7 +510,7 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.CreateTable<Band>();
-                Band defaultBand = conn.Table<Band>().FirstOrDefault<Band>();
+                Band defaultBand = conn.GetWithChildren<Band>(1, recursive:true);
                 return defaultBand;
             }
         }
@@ -539,6 +522,7 @@ namespace Experiment.Utilities
                 conn.CreateTable<Band>();
                 conn.CreateTable<Formule>();
                 Band actualBand = conn.GetWithChildren<Band>(1);
+                Console.WriteLine(actualBand);
                 return actualBand.Formules;
             }
         }
