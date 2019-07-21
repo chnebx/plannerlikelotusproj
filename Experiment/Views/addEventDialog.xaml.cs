@@ -88,9 +88,11 @@ namespace Experiment.Views
 
         private Event initializeNewEvent()
         {
+            Band actualBand = DBHandler.getDefaultBand();
             Event newEvt = new Event
             {
-                Band = DBHandler.getDefaultBand(),
+                Band = actualBand,
+                CurrentFormule = actualBand.Formules[0],
                 Start = new DateTime(actualDay.Date.Year, actualDay.Date.Month, actualDay.Date.Day, 19, 00, 0),
                 End = new DateTime(actualDay.Date.Year, actualDay.Date.Month, actualDay.Date.Day, 20, 00, 0),
                 Name = "Aucun Titre",
@@ -140,6 +142,7 @@ namespace Experiment.Views
                 eventsList.SelectedValue = (Event)parameterProvided;
                 refreshVisibilityBinding("SelectedItem");
             }
+            actualEventStack.sortEvents();
             LinearGradientBrush dayColor = manageDayColor(actualDay);
             titleHeaderContainer.Background = dayColor;
             startingDay = val.ToLongDateString().ToUpper();
@@ -217,6 +220,14 @@ namespace Experiment.Views
             set
             {
                 _selectedEvent = value;
+                if (_selectedEvent != null)
+                {
+                    if (_selectedEvent.CurrentFormule != null)
+                    {
+                        Console.WriteLine(_selectedEvent.CurrentFormule.Name);
+                    }
+                    
+                }
 
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("SelectedEvent"));
             }

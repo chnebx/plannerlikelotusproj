@@ -170,13 +170,11 @@ namespace Experiment
             {
                 if (evtStack.Events.Count > 0)
                 {
-                    Console.WriteLine("dialog true and update");
                     DBHandler.UpdateEventStack(evtStack);
                 }
             }
             if (evtStack.Events.Count <= 0)
             {
-                Console.WriteLine("check deletion");
                 eventsCollection.Remove(evtStack);
                 DBHandler.DeleteEventStack(evtStack);
                 //if (evtStack == eventsInfo.UpcomingEvent)

@@ -425,7 +425,7 @@
             </DockPanel>
             <Border Grid.Row="4" >
                 <!--<StackPanel Background="White" x:Name="InfosPanel" DataContext="{Binding ElementName=eventsList, Path=SelectedItem}" Visibility="{Binding ElementName=eventsList, Path=SelectedItem, Converter={StaticResource SelectedItemToVisibilityConverter}}" Margin="10,0">-->
-                <StackPanel Background="White" x:Name="InfosPanel" DataContext="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem}" Visibility="{Binding ElementName=ActualDayScheduler, Path=SelectedEventItem, Converter={StaticResource SelectedItemToVisibilityConverter}}" Margin="0,0">
+                <StackPanel Background="White" x:Name="InfosPanel" DataContext="{Binding ElementName=eventsList, Path=SelectedItem}" Visibility="{Binding ElementName=eventsList, Path=SelectedItem, Converter={StaticResource SelectedItemToVisibilityConverter}}" Margin="0,0">
                     <DockPanel VerticalAlignment="Top" Height="30" Margin="10,10,10,10">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                             <Label  FontWeight="DemiBold" Padding="0" Margin="0,3,0,0" Content="Titre : "/>
@@ -552,7 +552,7 @@
                         <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                             <Label Width="120" Padding="0, 5" Content="Formule :" Margin="0,0,0,0"></Label>
                             <!--<TextBox x:Name="txtFormuleName" Text="{Binding CurrentFormule.Name, Mode=TwoWay}" Height="24" Width="120"></TextBox>-->
-                            <ComboBox Height="30" SelectedValue="{Binding CurrentFormule, Mode=TwoWay}" x:Name="comboFormule" ItemsSource="{Binding Band.Formules}" Width="120">
+                            <ComboBox Height="30" SelectedItem="{Binding CurrentFormule, Mode=TwoWay}" x:Name="comboFormule" ItemsSource="{Binding Band.Formules}" Width="120">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>
