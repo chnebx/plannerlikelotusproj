@@ -399,6 +399,7 @@ namespace Experiment.Views
 
         private void RedDeleteBtn_Click(object sender, RoutedEventArgs e)
         {
+            DBHandler.DeleteEvent(SelectedEvent);
             actualEventStack.RemoveEvent(eventsList.SelectedIndex);
         }
 

@@ -475,6 +475,15 @@ namespace Experiment.Utilities
             }
         }
 
+        public static void DeleteEvent(Event evt)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var deleteQuery = "DELETE FROM Events WHERE Id = ?";
+                conn.Execute(deleteQuery, evt.Id);
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 
