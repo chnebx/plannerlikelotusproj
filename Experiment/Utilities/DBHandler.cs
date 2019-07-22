@@ -530,8 +530,12 @@ namespace Experiment.Utilities
             SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
             conn.RunInTransactionAsync(nonAsyncConn =>
             {
-                nonAsyncConn.Insert(newOne);
-                int newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+                int newOneId = newOne.Id;
+                if (newOneId < 1)
+                {
+                    nonAsyncConn.Insert(newOne);
+                    newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+                } 
                 nonAsyncConn.Execute(
                     "UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
                     newOneId,

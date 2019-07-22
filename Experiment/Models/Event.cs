@@ -289,6 +289,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public int Row
         {
             get { return _row; }
@@ -299,6 +300,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public int RowSpan
         {
             get { return _rowSpan; }

@@ -112,6 +112,10 @@ namespace Experiment
             MonthDays.Clear();
             eventsCollection.Clear();
             eventsCollection = DBHandler.getEvents(date.Year, date.Month);
+            for (int i = 0; i < eventsCollection.Count; i++)
+            {
+                eventsCollection[i].updateEvts();
+            }
             FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             eventsShow.ItemsSource = eventsCollection;
             DateTime d = new DateTime(date.Year, date.Month, 1);
@@ -239,7 +243,7 @@ namespace Experiment
                         //EventStack previousStack = FindItem(evt.parentStack.Id);
                         int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
                         previousStack.RemoveEvent(indexOfPreviousEvt);
-                        evt.parentStack = newEvtStack;
+                        //evt.parentStack = newEvtStack;
                         if (previousStack.Events.Count < 1)
                         {
                             eventsCollection.Remove(previousStack);
@@ -283,7 +287,7 @@ namespace Experiment
                 if (e.Data.GetDataPresent("EventFormat"))
                 {
                     Event evt = e.Data.GetData("EventFormat") as Event;
-                    EventStack previousStack = evt.parentStack;
+                    EventStack previousStack = fromEventStack;
 
                     if (actualStack != previousStack && actualStack.Events.Count < 3)
                     {
@@ -291,20 +295,21 @@ namespace Experiment
                         {
                             int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
                             previousStack.RemoveEvent(indexOfPreviousEvt);
-                            DBHandler.UpdateEventStack(previousStack);
+                            //DBHandler.UpdateEventStack(previousStack);
                             if (previousStack.Events.Count < 1)
                             {
                                 eventsCollection.Remove(previousStack);
-                                DBHandler.DeleteEventStack(previousStack);
+                                //DBHandler.DeleteEventStack(previousStack);
                             }
                             actualStack.AddEvent(evt);
+                            DBHandler.HandleDragEvent(previousStack, actualStack, evt);
                         }
                         else
                         {
                             Event copiedEvent = evt.DeepCopy();
                             actualStack.AddEvent(copiedEvent);
                         }
-                        DBHandler.UpdateEventStack(actualStack);
+                        //DBHandler.UpdateEventStack(actualStack);
                     }
                 }
                 else

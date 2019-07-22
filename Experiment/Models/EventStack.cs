@@ -31,6 +31,7 @@ namespace Experiment.Models
         private List<Event> _filteredEvents;
         private ObservableCollection<Event> _events;
         private DateTime _EventStackDay;
+        private int _spanLength;
 
         
         public EventStack()
@@ -81,6 +82,24 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
+        public int SpanLength
+        {
+            get
+            {
+                if (_spanLength == 0)
+                {
+                    _spanLength = CalculateSpanLength();
+                }
+                return _spanLength;
+            }
+            set
+            {
+                _spanLength = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("SpanLength"));
+            }
+        }
+
         public DateTime LowerLimitHour
         {
             get
@@ -114,6 +133,13 @@ namespace Experiment.Models
             {
                 return Events.Count >= 3;
             }
+        }
+
+        public int CalculateSpanLength()
+        {
+            double val = 6 / Events.Count;
+            int spanLength = (int)Math.Floor(val);
+            return spanLength;
         }
 
 
@@ -412,17 +438,19 @@ namespace Experiment.Models
                 sortEvents();
                 int incrementRow = 0;
                 double val = 6 / Events.Count;
-                int spanLength = (int) Math.Floor(val);
+                SpanLength = (int)Math.Floor(val);
                 for (int i = 0; i < Events.Count; i++)
                 {
                     Events[i].Row = incrementRow;
-                    incrementRow += spanLength;
-                    Events[i].RowSpan = spanLength;
+                    incrementRow += SpanLength;
+                    Events[i].RowSpan = SpanLength;
                 }
             } else if (Events.Count == 1)
             {
-                Events[0].RowSpan = 6;
+                Console.WriteLine(Events[0].Name);
                 Events[0].Row = 0;
+                Events[0].RowSpan = 6;
+                SpanLength = 6;
             }
         }
 

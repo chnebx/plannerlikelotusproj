@@ -151,6 +151,10 @@ namespace Experiment
                 FilterModule.Instance.clearFilterResults(eventsCollection);
             }
             eventsCollection = DBHandler.getEvents(currentYear);
+            for (int i = 0; i < eventsCollection.Count; i++)
+            {
+                eventsCollection[i].updateEvts();
+            }
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
             //filterModule.FilteredCollection = eventsCollection;
             //filterModule.RefreshFilter();
