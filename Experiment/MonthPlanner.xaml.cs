@@ -33,6 +33,10 @@ namespace Experiment
         private string _currentMonth;
         private Point StartPoint;
         private bool _isDraggingItem = false;
+        private bool _isDraggingEvent = false;
+        private bool _isDraggingEventStack = false;
+        private EventStack fromEventStack = null;
+        private Event draggedEvent = null;
 
         public MonthPlanner()
         {
@@ -231,8 +235,8 @@ namespace Experiment
                     
                     if (!Keyboard.IsKeyDown(Key.RightCtrl))
                     {
-                        //EventStack previousStack = evt.parentStack;
-                        EventStack previousStack = FindItem(evt.parentStack.Id);
+                        EventStack previousStack = fromEventStack;
+                        //EventStack previousStack = FindItem(evt.parentStack.Id);
                         int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
                         previousStack.RemoveEvent(indexOfPreviousEvt);
                         evt.parentStack = newEvtStack;
@@ -328,60 +332,19 @@ namespace Experiment
                     }
                 }
             }
-            if (_isDraggingItem)
-            {
-                _isDraggingItem = false;
-            }
-            
+            //if (_isDraggingItem)
+            //{
+            //    _isDraggingItem = false;
+            //}
+            _isDraggingEvent = false;
+            _isDraggingEventStack = false;
+            draggedEvent = null;
+            fromEventStack = null;
         }
 
-        private void Event_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            StartPoint = e.GetPosition(null);
-            if (sender is Border || sender is Grid)
-            {
-                _isDraggingItem = true;
-            }
-        }
+       
 
-        private void Event_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isDraggingItem)
-            {
-                e.Handled = true;
-                Point mousePos = e.GetPosition(null);
-                Vector diff = StartPoint - mousePos;
-
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    if (
-                    Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
-                    {
-                        
-                        if (sender is Border)
-                        {
-                            Event eventSelected = (Event)((Border)sender).DataContext;
-
-                            // Initialize the drag & drop operation
-                            DataObject dragData = new DataObject("EventFormat", eventSelected);
-                            DragDrop.DoDragDrop((Border)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
-                        }
-                        else
-                        {
-                            EventStack eventStackSelected = (EventStack)((Grid)sender).DataContext;
-
-                            // Initialize the drag & drop operation
-                            DataObject dragData = new DataObject("EventStackFormat", eventStackSelected);
-                            DragDrop.DoDragDrop((Grid)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
-                        }
-
-                    }
-
-                }
-            }
-            
-        }
+        
 
         private void Border_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -398,6 +361,105 @@ namespace Experiment
                 FilterModule.Instance.clearFilterResults(eventsCollection);
                 FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             }
+        }
+
+        private void Event_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            StartPoint = e.GetPosition(null);
+            //if (sender is Border || sender is Grid)
+            //{
+            //    _isDraggingItem = true;
+            //}
+            //var element = ((Border)sender).DataContext;
+            //Console.WriteLine(element.GetType());
+            draggedEvent = (Event)(((Border)sender).DataContext);
+            _isDraggingEvent = true;
+        }
+
+        private void Event_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            //if (_isDraggingItem)
+            //{
+            //    Point mousePos = e.GetPosition(null);
+            //    Vector diff = StartPoint - mousePos;
+
+            //    if (e.LeftButton == MouseButtonState.Pressed)
+            //    {
+            //        if (
+            //        Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+            //        Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+            //        {
+
+            //            if (sender is Border)
+            //            {
+            //                Event eventSelected = (Event)((Border)sender).DataContext;
+
+            //                // Initialize the drag & drop operation
+            //                DataObject dragData = new DataObject("EventFormat", eventSelected);
+            //                DragDrop.DoDragDrop((Border)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
+            //            }
+            //            else
+            //            {
+            //                EventStack eventStackSelected = (EventStack)((Grid)sender).DataContext;
+
+            //                // Initialize the drag & drop operation
+            //                DataObject dragData = new DataObject("EventStackFormat", eventStackSelected);
+            //                DragDrop.DoDragDrop((Grid)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
+            //            }
+
+            //        }
+
+            //    }
+            //}
+
+        }
+
+        private void EvtStack_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingEventStack = true;
+        }
+
+        private void EvtStack_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            Point mousePos = e.GetPosition(null);
+            Vector diff = StartPoint - mousePos;
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (
+                Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+
+                    if (_isDraggingEvent)
+                    {
+                        Event eventSelected = draggedEvent;
+
+                        // Initialize the drag & drop operation
+                        DataObject dragData = new DataObject("EventFormat", eventSelected);
+                        DragDrop.DoDragDrop((Border)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
+                    }
+                    else if (_isDraggingEventStack)
+                    {
+                        EventStack eventStackSelected = fromEventStack;
+
+                        // Initialize the drag & drop operation
+                        DataObject dragData = new DataObject("EventStackFormat", eventStackSelected);
+                        DragDrop.DoDragDrop((Border)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
+                    } else
+                    {
+                        _isDraggingEvent = false;
+                        _isDraggingEventStack = false;
+                        return;
+                    }
+
+                }
+            }
+
+        }
+
+        private void FullEvt_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            fromEventStack = ((EventStack)((Border)sender).DataContext);
         }
     }
 }

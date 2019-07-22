@@ -527,35 +527,12 @@ namespace Experiment.Utilities
             {
                 dayInterval = 1;
             }
-            //SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
-            //conn.RunInTransactionAsync(nonAsyncConn =>
-            //{
-            //    nonAsyncConn.Insert(newOne);
-            //    int newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
-            //    nonAsyncConn.Execute(
-            //        "UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
-            //        newOneId,
-            //        new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0).Ticks,
-            //        new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval).Ticks,
-            //        evt.Id
-            //        );
-            //    if (previous.Events.Count == 0)
-            //    {
-            //        nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);
-            //    }
-            //}
-            //);
-            //conn.CloseAsync();
-
-            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
+            conn.RunInTransactionAsync(nonAsyncConn =>
             {
-                conn.BeginTransaction();
-                conn.Insert(newOne);
-                int newOneId = conn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
-                //newOne.AddEvent(evt);
-                //conn.UpdateWithChildren(newOne);
-                //conn.Update(evt);
-                conn.Execute(
+                nonAsyncConn.Insert(newOne);
+                int newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+                nonAsyncConn.Execute(
                     "UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
                     newOneId,
                     new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0).Ticks,
@@ -564,10 +541,33 @@ namespace Experiment.Utilities
                     );
                 if (previous.Events.Count == 0)
                 {
-                    conn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);
+                    nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);
                 }
-                conn.Commit();
             }
+            );
+            conn.CloseAsync();
+
+            //using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            //{
+            //    conn.BeginTransaction();
+            //    conn.Insert(newOne);
+            //    int newOneId = conn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+            //    //newOne.AddEvent(evt);
+            //    //conn.UpdateWithChildren(newOne);
+            //    //conn.Update(evt);
+            //    conn.Execute(
+            //        "UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
+            //        newOneId,
+            //        new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0).Ticks,
+            //        new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval).Ticks,
+            //        evt.Id
+            //        );
+            //    if (previous.Events.Count == 0)
+            //    {
+            //        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);
+            //    }
+            //    conn.Commit();
+            //}
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

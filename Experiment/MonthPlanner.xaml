@@ -157,9 +157,8 @@
                         <Style>
                             <Style.Resources>
                                 <Style TargetType="Border">
-                                    <!--<Setter Property="BorderThickness" Value="1" />
-                                    <Setter Property="BorderBrush" Value="LightGray" />-->
-                                    
+                                    <Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="BorderBrush" Value="LightGray" />
                                 </Style>
                             </Style.Resources>
                             <Setter Property="Grid.Row" Value="{Binding Path=MonthRow}" />
@@ -177,18 +176,21 @@
                                 CornerRadius="6"
                                 AllowDrop="True"
                                 Drop="MonthDay_Drop"
+                                PreviewMouseDown="FullEvt_PreviewMouseDown"
+                                PreviewMouseMove="EvtStack_PreviewMouseMove"
                                 >
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"></RowDefinition>
                                         <RowDefinition Height="3*"></RowDefinition>
                                     </Grid.RowDefinitions>
-                                    <Grid Grid.Row="0" Background="Transparent"  
-                                          PreviewMouseDown="Event_PreviewMouseDown"
-                                          PreviewMouseMove="Event_PreviewMouseMove">
+                                    <Grid Grid.Row="0" Background="Transparent">
                                         <Border
                                             Grid.Row="0"
-                                            CornerRadius="6, 6, 0, 0">
+                                            CornerRadius="6, 6, 0, 0"
+                                            PreviewMouseDown="EvtStack_PreviewMouseDown"
+                                            PreviewMouseMove="EvtStack_PreviewMouseMove"
+                                            >
                                             <Border.Style>
                                                 <Style TargetType="{x:Type Border}">
                                                     <Style.Triggers>
@@ -312,16 +314,19 @@
                                             </Border>
                                         </Popup>
                                     </Grid>
-                                    <Border Grid.Row="1" CornerRadius="0,0,6,6" Background="#EE7070BE">
+                                    <Border Grid.Row="1" 
+                                            CornerRadius="0,0,6,6" 
+                                            Background="#EE7070BE"
+                                            >
                                         <ItemsControl ItemsSource="{Binding Events}" Grid.Row="1">
                                             <ItemsControl.Resources>
                                                 <DataTemplate DataType="{x:Type models:Event}">
                                                     <Border
-                                                BorderThickness="2"
-                                                PreviewMouseDown="Event_PreviewMouseDown"
-                                                PreviewMouseMove="Event_PreviewMouseMove"
-                                                Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
-                                                CornerRadius="6"
+                                                        BorderThickness="2"
+                                                        PreviewMouseDown="Event_PreviewMouseDown"
+                                                        PreviewMouseMove="Event_PreviewMouseMove"
+                                                        Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
+                                                        CornerRadius="6"    
                                                 >
                                                         <Border.Style>
                                                             <Style TargetType="{x:Type Border}">
