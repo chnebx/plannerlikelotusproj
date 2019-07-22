@@ -177,6 +177,8 @@ namespace Experiment
             {
                 eventsCollection.Remove(evtStack);
                 DBHandler.DeleteEventStack(evtStack);
+
+
                 //if (evtStack == eventsInfo.UpcomingEvent)
                 //{
                 //    FindNextEventFromNow();
@@ -202,6 +204,18 @@ namespace Experiment
             _previousHoveredColumn = ((Day)(((Border)sender).DataContext)).MonthColumn;
         }
 
+        private EventStack FindItem(int id)
+        {
+            for (int i = 0; i < eventsCollection.Count; i++)
+            {
+                if (eventsCollection[i].Id == id)
+                {
+                    return eventsCollection[i];
+                }
+            }
+            return null;
+        }
+
         private void MonthDay_Drop(object sender, DragEventArgs e)
         {
             var context = ((Border)sender).DataContext;
@@ -214,18 +228,20 @@ namespace Experiment
                     EventStack newEvtStack = new EventStack {
                         Current = droppedOnDay
                     };
+                    
                     if (!Keyboard.IsKeyDown(Key.RightCtrl))
                     {
-                        EventStack previousStack = evt.parentStack;
+                        //EventStack previousStack = evt.parentStack;
+                        EventStack previousStack = FindItem(evt.parentStack.Id);
                         int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
                         previousStack.RemoveEvent(indexOfPreviousEvt);
-                        DBHandler.UpdateEventStack(previousStack);
+                        evt.parentStack = newEvtStack;
                         if (previousStack.Events.Count < 1)
                         {
                             eventsCollection.Remove(previousStack);
-                            DBHandler.DeleteEventStack(previousStack);
                         }
                         newEvtStack.AddEvent(evt);
+                        DBHandler.HandleDragEvent(previousStack, newEvtStack, evt);
                     }
                     else
                     {
@@ -233,7 +249,7 @@ namespace Experiment
                         newEvtStack.AddEvent(copiedEvent);
                     }
                     eventsCollection.Add(newEvtStack);
-                    DBHandler.AddEventStack(newEvtStack);
+                    //DBHandler.AddEventStack(newEvtStack);
                 }
                 else if (e.Data.GetDataPresent("EventStackFormat")) //if "EventStackFormat"
                 {
@@ -316,6 +332,7 @@ namespace Experiment
             {
                 _isDraggingItem = false;
             }
+            
         }
 
         private void Event_PreviewMouseDown(object sender, MouseButtonEventArgs e)

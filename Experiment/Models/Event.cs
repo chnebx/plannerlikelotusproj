@@ -53,6 +53,7 @@ namespace Experiment.Models
         private SolidColorBrush colorRect;
         private string _SelectedColor;
         private static Random randomColor = new Random();
+        private EventStack _parentStack;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -98,7 +99,18 @@ namespace Experiment.Models
         public int EventStackId { get; set; }
 
         [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
-        public EventStack parentStack { get; set; }
+        public EventStack parentStack
+        {
+            get
+            {
+                return _parentStack;
+            }
+            set
+            {
+                _parentStack = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("parentStack"));
+            }
+        }
 
         public string Comment
         {

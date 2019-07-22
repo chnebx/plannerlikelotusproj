@@ -284,16 +284,16 @@ namespace Experiment
                 addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
                 if (addDialog.ShowDialog() == true)
                 {
-
+                    DBHandler.UpdateEventStack(evtStack);
                 }
                 if (evtStack.Events.Count <= 0)
                 {
                     eventsCollection.Remove(evtStack);
                     DBHandler.DeleteEventStack(evtStack);
-                    if (evtStack == eventsInfo.UpcomingEvent)
-                    {
-                        FindNextEventFromNow();
-                    }
+                    //if (evtStack == eventsInfo.UpcomingEvent)
+                    //{
+                    //    FindNextEventFromNow();
+                    //}
                 }
             }
             
@@ -356,10 +356,10 @@ namespace Experiment
             
             ToggleDayBrush(selectedCell, false);
             selectedCell = null;
-            if (freshEvent.Current.Date < eventsInfo.UpcomingEvent.Current.Date && freshEvent.Current.Date > DateTime.Now)
-            {
-                FindNextEventFromNow();
-            }
+            //if (freshEvent.Current.Date < eventsInfo.UpcomingEvent.Current.Date && freshEvent.Current.Date > DateTime.Now)
+            //{
+            //    FindNextEventFromNow();
+            //}
            
         }
 

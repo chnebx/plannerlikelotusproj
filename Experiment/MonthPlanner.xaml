@@ -187,7 +187,8 @@
                                           PreviewMouseDown="Event_PreviewMouseDown"
                                           PreviewMouseMove="Event_PreviewMouseMove">
                                         <Border
-                                            Grid.Row="0">
+                                            Grid.Row="0"
+                                            CornerRadius="6, 6, 0, 0">
                                             <Border.Style>
                                                 <Style TargetType="{x:Type Border}">
                                                     <Style.Triggers>
@@ -311,7 +312,7 @@
                                             </Border>
                                         </Popup>
                                     </Grid>
-                                    <Border Grid.Row="1" Background="#EE7070BE">
+                                    <Border Grid.Row="1" CornerRadius="0,0,6,6" Background="#EE7070BE">
                                         <ItemsControl ItemsSource="{Binding Events}" Grid.Row="1">
                                             <ItemsControl.Resources>
                                                 <DataTemplate DataType="{x:Type models:Event}">

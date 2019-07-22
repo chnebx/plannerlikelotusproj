@@ -220,15 +220,6 @@ namespace Experiment.Views
             set
             {
                 _selectedEvent = value;
-                if (_selectedEvent != null)
-                {
-                    if (_selectedEvent.CurrentFormule != null)
-                    {
-                        Console.WriteLine(_selectedEvent.CurrentFormule.Name);
-                    }
-                    
-                }
-
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("SelectedEvent"));
             }
         }

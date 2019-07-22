@@ -23,6 +23,7 @@ namespace Experiment.Utilities
         public static ObservableCollection<Location> _locations = null;
         public static bool _isLoaded = false;
         private static DBHandler _instance = null;
+        private static SQLiteConnection connection;
 
         public static DBHandler Instance
         {
@@ -180,6 +181,7 @@ namespace Experiment.Utilities
         public static void DbInit()
         {
             //ClearBand();
+            connection = new SQLiteConnection(LoadConnectionString());
             Band TC = new Band
             {
                 Name = "Orchestre Thierry Coudret"
@@ -444,23 +446,52 @@ namespace Experiment.Utilities
 
         }
 
-
-        public static void AddEventStack(EventStack evt)
+        public static List<EventStack> getEventsInMonth(int year, int month)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                conn.CreateTable<EventStack>();
-                conn.CreateTable<Event>();
-                conn.InsertWithChildren(evt, recursive:true);
+                var events = conn.GetAllWithChildren<EventStack>(recursive: true)
+                    .Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
+                    .ToList<EventStack>();
+                if (events.Count > 0)
+                {
+                    return events;
+                }
+                return new List<EventStack>();
             }
+
+        }
+
+        public static EventStack getEventStack(int id)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var item = conn.GetWithChildren<EventStack>(id);
+                return item;
+            }
+
+        }
+
+
+        public static void AddEventStack(EventStack evt)
+        {
+            //SQLite.SQLiteConnection nonAsyncConn = new SQLite.SQLiteConnection(LoadConnectionString());
+            //using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
+            conn.RunInTransactionAsync(nonAsyncConn =>
+            {
+                nonAsyncConn.InsertWithChildren(evt, recursive: true);
+            }
+            );
+            conn.CloseAsync();
+            //conn.InsertWithChildren(evt, recursive:true);
+            
         }
 
         public static void UpdateEventStack(EventStack evt)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                conn.CreateTable<EventStack>();
-                conn.CreateTable<Event>();
                 conn.InsertOrReplaceWithChildren(evt, recursive:true);
             }
         }
@@ -469,9 +500,13 @@ namespace Experiment.Utilities
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                var deleteQuery = "DELETE FROM Events WHERE EventStackID = ?";
-                conn.Execute(deleteQuery, evt.Id);
-                conn.Delete<EventStack>(evt.Id);
+                var deleteEventQuery = "DELETE FROM Events WHERE EventStackID = ?";
+                var deleteEventStackQuery = "DELETE FROM EventStacks WHERE Id = ?";
+                conn.BeginTransaction();
+                conn.Execute(deleteEventQuery, evt.Id);
+                conn.Execute(deleteEventStackQuery, evt.Id);
+                //conn.Delete<EventStack>(evt.Id);
+                conn.Commit();
             }
         }
 
@@ -479,8 +514,59 @@ namespace Experiment.Utilities
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                var deleteQuery = "DELETE FROM Events WHERE Id = ?";
-                conn.Execute(deleteQuery, evt.Id);
+                //var deleteQuery = "DELETE FROM Events WHERE Id = ?";
+                //conn.Execute(deleteQuery, evt.Id);
+                connection.Delete<Event>(evt.Id);
+            }
+        }
+
+        public static void HandleDragEvent(EventStack previous, EventStack newOne, Event evt)
+        {
+            int dayInterval = 0;
+            if (evt.End.Day != evt.Start.Day)
+            {
+                dayInterval = 1;
+            }
+            //SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
+            //conn.RunInTransactionAsync(nonAsyncConn =>
+            //{
+            //    nonAsyncConn.Insert(newOne);
+            //    int newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+            //    nonAsyncConn.Execute(
+            //        "UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
+            //        newOneId,
+            //        new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0).Ticks,
+            //        new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval).Ticks,
+            //        evt.Id
+            //        );
+            //    if (previous.Events.Count == 0)
+            //    {
+            //        nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);
+            //    }
+            //}
+            //);
+            //conn.CloseAsync();
+
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.BeginTransaction();
+                conn.Insert(newOne);
+                int newOneId = conn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+                //newOne.AddEvent(evt);
+                //conn.UpdateWithChildren(newOne);
+                //conn.Update(evt);
+                conn.Execute(
+                    "UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
+                    newOneId,
+                    new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0).Ticks,
+                    new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval).Ticks,
+                    evt.Id
+                    );
+                if (previous.Events.Count == 0)
+                {
+                    conn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);
+                }
+                conn.Commit();
             }
         }
 
