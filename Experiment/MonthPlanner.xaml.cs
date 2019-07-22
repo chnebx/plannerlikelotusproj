@@ -255,6 +255,7 @@ namespace Experiment
                     {
                         Event copiedEvent = evt.DeepCopy();
                         newEvtStack.AddEvent(copiedEvent);
+                        DBHandler.HandleDragEvent(fromEventStack, newEvtStack, evt, copy:true);
                     }
                     eventsCollection.Add(newEvtStack);
                     //DBHandler.AddEventStack(newEvtStack);

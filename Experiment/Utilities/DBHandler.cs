@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Experiment.Utilities
 {
-    public class DBHandler: INotifyPropertyChanged
+    public class DBHandler : INotifyPropertyChanged
     {
         //public static ObservableCollection<EventStack> _events = null;
         public static List<EventStack> _events = null;
@@ -311,7 +311,7 @@ namespace Experiment.Utilities
                 _events = value;
             }
         }
-            
+
         public static ObservableCollection<EventStack> getEvents()
         {
             //return new ObservableCollection<EventStack>(_events);
@@ -380,7 +380,7 @@ namespace Experiment.Utilities
                     });
                     conn.InsertAll(formules);
                     newBand.Formules = formules;
-                    conn.InsertWithChildren(newBand, recursive:true);
+                    conn.InsertWithChildren(newBand, recursive: true);
                     //conn.UpdateWithChildren(newBand);
                 }
             }
@@ -485,14 +485,14 @@ namespace Experiment.Utilities
             );
             conn.CloseAsync();
             //conn.InsertWithChildren(evt, recursive:true);
-            
+
         }
 
         public static void UpdateEventStack(EventStack evt)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                conn.InsertOrReplaceWithChildren(evt, recursive:true);
+                conn.InsertOrReplaceWithChildren(evt, recursive: true);
             }
         }
 
@@ -520,7 +520,7 @@ namespace Experiment.Utilities
             }
         }
 
-        public static void HandleDragEvent(EventStack previous, EventStack newOne, Event evt)
+        public static void HandleDragEvent(EventStack previous, EventStack newOne, Event evt, bool copy = false)
         {
             int dayInterval = 0;
             if (evt.End.Day != evt.Start.Day)
@@ -536,13 +536,24 @@ namespace Experiment.Utilities
                     nonAsyncConn.Insert(newOne);
                     newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
                 } 
-                nonAsyncConn.Execute(
+                if (!copy)
+                {
+                    nonAsyncConn.Execute(
                     "UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
                     newOneId,
                     new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0).Ticks,
                     new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval).Ticks,
                     evt.Id
                     );
+                } else
+                {
+                    Event copiedEvent = evt.Clone();
+                    copiedEvent.Start = new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0);
+                    copiedEvent.End = new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval);
+                    copiedEvent.EventStackId = newOneId;
+                    nonAsyncConn.Insert(copiedEvent);
+                }
+                
                 if (previous.Events.Count == 0)
                 {
                     nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);

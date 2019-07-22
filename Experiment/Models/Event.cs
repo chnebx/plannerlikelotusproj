@@ -683,6 +683,11 @@ namespace Experiment.Models
             evt.Start <= this.Start && evt.End >= this.End;
         }
 
+        public Event Clone()
+        {
+            return (Event)this.MemberwiseClone();
+        }
+
         public string ShortNameMaker(string name)
         {
             if (name.Length > 7)
