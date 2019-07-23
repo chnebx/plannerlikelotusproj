@@ -529,37 +529,54 @@ namespace Experiment.Utilities
                 if (ToStack == null)
                 {
                     nonAsyncConn.Execute(
-                        "UPDATE EventStacks SET EventStackDay = ?, LowerLimitHour = ?, UpperLimitHour = ? WHERE Id = ?",
-                        FromStack.EventStackDay.Ticks,
-                        new DateTime(FromStack.EventStackDay.Year, FromStack.EventStackDay.Month, FromStack.EventStackDay.Day, 0, 0, 0),
-                        new DateTime(FromStack.EventStackDay.Year, FromStack.EventStackDay.Month, FromStack.EventStackDay.Day, 0, 0, 0).AddDays(1).AddHours(12).Ticks,
-                        FromStack.Id
-                        );
-                    for ( int i = 0; i < FromStack.Events.Count; i++)
+                    "UPDATE EventStacks SET EventStackDay = ?, LowerLimitHour = ?, UpperLimitHour = ? WHERE Id = ?",
+                    FromStack.EventStackDay.Ticks,
+                    new DateTime(FromStack.EventStackDay.Year, FromStack.EventStackDay.Month, FromStack.EventStackDay.Day, 0, 0, 0),
+                    new DateTime(FromStack.EventStackDay.Year, FromStack.EventStackDay.Month, FromStack.EventStackDay.Day, 0, 0, 0).AddDays(1).AddHours(12).Ticks,
+                    FromStack.Id
+                    );
+                    for (int i = 0; i < FromStack.Events.Count; i++)
                     {
                         nonAsyncConn.Execute("UPDATE Events SET Start = ?, End = ? WHERE Id = ?",
                             FromStack.Events[i].Start.Ticks,
                             FromStack.Events[i].End.Ticks,
                             FromStack.Events[i].Id
                             );
-                    }
+                    } 
                 } else
                 {
-                    for (int i = 0; i < ToStack.Events.Count; i++)
+                    if (copy)
                     {
-                        if (ToStack.Events[i].EventStackId != ToStack.Id)
+                        for (int i = 0; i < ToStack.Events.Count; i++)
                         {
-                            nonAsyncConn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
-                                ToStack.Id,
-                                ToStack.Events[i].Start.Ticks,
-                                ToStack.Events[i].End.Ticks,
-                                ToStack.Events[i].Id
-                                );
+                            if (ToStack.Events[i].EventStackId != ToStack.Id)
+                            {
+                                Event temp = ToStack.Events[i];
+                                temp.EventStackId = ToStack.Id;
+                                temp.Id = 0;
+                                nonAsyncConn.Insert(temp);
+                            }
                         }
                     }
-                    nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?",
-                        FromStack.Id
-                        );
+                    else
+                    {
+                        for (int i = 0; i < ToStack.Events.Count; i++)
+                        {
+                            if (ToStack.Events[i].EventStackId != ToStack.Id)
+                            {
+                                nonAsyncConn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE EventStackId = ?",
+                                    ToStack.Id,
+                                    ToStack.Events[i].Start.Ticks,
+                                    ToStack.Events[i].End.Ticks,
+                                    FromStack.Id
+                                    );
+                            }
+                        }
+
+                        nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?",
+                           FromStack.Id
+                           );
+                    } 
                 }
             }
             );

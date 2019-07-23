@@ -25,7 +25,7 @@ namespace Experiment.Models
             _events = new ObservableCollection<Event>();
         }
 
-        [PrimaryKey, AutoIncrement, Unique, NotNull]
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         [Unique, NotNull]
@@ -70,19 +70,19 @@ namespace Experiment.Models
             }
         }
 
-        [OneToMany(CascadeOperations = CascadeOperation.CascadeRead)]
-        public ObservableCollection<Event> Events
-        {
-            get
-            {
-                return _events;
-            }
-            set
-            {
-                _events = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
-            }
-        }
+        //[OneToMany(CascadeOperations = CascadeOperation.CascadeRead)]
+        //public ObservableCollection<Event> Events
+        //{
+        //    get
+        //    {
+        //        return _events;
+        //    }
+        //    set
+        //    {
+        //        _events = value;
+        //        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
+        //    }
+        //}
 
         public void addMusician(Musician musician)
         {

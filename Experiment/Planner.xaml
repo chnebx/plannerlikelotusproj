@@ -477,6 +477,7 @@
                             Drop="Day_Drop"
                             MouseEnter="EventStack_FullMouseEnter"
                             MouseLeave="EventStack_FullMouseLeave"
+                            PreviewMouseDown="FullEvtStack_PreviewMouseDown"
                             >
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"></RowDefinition>

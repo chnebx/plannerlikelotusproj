@@ -54,7 +54,8 @@ namespace Experiment
         public GradientStop gradStop0 = new GradientStop();
         public LinearGradientBrush defaultMonthBrush = new LinearGradientBrush();
         public IDisposable formuleObservable;
-       
+        private EventStack fromEventStack;
+
         // Using a DependencyProperty as the backing store for targetTimer.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty targetTimerProperty =
             DependencyProperty.Register("targetTimer", typeof(DateTime), typeof(Planner), new PropertyMetadata(DateTime.Now));
@@ -194,25 +195,25 @@ namespace Experiment
 
         private void handleMonthHover(Day actualDay)
         {
-            if (actualDay is null)
-            {
-                monthControls[hoveredMonth].Background = CalendarSource.defaultMonthBrush;
-                hoveredMonth = -1;
-                return;
-            }
-            int actualDayMonth = actualDay.Date.Month - 1;
-            if (hoveredMonth == -1)
-            {
-                hoveredMonth = actualDayMonth;
-                monthControls[actualDayMonth].Background = CalendarSource.hoveredMonthBrush;
-            }
-            else if (actualDayMonth != hoveredMonth)
-            {
+            //if (actualDay is null)
+            //{
+            //    monthControls[hoveredMonth].Background = CalendarSource.defaultMonthBrush;
+            //    hoveredMonth = -1;
+            //    return;
+            //}
+            //int actualDayMonth = actualDay.Date.Month - 1;
+            //if (hoveredMonth == -1)
+            //{
+            //    hoveredMonth = actualDayMonth;
+            //    monthControls[actualDayMonth].Background = CalendarSource.hoveredMonthBrush;
+            //}
+            //else if (actualDayMonth != hoveredMonth)
+            //{
 
-                monthControls[hoveredMonth].Background = CalendarSource.defaultMonthBrush;
-                monthControls[actualDayMonth].Background = CalendarSource.hoveredMonthBrush;
-                hoveredMonth = actualDayMonth;
-            }
+            //    monthControls[hoveredMonth].Background = CalendarSource.defaultMonthBrush;
+            //    monthControls[actualDayMonth].Background = CalendarSource.hoveredMonthBrush;
+            //    hoveredMonth = actualDayMonth;
+            //}
         }
 
         private void Border_MouseEnter(object sender, MouseEventArgs e)
@@ -425,109 +426,23 @@ namespace Experiment
 
         private void Day_Drop(object sender, DragEventArgs e)
         {
+            object context;
             if (sender is Border)
             {
-                if (e.Data.GetDataPresent("EventFormat"))
-                {
-
-                    Event evt = e.Data.GetData("EventFormat") as Event;
-                    Day droppedOnDay = (Day)((Border)sender).DataContext;
-                    EventStack newEvtStack = new EventStack {
-                        Current = droppedOnDay
-                    };
-                    if(!Keyboard.IsKeyDown(Key.RightCtrl))
-                    {
-                        EventStack previousStack = evt.parentStack;
-                        int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
-                        previousStack.RemoveEvent(indexOfPreviousEvt);
-                        DBHandler.UpdateEventStack(previousStack);
-                        if (previousStack.Events.Count < 1)
-                        {
-                            eventsCollection.Remove(previousStack);
-                            DBHandler.DeleteEventStack(previousStack);
-                        }
-                        newEvtStack.AddEvent(evt);
-                    } else
-                    {
-                        Event copiedEvent = evt.DeepCopy();
-                        newEvtStack.AddEvent(copiedEvent);
-                    }
-                    eventsCollection.Add(newEvtStack);
-                    DBHandler.AddEventStack(newEvtStack);
-                } else //if "EventStackFormat"
-                {
-                    EventStack evtStack = e.Data.GetData("EventStackFormat") as EventStack;
-                    Day droppedOnDay = (Day)((Border)sender).DataContext;
-                    if (!Keyboard.IsKeyDown(Key.RightCtrl))
-                    {
-                        evtStack.Current = droppedOnDay;
-                        DBHandler.UpdateEventStack(evtStack);
-                    }
-                    else
-                    {
-                        EventStack newEvtStack = new EventStack {
-                            Current = droppedOnDay
-                        };
-                        for(int i = 0; i < evtStack.Events.Count; i++)
-                        {
-                            newEvtStack.AddEvent(evtStack.Events[i].DeepCopy());
-                        }
-                        eventsCollection.Add(newEvtStack);
-                        DBHandler.AddEventStack(newEvtStack);
-                    }
-                }
-            } else if (sender is Grid)
+                context = ((Border)sender).DataContext;
+            } else
             {
-                EventStack actualStack = (EventStack)((Grid)sender).DataContext;
-                if (e.Data.GetDataPresent("EventFormat"))
-                {
-                    Event evt = e.Data.GetData("EventFormat") as Event;
-                    EventStack previousStack = evt.parentStack;
-                    
-                    if (actualStack != previousStack && actualStack.Events.Count < 3)
-                    {
-                        if (!Keyboard.IsKeyDown(Key.RightCtrl))
-                        {
-                            int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
-                            previousStack.RemoveEvent(indexOfPreviousEvt);
-                            DBHandler.UpdateEventStack(previousStack);
-                            if (previousStack.Events.Count < 1)
-                            {
-                                eventsCollection.Remove(previousStack);
-                                DBHandler.DeleteEventStack(previousStack);
-                            }
-                            actualStack.AddEvent(evt);
-                        } else
-                        {
-                            Event copiedEvent = evt.DeepCopy();
-                            actualStack.AddEvent(copiedEvent);
-                        }
-                        DBHandler.UpdateEventStack(actualStack);
-                    } 
-                } else
-                {
-                    EventStack evtStack = e.Data.GetData("EventStackFormat") as EventStack;
-                    if (evtStack != actualStack && evtStack.Events.Count + actualStack.Events.Count <= 3)
-                    {
-                        if (!Keyboard.IsKeyDown(Key.RightCtrl))
-                        {
-                            for (int i = 0; i < evtStack.Events.Count; i++)
-                            {
-                                actualStack.AddEvent(evtStack.Events[i]);
-                            }
-                            eventsCollection.Remove(evtStack);
-                            DBHandler.DeleteEventStack(evtStack);
-                        } else
-                        {
-                            for (int i = 0; i < evtStack.Events.Count; i++)
-                            {
-                                actualStack.AddEvent(evtStack.Events[i].DeepCopy());
-                            }
-                        }
-                        DBHandler.UpdateEventStack(actualStack);
-                    }
-                }
+                context = ((Grid)sender).DataContext;
             }
+
+            if (e.Data.GetDataPresent("EventFormat"))
+            {
+                EventsUtilities.DropHandler(context, e.Data.GetData("EventFormat"), fromEventStack, eventsCollection);
+            } else
+            {
+                EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
+            }
+
             if (_isDraggingItem)
             {
                 _isDraggingItem = false;
@@ -652,6 +567,11 @@ namespace Experiment
                 FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             }
             
+        }
+
+        private void FullEvtStack_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            fromEventStack = ((EventStack)((Grid)sender).DataContext);
         }
     }
 }

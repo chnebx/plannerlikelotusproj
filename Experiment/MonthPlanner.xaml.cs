@@ -224,133 +224,19 @@ namespace Experiment
             return null;
         }
 
+       
         private void MonthDay_Drop(object sender, DragEventArgs e)
         {
             var context = ((Border)sender).DataContext;
             if (_isDraggingEvent || _isDraggingEventStack)
             {
-                if (context is Day)
+                if (e.Data.GetDataPresent("EventFormat"))
                 {
-                    if (e.Data.GetDataPresent("EventFormat"))
-                    {
-                        Event evt = e.Data.GetData("EventFormat") as Event;
-                        Day droppedOnDay = (Day)((Border)sender).DataContext;
-                        EventStack newEvtStack = new EventStack
-                        {
-                            Current = droppedOnDay
-                        };
-
-                        if (!Keyboard.IsKeyDown(Key.RightCtrl))
-                        {
-                            EventStack previousStack = fromEventStack;
-                            int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
-                            previousStack.RemoveEvent(indexOfPreviousEvt);
-                            if (previousStack.Events.Count < 1)
-                            {
-                                eventsCollection.Remove(previousStack);
-                            }
-                            newEvtStack.AddEvent(evt);
-                            DBHandler.HandleDragEvent(previousStack, newEvtStack, evt);
-                        }
-                        else
-                        {
-                            
-                            Event copiedEvent = evt.Clone();
-                            newEvtStack.AddEvent(copiedEvent);
-                            DBHandler.HandleDragEvent(fromEventStack, newEvtStack, copiedEvent, copy: true);
-                        }
-                        eventsCollection.Add(newEvtStack);
-                    }
-                    else if (e.Data.GetDataPresent("EventStackFormat")) //if "EventStackFormat"
-                    {
-                        Console.WriteLine("Day drop EventStack Format");
-                        EventStack evtStack = e.Data.GetData("EventStackFormat") as EventStack;
-                        Day droppedOnDay = (Day)((Border)sender).DataContext;
-                        if (!Keyboard.IsKeyDown(Key.RightCtrl))
-                        {
-                            evtStack.EventStackDay = droppedOnDay.Date;
-                            for (int i = 0; i < evtStack.Events.Count; i++)
-                            {
-                                evtStack.Events[i].updateDates(droppedOnDay.Date.Year, droppedOnDay.Date.Month, droppedOnDay.Date.Day);
-                            }
-                            //DBHandler.UpdateEventStack(evtStack);
-                            DBHandler.HandleDragEventStack(evtStack, null, copy: false);
-                        }
-                        else
-                        {
-                            EventStack newEvtStack = new EventStack
-                            {
-                                EventStackDay = droppedOnDay.Date
-                            };
-                            for (int i = 0; i < evtStack.Events.Count; i++)
-                            {
-                                newEvtStack.AddEvent(evtStack.Events[i].Clone());
-                            }
-                            eventsCollection.Add(newEvtStack);
-                            DBHandler.AddEventStack(newEvtStack);
-                        }
-                    }
-                }
-                else if (context is EventStack)
+                    EventsUtilities.DropHandler(context, e.Data.GetData("EventFormat"), fromEventStack, eventsCollection);
+                } else
                 {
-                    EventStack actualStack = (EventStack)((Border)sender).DataContext;
-                    if (e.Data.GetDataPresent("EventFormat"))
-                    {
-                        Event evt = e.Data.GetData("EventFormat") as Event;
-                        EventStack previousStack = fromEventStack;
-
-                        if (actualStack != previousStack && actualStack.Events.Count < 3)
-                        {
-                            if (!Keyboard.IsKeyDown(Key.RightCtrl))
-                            {
-                                int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
-                                previousStack.RemoveEvent(indexOfPreviousEvt);
-                                if (previousStack.Events.Count < 1)
-                                {
-                                    eventsCollection.Remove(previousStack);
-                                }
-                                actualStack.AddEvent(evt);
-                                DBHandler.HandleDragEvent(previousStack, actualStack, evt);
-                            }
-                            else
-                            {
-                                Event copiedEvent = evt.Clone();
-                                actualStack.AddEvent(copiedEvent);
-                                DBHandler.HandleDragEvent(previousStack, actualStack, copiedEvent, copy: true);
-                            }
-                            //DBHandler.UpdateEventStack(actualStack);
-                        }
-                    }
-                    else
-                    {
-                        EventStack evtStack = e.Data.GetData("EventStackFormat") as EventStack;
-                        if (evtStack != actualStack && evtStack.Events.Count + actualStack.Events.Count <= 3)
-                        {
-                            if (!Keyboard.IsKeyDown(Key.RightCtrl))
-                            {
-                                for (int i = 0; i < evtStack.Events.Count; i++)
-                                {
-                                    actualStack.AddEvent(evtStack.Events[i]);
-                                }
-                                eventsCollection.Remove(evtStack);
-                                DBHandler.HandleDragEventStack(evtStack, actualStack, copy: false);
-                                //DBHandler.DeleteEventStack(evtStack);
-                            }
-                            else
-                            {
-                                for (int i = 0; i < evtStack.Events.Count; i++)
-                                {
-                                    actualStack.AddEvent(evtStack.Events[i].DeepCopy());
-                                }
-                            }
-                            DBHandler.UpdateEventStack(actualStack);
-                        }
-                    }
+                    EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
                 }
-                //if (_isDraggingItem)
-                //{
-                //    _isDraggingItem = false;
-                //}
                 _isDraggingEvent = false;
                 _isDraggingEventStack = false;
                 draggedEvent = null;
@@ -408,7 +294,6 @@ namespace Experiment
 
                     if (_isDraggingEvent)
                     {
-                        Console.WriteLine("start dragging event");
                         Event eventSelected = draggedEvent;
 
                         // Initialize the drag & drop operation
@@ -417,7 +302,6 @@ namespace Experiment
                     }
                     else if (_isDraggingEventStack)
                     {
-                        Console.WriteLine("start dragging eventstack");
                         EventStack eventStackSelected = fromEventStack;
 
                         // Initialize the drag & drop operation
