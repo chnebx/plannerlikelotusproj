@@ -189,7 +189,6 @@
                                             Grid.Row="0"
                                             CornerRadius="6, 6, 0, 0"
                                             PreviewMouseDown="EvtStack_PreviewMouseDown"
-                                            PreviewMouseMove="EvtStack_PreviewMouseMove"
                                             >
                                             <Border.Style>
                                                 <Style TargetType="{x:Type Border}">
@@ -324,7 +323,7 @@
                                                     <Border
                                                         BorderThickness="2"
                                                         PreviewMouseDown="Event_PreviewMouseDown"
-                                                        PreviewMouseMove="Event_PreviewMouseMove"
+                                                 
                                                         Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
                                                         CornerRadius="6"    
                                                 >

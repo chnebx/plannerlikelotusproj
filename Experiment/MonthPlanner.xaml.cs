@@ -383,48 +383,9 @@ namespace Experiment
         private void Event_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             StartPoint = e.GetPosition(null);
-            Console.WriteLine("Event mouse down");
             _isDraggingEventStack = false;
             draggedEvent = (Event)(((Border)sender).DataContext);
             _isDraggingEvent = true;
-        }
-
-        private void Event_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            //if (_isDraggingItem)
-            //{
-            //    Point mousePos = e.GetPosition(null);
-            //    Vector diff = StartPoint - mousePos;
-
-            //    if (e.LeftButton == MouseButtonState.Pressed)
-            //    {
-            //        if (
-            //        Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-            //        Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
-            //        {
-
-            //            if (sender is Border)
-            //            {
-            //                Event eventSelected = (Event)((Border)sender).DataContext;
-
-            //                // Initialize the drag & drop operation
-            //                DataObject dragData = new DataObject("EventFormat", eventSelected);
-            //                DragDrop.DoDragDrop((Border)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
-            //            }
-            //            else
-            //            {
-            //                EventStack eventStackSelected = (EventStack)((Grid)sender).DataContext;
-
-            //                // Initialize the drag & drop operation
-            //                DataObject dragData = new DataObject("EventStackFormat", eventStackSelected);
-            //                DragDrop.DoDragDrop((Grid)sender, dragData, DragDropEffects.Move | DragDropEffects.Copy);
-            //            }
-
-            //        }
-
-            //    }
-            //}
-
         }
 
         private void EvtStack_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -432,7 +393,6 @@ namespace Experiment
             StartPoint = e.GetPosition(null);
             _isDraggingEvent = false;
             _isDraggingEventStack = true;
-            Console.WriteLine("EventStack mouse down");
         }
 
         private void EvtStack_PreviewMouseMove(object sender, MouseEventArgs e)
