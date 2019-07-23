@@ -240,10 +240,8 @@ namespace Experiment
                     if (!Keyboard.IsKeyDown(Key.RightCtrl))
                     {
                         EventStack previousStack = fromEventStack;
-                        //EventStack previousStack = FindItem(evt.parentStack.Id);
                         int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
                         previousStack.RemoveEvent(indexOfPreviousEvt);
-                        //evt.parentStack = newEvtStack;
                         if (previousStack.Events.Count < 1)
                         {
                             eventsCollection.Remove(previousStack);
@@ -253,12 +251,11 @@ namespace Experiment
                     }
                     else
                     {
-                        Event copiedEvent = evt.DeepCopy();
+                        Event copiedEvent = evt.Clone();
                         newEvtStack.AddEvent(copiedEvent);
-                        DBHandler.HandleDragEvent(fromEventStack, newEvtStack, evt, copy:true);
+                        DBHandler.HandleDragEvent(fromEventStack, newEvtStack, copiedEvent, copy:true);
                     }
                     eventsCollection.Add(newEvtStack);
-                    //DBHandler.AddEventStack(newEvtStack);
                 }
                 else if (e.Data.GetDataPresent("EventStackFormat")) //if "EventStackFormat"
                 {
@@ -266,17 +263,22 @@ namespace Experiment
                     Day droppedOnDay = (Day)((Border)sender).DataContext;
                     if (!Keyboard.IsKeyDown(Key.RightCtrl))
                     {
-                        evtStack.Current = droppedOnDay;
-                        DBHandler.UpdateEventStack(evtStack);
+                        evtStack.EventStackDay = droppedOnDay.Date;
+                        for (int i = 0; i < evtStack.Events.Count; i++)
+                        {
+                            evtStack.Events[i].updateDates(droppedOnDay.Date.Year, droppedOnDay.Date.Month, droppedOnDay.Date.Day);
+                        }
+                        //DBHandler.UpdateEventStack(evtStack);
+                        DBHandler.HandleDragEventStack(evtStack, null, copy: false);
                     }
                     else
                     {
                         EventStack newEvtStack = new EventStack {
-                            Current = droppedOnDay
+                            EventStackDay = droppedOnDay.Date
                         };
                         for (int i = 0; i < evtStack.Events.Count; i++)
                         {
-                            newEvtStack.AddEvent(evtStack.Events[i].DeepCopy());
+                            newEvtStack.AddEvent(evtStack.Events[i].Clone());
                         }
                         eventsCollection.Add(newEvtStack);
                         DBHandler.AddEventStack(newEvtStack);
@@ -307,8 +309,9 @@ namespace Experiment
                         }
                         else
                         {
-                            Event copiedEvent = evt.DeepCopy();
+                            Event copiedEvent = evt.Clone();
                             actualStack.AddEvent(copiedEvent);
+                            DBHandler.HandleDragEvent(previousStack, actualStack, copiedEvent, copy:true);
                         }
                         //DBHandler.UpdateEventStack(actualStack);
                     }

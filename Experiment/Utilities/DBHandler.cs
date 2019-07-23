@@ -520,6 +520,35 @@ namespace Experiment.Utilities
             }
         }
 
+        public static void HandleDragEventStack(EventStack FromStack, EventStack ToStack, bool copy = false)
+        {
+            
+            SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
+            conn.RunInTransactionAsync(nonAsyncConn =>
+            {
+                if (ToStack == null)
+                {
+                    nonAsyncConn.Execute(
+                        "UPDATE EventStacks SET EventStackDay = ?, LowerLimitHour = ?, UpperLimitHour = ? WHERE Id = ?",
+                        FromStack.EventStackDay.Ticks,
+                        new DateTime(FromStack.EventStackDay.Year, FromStack.EventStackDay.Month, FromStack.EventStackDay.Day, 0, 0, 0),
+                        new DateTime(FromStack.EventStackDay.Year, FromStack.EventStackDay.Month, FromStack.EventStackDay.Day, 0, 0, 0).AddDays(1).AddHours(12).Ticks,
+                        FromStack.Id
+                        );
+                    for ( int i = 0; i < FromStack.Events.Count; i++)
+                    {
+                        nonAsyncConn.Execute("UPDATE Events SET Start = ?, End = ? WHERE Id = ?",
+                            FromStack.Events[i].Start.Ticks,
+                            FromStack.Events[i].End.Ticks,
+                            FromStack.Events[i].Id
+                            );
+                    }
+                }
+            }
+            );
+            conn.CloseAsync();
+        }
+
         public static void HandleDragEvent(EventStack previous, EventStack newOne, Event evt, bool copy = false)
         {
             int dayInterval = 0;
@@ -547,11 +576,8 @@ namespace Experiment.Utilities
                     );
                 } else
                 {
-                    Event copiedEvent = evt.Clone();
-                    copiedEvent.Start = new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.Start.Hour, evt.Start.Minute, 0);
-                    copiedEvent.End = new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval);
-                    copiedEvent.EventStackId = newOneId;
-                    nonAsyncConn.Insert(copiedEvent);
+                    evt.EventStackId = newOneId;
+                    nonAsyncConn.InsertWithChildren(evt);
                 }
                 
                 if (previous.Events.Count == 0)

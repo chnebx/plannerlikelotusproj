@@ -63,8 +63,15 @@ namespace Experiment.Models
             set
             {
                 _EventStackDay = value;
-                _current = new Day(_EventStackDay);
+                _lowerLimitHour = new DateTime(EventStackDay.Year, EventStackDay.Month, EventStackDay.Day, 0, 0, 0);
+                _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventStackDay"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Row"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Column"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MonthRow"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MonthColumn"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Current"));
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("DayNumber"));
             }
         }
 
@@ -175,7 +182,7 @@ namespace Experiment.Models
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Column"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MonthRow"));
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MonthColumn"));
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("DayNum"));
+               
             }
         }
 
@@ -447,7 +454,6 @@ namespace Experiment.Models
                 }
             } else if (Events.Count == 1)
             {
-                Console.WriteLine(Events[0].Name);
                 Events[0].Row = 0;
                 Events[0].RowSpan = 6;
                 SpanLength = 6;
