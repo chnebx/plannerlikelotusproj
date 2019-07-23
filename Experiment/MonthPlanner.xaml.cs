@@ -298,11 +298,9 @@ namespace Experiment
                         {
                             int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
                             previousStack.RemoveEvent(indexOfPreviousEvt);
-                            //DBHandler.UpdateEventStack(previousStack);
                             if (previousStack.Events.Count < 1)
                             {
                                 eventsCollection.Remove(previousStack);
-                                //DBHandler.DeleteEventStack(previousStack);
                             }
                             actualStack.AddEvent(evt);
                             DBHandler.HandleDragEvent(previousStack, actualStack, evt);
@@ -328,7 +326,8 @@ namespace Experiment
                                 actualStack.AddEvent(evtStack.Events[i]);
                             }
                             eventsCollection.Remove(evtStack);
-                            DBHandler.DeleteEventStack(evtStack);
+                            DBHandler.HandleDragEventStack(evtStack, actualStack, copy: false);
+                            //DBHandler.DeleteEventStack(evtStack);
                         }
                         else
                         {

@@ -543,6 +543,23 @@ namespace Experiment.Utilities
                             FromStack.Events[i].Id
                             );
                     }
+                } else
+                {
+                    for (int i = 0; i < ToStack.Events.Count; i++)
+                    {
+                        if (ToStack.Events[i].EventStackId != ToStack.Id)
+                        {
+                            nonAsyncConn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE Id = ?",
+                                ToStack.Id,
+                                ToStack.Events[i].Start.Ticks,
+                                ToStack.Events[i].End.Ticks,
+                                ToStack.Events[i].Id
+                                );
+                        }
+                    }
+                    nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?",
+                        FromStack.Id
+                        );
                 }
             }
             );
