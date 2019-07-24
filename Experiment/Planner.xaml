@@ -387,11 +387,11 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>
-                                <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Viewbox Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock Opacity="0.8" Text="{Binding DayNum, Mode=OneTime}"  FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                <Canvas>
+                                    <Viewbox Margin="5,3,0,0" Height="16">
+                                        <TextBlock Text="{Binding DayNum, Mode=OneTime}"  FontWeight="Normal"></TextBlock>
                                     </Viewbox>
-                                    <!--<TextBlock Opacity="1" Text="{Binding DayNum}"  FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>-->
+                                    <!--<TextBlock Text="{Binding DayNum, Mode=OneTime}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Light"></TextBlock>-->
                                     <Popup AllowsTransparency="True" IsOpen="{Binding EditMode, UpdateSourceTrigger=PropertyChanged}">
                                         <Border Background="White" Height="80" Width="150" CornerRadius="10">
                                             <Grid>
@@ -431,7 +431,7 @@
                                             </Grid>
                                         </Border>
                                     </Popup>
-                                </DockPanel>
+                                </Canvas>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.Resources>

@@ -147,6 +147,8 @@
                 GridLinesVisibility="None"
                 Grid.Row="1"
                 IsReadOnly="True"
+                SelectionMode="Single"
+                SelectionUnit="FullRow"
                 SelectedValue="{Binding SelectedEmployer, Mode=TwoWay}"
                 VirtualizingPanel.IsVirtualizing="True"
                 TextElement.FontSize="17" BorderBrush="#FF688CAF"

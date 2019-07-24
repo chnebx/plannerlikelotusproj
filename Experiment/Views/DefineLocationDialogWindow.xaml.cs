@@ -154,7 +154,7 @@ namespace Experiment.Views
                 !String.IsNullOrEmpty(txtLocationAddress.Text))
             {
                 Location newLocation = new Location {
-                    PlaceName = txtLocationTownName.Text,
+                    TownName = txtLocationTownName.Text,
                     Address = txtLocationAddress.Text
                 };
                 newLocation.PlaceType = comboLocationPlaceType.SelectedItem.ToString();

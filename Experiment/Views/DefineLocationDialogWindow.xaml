@@ -166,6 +166,8 @@
                 AlternatingRowBackground="#deebf8"
                 Grid.Row="1"
                 GridLinesVisibility="None"
+                SelectionMode="Single"
+                SelectionUnit="FullRow"
                 IsReadOnly="True"
                 SelectedValue="{Binding SelectedLocation, Mode=TwoWay}"
                 VirtualizingPanel.IsVirtualizing="True"

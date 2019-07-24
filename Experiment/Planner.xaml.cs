@@ -75,7 +75,7 @@ namespace Experiment
             FindNextEventFromNow();
             hoveredDate.Text = "(Aucune date)";
             formules = new ObservableCollection<Formule>();
-            //formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
+
             monthControls = new ObservableCollection<Border>()
             {
                 JanvierHeader,
