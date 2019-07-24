@@ -13,9 +13,7 @@
              Loaded="Planner_Loaded"
              >
     <UserControl.Resources>
-        <localConverters:WeColorConverter x:Key="WeColorConverter"></localConverters:WeColorConverter>
         <localConverters:BrushToGradientConverter x:Key="BrushToGradientConverter"/>
-        <localConverters:BooleanToBorderConverter x:Key="BooleanToBorderConverter"/>
         <localConverters:SearchStringToHeaderColorConverter x:Key="SearchStringToHeaderColorConverter" />
         <localConverters:BoolToBorderThicknessConverter x:Key="BoolToBorderThicknessConverter"/>
         <localConverters:OpacityToFullVisibilityConverter x:Key="OpacityToFullVisibilityConverter"/>
@@ -359,17 +357,39 @@
                 <ItemsControl x:Name="DayShow" ItemsSource="{Binding yearDays}">
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type local1:Day}">
-                            <Border BorderBrush="{Binding Path=EditMode, Converter={StaticResource BooleanToBorderConverter}, UpdateSourceTrigger=PropertyChanged}"
-                                BorderThickness="0.2"
-                                MouseLeave="Border_MouseLeave" 
-                                MouseEnter="Border_MouseEnter"
+                            <Border 
                                 MouseUp="EventCreateHandler"
+                                MouseLeave="Border_MouseLeave"
+                                MouseEnter="Border_MouseEnter"
                                 AllowDrop="True"
                                 Drop="Day_Drop"
-                                Background="{Binding Path=DayType, Converter={StaticResource WeColorConverter}}">
+                                >
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DayType}" Value="Enabled">
+                                                <Setter Property="Background" Value="#FFEEEEEE" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsWE}" Value="True">
+                                                <Setter Property="Background" Value="#FFE6C775" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                <Setter Property="Background" Value="#FF9393F0" />
+                                            </DataTrigger>
+                                            <Trigger Property="IsMouseOver" Value="False">
+                                                <Setter Property="BorderBrush" Value="DarkGray"/>
+                                                <Setter Property="BorderThickness" Value="0.2" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="BorderBrush" Value="#FFC7D9EE" />
+                                                <Setter Property="BorderThickness" Value="3.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
                                 <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Viewbox Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock Opacity="0.8" Text="{Binding DayNum}"  FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                        <TextBlock Opacity="0.8" Text="{Binding DayNum, Mode=OneTime}"  FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
                                     </Viewbox>
                                     <!--<TextBlock Opacity="1" Text="{Binding DayNum}"  FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>-->
                                     <Popup AllowsTransparency="True" IsOpen="{Binding EditMode, UpdateSourceTrigger=PropertyChanged}">
@@ -380,7 +400,22 @@
                                                     <RowDefinition Height="*"></RowDefinition>
                                                 </Grid.RowDefinitions>
 
-                                                <Border CornerRadius="10,10,0,0" Grid.Row="0" Background="{Binding Path=DayType, Converter={StaticResource WeColorConverter}}">
+                                                <Border CornerRadius="10,10,0,0" Grid.Row="0">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding DayType}" Value="Enabled">
+                                                                    <Setter Property="Background" Value="#FFEEEEEE" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsWE}" Value="True">
+                                                                    <Setter Property="Background" Value="#FFE6C775" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                                    <Setter Property="Background" Value="#FF9393F0" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
                                                     <TextBlock FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding DayTitle}"></TextBlock>
                                                 </Border>
                                                 <Button 
@@ -487,10 +522,21 @@
                                     <Border 
                                         Grid.Row="0"
                                         CornerRadius="8,8,0,0"
-                                        Background="#EE7070BE" 
                                         PreviewMouseDown="Events_PreviewMouseDown"
                                         PreviewMouseMove="Events_PreviewMouseMove"
                                         >
+                                        <Border.Style>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="False">
+                                                        <Setter Property="Background" Value="#EE7070BE" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#EE9191E0" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
                                         <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <TextBlock Foreground="white" FontWeight="DemiBold" Text="{Binding DayNumber}"></TextBlock>
                                         </Viewbox>
@@ -611,12 +657,25 @@
                                             <Rectangle
                                             PreviewMouseDown="Events_PreviewMouseDown"
                                             PreviewMouseMove="Events_PreviewMouseMove"
-                                            Stroke="Black"
-                                            StrokeThickness="0.4"
                                             Fill="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
                                             RadiusY="3"
                                             RadiusX="3"
-                                        />
+                                        >
+                                                <Rectangle.Style>
+                                                    <Style TargetType="{x:Type Rectangle}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="False">
+                                                                <Setter Property="Stroke" Value="Black"/>
+                                                                <Setter Property="StrokeThickness" Value="0.4"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Stroke" Value="#FFF1C633"/>
+                                                                <Setter Property="StrokeThickness" Value="2"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Rectangle.Style>
+                                        </Rectangle>
                                         </DataTemplate>
                                     </ItemsControl.Resources>
                                     <ItemsControl.ItemsPanel>

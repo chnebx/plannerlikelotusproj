@@ -55,6 +55,7 @@ namespace Experiment
         public LinearGradientBrush defaultMonthBrush = new LinearGradientBrush();
         public IDisposable formuleObservable;
         private EventStack fromEventStack;
+        private int _previousHoveredRow = -1;
 
         // Using a DependencyProperty as the backing store for targetTimer.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty targetTimerProperty =
@@ -157,8 +158,6 @@ namespace Experiment
                 eventsCollection[i].updateEvts();
             }
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
-            //filterModule.FilteredCollection = eventsCollection;
-            //filterModule.RefreshFilter();
             FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             contentShow.ItemsSource = eventsCollection;
             if (evts.View != null)
@@ -176,7 +175,6 @@ namespace Experiment
                 for (int day = dayOfYear; day <= upTo; day++)
                 {
                     Day currentDay = new Day(d);
-                    //currentDay.Date = d;
                     currentDay.DayType = Day._dayType.Enabled;
                     if (d == DateTime.Today)
                     {
@@ -193,53 +191,36 @@ namespace Experiment
             }
         }
 
-        private void handleMonthHover(Day actualDay)
-        {
-            //if (actualDay is null)
-            //{
-            //    monthControls[hoveredMonth].Background = CalendarSource.defaultMonthBrush;
-            //    hoveredMonth = -1;
-            //    return;
-            //}
-            //int actualDayMonth = actualDay.Date.Month - 1;
-            //if (hoveredMonth == -1)
-            //{
-            //    hoveredMonth = actualDayMonth;
-            //    monthControls[actualDayMonth].Background = CalendarSource.hoveredMonthBrush;
-            //}
-            //else if (actualDayMonth != hoveredMonth)
-            //{
-
-            //    monthControls[hoveredMonth].Background = CalendarSource.defaultMonthBrush;
-            //    monthControls[actualDayMonth].Background = CalendarSource.hoveredMonthBrush;
-            //    hoveredMonth = actualDayMonth;
-            //}
-        }
-
         private void Border_MouseEnter(object sender, MouseEventArgs e)
         {
             var selectedItem = ((Border)sender).DataContext;
             var actualDay = (Day)selectedItem;
-            previousCell = ((Border)sender);
-
-            ToggleDayBrush(previousCell, true);
-            handleMonthHover(actualDay);
+            if (_previousHoveredRow != -1)
+            {
+                monthControls[_previousHoveredRow].Background = CalendarSource.defaultMonthBrush;
+            }
+            monthControls[((Day)(((Border)sender).DataContext)).Row].Background = CalendarSource.hoveredMonthBrush;
             hoveredDate.Text = actualDay.DayFullName;
         }
 
         private void Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            var prevCell = previousCell;
-            if (prevCell.DataContext is Day)
+            if (_previousHoveredRow == ((Day)(((Border)sender).DataContext)).Row)
             {
-                var prevDay = (Day)prevCell.DataContext;
-                if (selectedCell == null || prevDay != (Day)selectedCell.DataContext)
-                {
-                    ToggleDayBrush(previousCell, false);
-                    hoveredDate.Text = "(Aucune date)";
-                }
+                return;
             }
-            
+            _previousHoveredRow = ((Day)(((Border)sender).DataContext)).Row;
+            hoveredDate.Text = "(Aucune date)";
+        }
+
+        private void handleMonthHover(int actualRow)
+        {
+            if (_previousHoveredRow >= 0)
+            {
+                monthControls[_previousHoveredRow].Background = CalendarSource.defaultMonthBrush;
+            }
+            monthControls[actualRow].Background = CalendarSource.hoveredMonthBrush;
+            _previousHoveredRow = actualRow;
         }
 
         private void ActualGrid_Loaded(object sender, RoutedEventArgs e)
@@ -324,12 +305,13 @@ namespace Experiment
             {
                 actualCell.BorderBrush = Brushes.DarkGray;
                 actualCell.BorderThickness = new Thickness(0.2);
-            } else
+            }
+            else
             {
                 actualCell.BorderBrush = Brushes.LightSteelBlue;
                 actualCell.BorderThickness = new Thickness(3);
             }
-            
+
         }
 
         private void EventsView_Filter(object sender, FilterEventArgs e)
@@ -358,8 +340,6 @@ namespace Experiment
                     DBHandler.AddEventStack(freshEvent);
                 }
             }
-            
-            ToggleDayBrush(selectedCell, false);
             selectedCell = null;
             //if (freshEvent.Current.Date < eventsInfo.UpcomingEvent.Current.Date && freshEvent.Current.Date > DateTime.Now)
             //{
@@ -468,7 +448,7 @@ namespace Experiment
         {
             EventStack evtStack = (EventStack)(((Grid)sender).DataContext);
             
-            handleMonthHover(evtStack.Current);
+            handleMonthHover(evtStack.Row);
             //hoveredDate.Text = evtStack.Current.DayFullName;
         }
 
@@ -479,43 +459,11 @@ namespace Experiment
 
         private void Calendar_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (hoveredMonth >= 0)
+            if (_previousHoveredRow >= 0)
             {
-                handleMonthHover(null);
+                monthControls[_previousHoveredRow].Background = CalendarSource.defaultMonthBrush;
             }
         }
-
-        //public bool EmployerFilter(object employer)
-        //{
-            
-        //    if (String.IsNullOrEmpty(txtBoxFilterEmployer.Text))
-        //        return true;
-
-        //    EventStack evtStack = (EventStack)employer;
-
-
-        //    if (evtStack.containsEmployer(txtBoxFilterEmployer.Text))
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
-        //public void Employer_Filter(object sender, FilterEventArgs e)
-        //{
-
-        //    if (String.IsNullOrEmpty(txtBoxFilterEmployer.Text))
-        //        e.Accepted = true;
-
-        //    EventStack evtStack = (EventStack)e.Item;
-
-        //    if (evtStack.containsEmployer(txtBoxFilterEmployer.Text))
-        //    {
-        //        e.Accepted = true;
-        //    }
-           
-
-        //}
 
         private void filteredEvent_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -529,19 +477,6 @@ namespace Experiment
 
             }
         }
-
-        //private void Reset_Click(object sender, RoutedEventArgs e)
-        //{
-        //    txtBoxFilterComment.Clear();
-        //    txtBoxFilterEmployer.Clear();
-        //    txtBoxFilterLength.Clear();
-        //    txtBoxFilterLocation.Clear();
-        //    txtBoxFilterTitle.Clear();
-        //    if (comboBoxFormules.SelectedIndex != 0)
-        //    {
-        //        comboBoxFormules.SelectedIndex = 0;     
-        //    }
-        //}
 
         private void BackwardBtn_Click(object sender, RoutedEventArgs e)
         {
