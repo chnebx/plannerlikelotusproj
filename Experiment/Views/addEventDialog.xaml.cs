@@ -106,14 +106,9 @@ namespace Experiment.Views
         private void initDialog(object parameterProvided, Point mouseLocation, bool automaticSelection)
         {
             
-            //Day actualDay = null;
+       
             DateTime val;
-            //if (parameterProvided is Day)
-            //{
-            //    Console.WriteLine("day");
-            //    actualDay = (Day)parameterProvided;
-            //    val = actualDay.Date;
-            //} else  
+            
             if (parameterProvided is EventStack)
             {
                 
@@ -174,22 +169,8 @@ namespace Experiment.Views
             ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;
             ActualDayScheduler.Refresh();
             ActualDayScheduler.SelectDefault();
-            //Console.WriteLine(actualEventStack.Events[0].Band.Formules.Count);
-            /*
-            ActualDayScheduler.DrawnEventsList = actualEventStack.Events;
-            ActualDayScheduler.ActualGridDay = val;
-            ActualDayScheduler.Refresh();
-            */
-            //fillFormules();
-        }
-
-        //public addEventDialog(Day actualDay, Point mouseLocation)
-        //{
-        //    InitializeComponent();
-        //    DataContext = this;
-        //    initDialog(actualDay, mouseLocation, false);
             
-        //}
+        }
 
         public addEventDialog(EventStack currentEvts, Point mouseLocation, bool automaticSelection)
         {
@@ -341,42 +322,11 @@ namespace Experiment.Views
             if (!String.IsNullOrEmpty(txtTitle.Text)
                 && comboFormule.SelectedIndex != -1
                 && SelectedEvent.ActualEmployer != null
-                && SelectedEvent.CurrentFormule != null
-                /*
-            && txtHour != null
-            && txtMinutes != null
-
-            && txtEndHour != null
-            && txtEndMinutes != null
-            */
-                )
-            {
-                actualEventStack.AddEvent(SelectedEvent);
-                /*
-                Event newEvt = new Event(
-                    DBHandler.getDefaultBand(),
-                    uint.Parse(txtHour.Text),
-                    uint.Parse(txtMinutes.Text),
-                    int.Parse(txtLengthHour.Text),
-                    int.Parse(txtLengthMinutes.Text),
-                   
-                    //uint.Parse(txtEndHour.Text),
-                    //uint.Parse(txtEndMinutes.Text),
-                    
-                    txtTitle.Text,
-                    null,
-                    txtLieu.Text,
-                    false
-                    );              
-                newEvt.ActualEmployer.LastName = txtEmployerName.Text;
-                newEvt.ActualEmployer.PhoneNumber = txtEmployerTel.Text;         
-                newEvt.CurrentFormule = (Formule)comboFormule.SelectedValue;
-               
-                actualEventStack.AddEvent(newEvt);
-                */
-                toggleCreateMode();
-                
-            }
+                && SelectedEvent.CurrentFormule != null)
+                {
+                    actualEventStack.AddEvent(SelectedEvent);
+                    toggleCreateMode();
+                }
             
         }
 
@@ -388,15 +338,6 @@ namespace Experiment.Views
         private void clearTxtBoxes()
         {
             txtTitle.Clear();
-            /*
-            txtHour.Clear();
-            txtMinutes.Clear();
-            
-            txtEmployerName.Clear();
-            txtEmployerTel.Clear();
-            //txtFormuleName.Clear();
-            txtLieu.Clear();
-            */
         }
 
         private void RedDeleteBtn_Click(object sender, RoutedEventArgs e)
