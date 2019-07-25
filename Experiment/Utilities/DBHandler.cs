@@ -315,25 +315,14 @@ namespace Experiment.Utilities
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
         }
 
-        //public List<EventStack> Events
-        //{
-        //    get
-        //    {
-        //        return _events;
-        //    }
-        //    set
-        //    {
-        //        _events = value;
-        //    }
-        //}
 
         public static ObservableCollection<EventStack> getEvents()
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.CreateTable<EventStack>();
-                var eventstacks = conn.Table<EventStack>().ToList<EventStack>();
-
+                var eventstacks = conn.GetAllWithChildren<EventStack>(recursive: true).ToList<EventStack>();
+                
                 return new ObservableCollection<EventStack>(eventstacks);
             }
         }
@@ -632,7 +621,6 @@ namespace Experiment.Utilities
                 conn.CreateTable<Band>();
                 conn.CreateTable<Formule>();
                 Band actualBand = conn.GetWithChildren<Band>(1);
-                Console.WriteLine(actualBand);
                 return actualBand.Formules;
             }
         }

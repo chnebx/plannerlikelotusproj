@@ -162,12 +162,14 @@ namespace Experiment.Utilities
                     attempts = _providedEvtStackList[i].Filter(GF.Filter);
                     if (attempts != null)
                     {
+                        
                         for (int j = 0; j < attempts.Count; j++)
                         {
                             EventsResults.Add(_providedEvtStackList[i].Events[attempts[j]]);
                         }
                     }
                 }
+                
             } else
             {
                 IsFilterActive = false;

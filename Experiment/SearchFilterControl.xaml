@@ -224,7 +224,7 @@
                                 </Border>
                                 <TextBlock FontSize="14" Foreground="#FF666666" FontWeight="Bold" Text="{Binding Name}"></TextBlock>
                             </StackPanel>
-                            <TextBlock FontSize="12" Margin="8,0,0,2" Foreground="#FF666666" Text="{Binding parentStack.Current.DayTitle}"></TextBlock>
+                            <TextBlock FontSize="12" Margin="8,0,0,2" Foreground="#FF666666" Text="{Binding parentStack.EventStackDay, StringFormat={}{0:D}}"></TextBlock>
                         </StackPanel>
                     </Border>
                 </DataTemplate>
