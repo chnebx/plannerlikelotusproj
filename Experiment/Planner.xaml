@@ -388,10 +388,10 @@
                                     </Style>
                                 </Border.Style>
                                 <Canvas>
-                                    <Viewbox Margin="5,3,0,0" Height="16">
+                                    <!--<Viewbox Margin="5,3,0,0" Height="16">
                                         <TextBlock Text="{Binding DayNum, Mode=OneTime}"  FontWeight="Normal"></TextBlock>
-                                    </Viewbox>
-                                    <!--<TextBlock Text="{Binding DayNum, Mode=OneTime}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Light"></TextBlock>-->
+                                    </Viewbox>-->
+                                    <TextBlock FontSize="12" Margin="5,0,0,0" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light" Background="{x:Null}"></TextBlock>
                                     <Popup AllowsTransparency="True" IsOpen="{Binding EditMode, UpdateSourceTrigger=PropertyChanged}">
                                         <Border Background="White" Height="80" Width="150" CornerRadius="10">
                                             <Grid>
@@ -529,10 +529,10 @@
                                             <Style TargetType="{x:Type Border}">
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="False">
-                                                        <Setter Property="Background" Value="#EE7070BE" />
+                                                        <Setter Property="Background" Value="#FF7070BE" />
                                                     </Trigger>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#EE9191E0" />
+                                                        <Setter Property="Background" Value="#FF9191E0" />
                                                     </Trigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -561,12 +561,16 @@
                                                     <RowDefinition Height="*"></RowDefinition>
                                                 </Grid.RowDefinitions>
                                                 <Border CornerRadius="10,10,0,0" Grid.Row="0" Background="#EE7070BE">
-                                                    <TextBlock Text="{Binding DayNumber}"
-                                                           Foreground="White"
-                                                           FontSize="13"
-                                                           FontWeight="Bold"
-                                                           VerticalAlignment="Center"
-                                                           HorizontalAlignment="Center"></TextBlock>
+                                                    <TextBlock
+                                                        Text="{Binding EventStackDay, StringFormat={}{0:D}}"
+                                                        Foreground="White"
+                                                        FontSize="13"
+                                                        FontWeight="Bold"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Center"
+                                                        >
+                                                        
+                                                    </TextBlock>
                                                 </Border>
                                                 <Border x:Name="clippingborder" Grid.Row="1" Background="White" CornerRadius="0,0,10,10" />
                                                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Events}">
@@ -775,126 +779,7 @@
                 </ItemsControl>
             </Grid>
         </Border>
-        <!--<Expander BorderBrush="Gray" BorderThickness="0,1,0,1" Margin="0.1,0,0,0" Grid.Row="2" Grid.Column="2" ExpandDirection="Right" Background="#FF9A9DB9">
-            <Border Margin="0" Background="#FF9A9DB9" Width="180">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="40"></RowDefinition>
-                        <RowDefinition Height="3*" MaxHeight="300"></RowDefinition>
-                        <RowDefinition Height="86"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Border Grid.Row="0" Margin="10,0,10,10" Style="{StaticResource ColorFilterHeaderStyle}" Height="35" CornerRadius="0,0,10,10">
-                        <TextBlock Text="Filtres" 
-                                HorizontalAlignment="Center"
-                                FontWeight="DemiBold"
-                                FontSize="18"
-                                Foreground="White"/>
-                    </Border>
-
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-                        <StackPanel MinHeight="50" CanVerticallyScroll="True" Grid.Row="0">
-                            <Border Style="{StaticResource FilterHeaderStyle}" Background="{Binding ElementName=txtBoxFilterEmployer, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}">
-                                <TextBlock Text="Employeur :" 
-                                    Style="{StaticResource FilterHeaderTextStyle}"
-                                    ></TextBlock>
-                            </Border>
-                            <TextBox x:Name="txtBoxFilterEmployer" Margin="10,0,10,10"></TextBox>
-
-                            <Border Background="{Binding ElementName=comboBoxFormules, Path=SelectedIndex, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}">
-                                <TextBlock Text="Formule :" 
-                                        Style="{StaticResource FilterHeaderTextStyle}"
-                                        ></TextBlock>
-                            </Border>
-                            --><!--<TextBox x:Name="txtBoxFilterFormule" Margin="10,0,10,10"></TextBox>--><!--
-                            <ComboBox 
-                                Height="24" 
-                                x:Name="comboBoxFormules"
-                                Margin="10,0,10,10"
-                                FontSize="15"
-                                ItemsSource="{Binding Path=formules}"
-                                >
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Name}"></TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ComboBox>
-
-                            <Border Background="{Binding ElementName=txtBoxFilterLocation, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}" >
-                                <TextBlock Text="Lieu :" 
-                                        Style="{StaticResource FilterHeaderTextStyle}"
-                                        ></TextBlock>
-                            </Border>
-                            <TextBox x:Name="txtBoxFilterLocation" Margin="10,0,10,10"></TextBox>
-
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel>
-                                    <Border Background="{Binding ElementName=txtBoxFilterLength, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}" Width="60">
-                                        <TextBlock Text="Durée : " 
-                                        Style="{StaticResource FilterHeaderTextStyle}"
-                                        ></TextBlock>
-                                    </Border>
-                                    <TextBox Width="60" x:Name="txtBoxFilterLength" Margin="10,0,10,10"></TextBox>
-                                </StackPanel>
-                            </StackPanel>
-                            <Border Background="{Binding ElementName=txtBoxFilterTitle, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}">
-                                <TextBlock Text="Titre :" 
-                                        Style="{StaticResource FilterHeaderTextStyle}"
-                                        ></TextBlock>
-                            </Border>
-                            <TextBox x:Name="txtBoxFilterTitle" Margin="10,0,10,10"></TextBox>
-                            <Border Background="{Binding ElementName=txtBoxFilterComment, Path=Text, Converter={StaticResource SearchStringToHeaderColorConverter}}" Style="{StaticResource FilterHeaderStyle}">
-                                <TextBlock Text="Commentaire :" 
-                                        Style="{StaticResource FilterHeaderTextStyle}"
-                                        ></TextBlock>
-                            </Border>
-                            <TextBox x:Name="txtBoxFilterComment" Margin="10,0,10,0"></TextBox>
-                        </StackPanel>
-                    </ScrollViewer>
-                    <StackPanel Margin="0,10,0,10" Grid.Row="2">
-                        <Button Style="{StaticResource resetFilterBtn}" IsEnabled="{Binding filterModule.IsFilterActive}" Click="Reset_Click">Réinitialiser</Button>
-                        <Border Margin="10,10,10,10" Background="#FF8484AA" Height="30" CornerRadius="10">
-                            <TextBlock 
-                                Text="Resultats" 
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontWeight="DemiBold"
-                                FontSize="18"
-                                Foreground="White"
-                                ></TextBlock>
-                        </Border>
-                    </StackPanel>
-                    <ScrollViewer Grid.Row="3" Height="auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-                        <ItemsControl  ItemsSource="{Binding filterModule.EventsResults}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border CornerRadius="10" Margin="0,5,0,5" Background="#FF8E8EB2" MouseUp="filteredEvent_MouseUp">
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Border 
-                                                Width="15"
-                                                Height="15"
-                                                CornerRadius="2"
-                                                Margin="8,3,5,0"
-                                                Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"></Border>
-                                                <TextBlock FontSize="14" Foreground="White" FontWeight="Bold" Text="{Binding Name}"></TextBlock>
-                                            </StackPanel>
-                                            <TextBlock FontSize="12" Margin="8,0,0,2" Foreground="White" Text="{Binding parentStack.Current.DayTitle}"></TextBlock>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Margin="10,0,10,0" CanVerticallyScroll="True"></StackPanel>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </Grid>
-            </Border>
-        </Expander>-->
+        
         <Grid Margin="0,5,0,0" Grid.Row="3" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>

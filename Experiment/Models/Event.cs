@@ -207,7 +207,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
+        [ReadOnly(true), ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Band Band
         {
             get
@@ -221,7 +221,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
+        [ReadOnly(true), ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Employer ActualEmployer
         {
             get
@@ -235,7 +235,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
+        [ReadOnly(true), ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Location LocationName
         {
             get
@@ -249,7 +249,7 @@ namespace Experiment.Models
             }
         }
 
-        [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
+        [ReadOnly(true),  ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public Formule CurrentFormule
         {
             get

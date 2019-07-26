@@ -329,7 +329,6 @@ namespace Experiment.Models
             if (!IsFull)
             {
                 newEvent.parentStack = this;
-                //newEvent.Column = Events.Count;
                 newEvent.updateDates(EventStackDay.Year, EventStackDay.Month, EventStackDay.Day);
                 Events.Add(newEvent);
                 updateEvts();

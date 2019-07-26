@@ -297,7 +297,7 @@ namespace Experiment.Utilities
             FillDB();
         }
 
-        public ObservableCollection<EventStack> Events
+        public static ObservableCollection<EventStack> Events
         {
             get
             {
@@ -306,7 +306,6 @@ namespace Experiment.Utilities
             set
             {
                 _events = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("getEvents"));
             }
         }
 
@@ -382,22 +381,6 @@ namespace Experiment.Utilities
 
         }
 
-        public static List<EventStack> getEventsInMonth(int year, int month)
-        {
-            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
-            {
-                var events = conn.GetAllWithChildren<EventStack>(recursive: true)
-                    .Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
-                    .ToList<EventStack>();
-                if (events.Count > 0)
-                {
-                    return events;
-                }
-                return new List<EventStack>();
-            }
-
-        }
-
         public static EventStack getEventStack(int id)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
@@ -418,10 +401,12 @@ namespace Experiment.Utilities
             }
             );
             conn.CloseAsync();
+
         }
 
         public static void UpdateEventStack(EventStack evt)
         {
+
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.InsertOrReplaceWithChildren(evt, recursive: true);
@@ -445,7 +430,8 @@ namespace Experiment.Utilities
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                connection.Delete<Event>(evt.Id);
+                conn.CreateTable<Event>();
+                conn.Delete<Event>(evt.Id);
             }
         }
 
