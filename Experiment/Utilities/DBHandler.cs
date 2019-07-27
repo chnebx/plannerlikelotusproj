@@ -321,7 +321,6 @@ namespace Experiment.Utilities
             {
                 conn.CreateTable<EventStack>();
                 var eventstacks = conn.GetAllWithChildren<EventStack>(recursive: true).ToList<EventStack>();
-                
                 return new ObservableCollection<EventStack>(eventstacks);
             }
         }
@@ -351,12 +350,11 @@ namespace Experiment.Utilities
 
         public static ObservableCollection<EventStack> getEvents(int year)
         {
+            var beginYear = new DateTime(year, 1, 1);
+            var endYear = beginYear.AddYears(1);
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                var connection = conn.CreateTable<EventStack>();
-                var events = conn.GetAllWithChildren<EventStack>(recursive: true)
-                    .Where<EventStack>((x) => x.EventStackDay.Year == year)
-                    .ToList<EventStack>();
+                var events = conn.GetAllWithChildren<EventStack>(x => x.EventStackDay >= beginYear && x.EventStackDay < endYear, recursive:true);
                 if (events.Count > 0)
                 {
                     return new ObservableCollection<EventStack>(events);
@@ -367,11 +365,11 @@ namespace Experiment.Utilities
 
         public static ObservableCollection<EventStack> getEvents(int year, int month)
         {
+            var beginMonth = new DateTime(year, month, 1);
+            var endMonth = beginMonth.AddMonths(1);
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                var events = conn.GetAllWithChildren<EventStack>(recursive: true)
-                    .Where<EventStack>((x) => x.EventStackDay.Year == year && x.EventStackDay.Month == month)
-                    .ToList<EventStack>();
+                var events = conn.GetAllWithChildren<EventStack>((x) => x.EventStackDay >= beginMonth && x.EventStackDay < endMonth, recursive: true);
                 if (events.Count > 0)
                 {
                     return new ObservableCollection<EventStack>(events);

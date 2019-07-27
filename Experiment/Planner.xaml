@@ -387,10 +387,11 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>
-                                <Canvas>
-                                    <!--<Viewbox Margin="5,3,0,0" Height="16">
+                                <!--<Viewbox Margin="5,3,0,0" Height="16">
                                         <TextBlock Text="{Binding DayNum, Mode=OneTime}"  FontWeight="Normal"></TextBlock>
                                     </Viewbox>-->
+                                <!--<TextBlock FontSize="12" Margin="5,0,0,0" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light" Background="{x:Null}"></TextBlock>-->
+                                <Canvas>
                                     <TextBlock FontSize="12" Margin="5,0,0,0" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light" Background="{x:Null}"></TextBlock>
                                     <Popup AllowsTransparency="True" IsOpen="{Binding EditMode, UpdateSourceTrigger=PropertyChanged}">
                                         <Border Background="White" Height="80" Width="150" CornerRadius="10">

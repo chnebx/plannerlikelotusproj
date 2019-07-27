@@ -98,6 +98,7 @@ namespace Experiment.Views
                 Name = "Aucun Titre",
                 LocationName = null
             };
+            newEvt.updateDuration();
             return newEvt;
             //SelectedEvent = newEvt;
             //actualEventStack.AddEvent(SelectedEvent);

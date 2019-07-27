@@ -79,7 +79,7 @@ namespace Experiment
                 .DistinctUntilChanged()
                 .Throttle(TimeSpan.FromMilliseconds(delay))
                 .Subscribe(text => {
-                    Predicate<Event> titleFilter = new Predicate<Event>((x) => x.Name.ToLower().Contains(txtBoxFilterTitle.Text.ToLower())); ;
+                    Predicate<Event> titleFilter = new Predicate<Event>((x) => x.Name != null && x.Name.ToLower().Contains(txtBoxFilterTitle.Text.ToLower())); ;
                     this.Dispatcher.Invoke(new Action<Predicate<Event>, TextBox>((title, element) => TextChangedHandler(title, element)), new object[] { titleFilter, txtBoxFilterTitle });
                 });
 
@@ -88,7 +88,7 @@ namespace Experiment
                 .DistinctUntilChanged()
                 .Throttle(TimeSpan.FromMilliseconds(delay))
                 .Subscribe(text => {
-                    Predicate<Event> commentFilter = new Predicate<Event>((x) => x.Comment.ToLower().Contains(txtBoxFilterComment.Text.ToLower()));
+                    Predicate<Event> commentFilter = new Predicate<Event>((x) => x.Comment != null && x.Comment.ToLower().Contains(txtBoxFilterComment.Text.ToLower()));
                     this.Dispatcher.Invoke(new Action<Predicate<Event>, TextBox>((comment, element) => TextChangedHandler(comment, element)), new object[] { commentFilter, txtBoxFilterComment });
                 });
         }

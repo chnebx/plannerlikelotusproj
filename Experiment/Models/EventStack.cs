@@ -80,6 +80,7 @@ namespace Experiment.Models
         {
             get
             {
+                
                 return _events;
             }
             set
