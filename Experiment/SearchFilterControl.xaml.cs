@@ -116,6 +116,7 @@ namespace Experiment
                 if (((ComboBox)element).SelectedIndex == 0)
                 {
                     FilterMod.RemoveFilter(filterFunc);
+                    formulesQuery = "";
                 }
             }
             else
