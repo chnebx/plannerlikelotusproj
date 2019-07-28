@@ -348,6 +348,32 @@ namespace Experiment.Utilities
             }
         }
 
+        public static List<Event> QueryDB(string employerQuery, string formuleQuery, string locationQuery, string titleQuery)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var evts = conn.Query<Event>(
+                    "Select * From Events WHERE LocationID IN (Select Id From Locations WHERE TownName LIKE ?) AND " +
+                    "EmployerID IN (Select Id FROM Employers WHERE FirstName LIKE ? OR LastName LIKE ?) AND "
+                    + "Name Like ? AND FormuleID IN (Select Id FROM Formules WHERE Name LIKE ?)",
+                    locationQuery + "%",
+                    employerQuery + "%",
+                    employerQuery + "%",
+                    titleQuery + "%",
+                    formuleQuery + "%"
+                    );
+                if (evts.Count > 0)
+                {
+                    return evts;
+                } else
+                {
+                    return null;
+                }
+            }
+                
+        }
+
+
         public static ObservableCollection<EventStack> getEvents(int year)
         {
             var beginYear = new DateTime(year, 1, 1);

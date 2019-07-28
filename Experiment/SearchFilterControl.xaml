@@ -24,7 +24,7 @@
             <Setter Property="FontSize" Value="13"></Setter>
         </Style>
 
-        <CollectionViewSource x:Key="filteredResults" Source="{Binding FilterMod.EventsResults}">
+        <CollectionViewSource x:Key="filteredResults" Source="{Binding eventsResults}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Start.Date.Year" />
             </CollectionViewSource.GroupDescriptions>
@@ -202,7 +202,7 @@
                  ItemContainerStyle="{StaticResource ListBoxItemStyle1}"
                  Grid.Row="1" 
                  Grid.Column="1"
-                 ItemsSource="{Binding Source={StaticResource filteredResults}}"
+                 ItemsSource="{Binding eventsResults}"
                  >
             <ListBox.Resources>
                 <Style TargetType="ListBox">

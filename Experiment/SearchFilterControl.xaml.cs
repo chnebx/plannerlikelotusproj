@@ -1,5 +1,6 @@
 ﻿using Experiment.Models;
 using Experiment.Utilities;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace Experiment
 {
     /// <summary>
@@ -27,13 +29,16 @@ namespace Experiment
         public Predicate<Event> previousFormuleFilter = null;
         public FilterModule FilterMod { get; set; }
         public ObservableCollection<Formule> formules { get; set; }
-
+        public List<Event> eventsResults { get; set; }
+        public CollectionViewSource evts = null;
 
         public SearchFilterControl()
         {
             InitializeComponent();
             FilterMod = FilterModule.Instance;
             DataContext = this;
+            //EventSetter = new List<Event>();
+            evts = (CollectionViewSource)this.FindResource("filteredResults");
             formules = new ObservableCollection<Formule>();
             formules = new ObservableCollection<Formule>(formules.Concat(DBHandler.getFormules()));
             comboBoxFormules.SelectedIndex = 0;
@@ -95,6 +100,11 @@ namespace Experiment
 
         public void TextChangedHandler(Predicate<Event> filterFunc, object element)
         {
+            string employerQuery = txtBoxFilterEmployer.Text;
+            string titleQuery = txtBoxFilterTitle.Text;
+            string locationQuery = txtBoxFilterLocation.Text;
+            string formulesQuery = "";
+
             if (!FilterMod.ContainsFilter(filterFunc))
             {
                 FilterMod.AddFilter(filterFunc);
@@ -102,6 +112,7 @@ namespace Experiment
 
             if (element is ComboBox)
             {
+                formulesQuery = ((Formule)((ComboBox)element).SelectedValue).Name;
                 if (((ComboBox)element).SelectedIndex == 0)
                 {
                     FilterMod.RemoveFilter(filterFunc);
@@ -116,6 +127,15 @@ namespace Experiment
             }
 
             FilterMod.RefreshFilter();
+            if (FilterMod.IsFilterActive)
+            {
+                eventsResults = DBHandler.QueryDB(employerQuery, formulesQuery, locationQuery, titleQuery);
+            }
+            else
+            {
+                eventsResults = null;
+            };
+            FilterResultsListBox.ItemsSource = eventsResults;
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)

@@ -33,7 +33,8 @@ namespace Experiment.Utilities
         public FilterModule()
         {
             _groupFilter = new GroupFilter();
-            _providedEvtStackList = DBHandler.getEvents();
+            //_providedEvtStackList = DBHandler.getEvents();
+            _providedEvtStackList = new ObservableCollection<EventStack>();
             _areFiltersEmpty = true;
             connard = true;
             _results = new ObservableCollection<Event>();
