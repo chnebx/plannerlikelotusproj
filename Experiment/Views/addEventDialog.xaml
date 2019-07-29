@@ -367,6 +367,15 @@
                 </DockPanel>
             </Border>
             <DockPanel Margin="10,0,10,0" Grid.Row="3" >
+                <DockPanel.Style>
+                    <Style TargetType="{x:Type DockPanel}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=AdvancedModeBtn, Path=IsChecked}" Value="True">
+                                <Setter Property="Visibility" Value="Hidden"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
                 <Button x:Name="greenAddBtn"
                         FontSize="15" 
                         HorizontalAlignment="Left" 

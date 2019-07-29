@@ -336,11 +336,13 @@ namespace Experiment.CustomControls
 
 
                 double marginTop = oneHourHeight * (e.Start.Hour + (e.Start.Minute / 60.0));
-                double width = columnWidth / (concurrentEvents.Count());
-                double marginLeft = width * getIndex(e, concurrentEvents.ToList());
-                Console.WriteLine(marginLeft);
-                //double width = 320;
-                //EventUserControl wEvent = new EventUserControl(e, true);
+                double width = columnWidth;
+                double marginLeft = 0;
+                if (concurrentEvents.Count() > 0)
+                {
+                    width = columnWidth / (concurrentEvents.Count());
+                    marginLeft = width * getIndex(e, concurrentEvents.ToList());
+                }
                 Border wEvent = new Border();
                 Border containedTitle = new Border();
                 TextBlock Title = new TextBlock();
