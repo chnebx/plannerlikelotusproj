@@ -152,7 +152,7 @@
         <Style TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="15"></Setter>
             <Setter Property="FontWeight" Value="DemiBold"></Setter>
-            <Setter Property="Foreground" Value="#FF666666" />
+            <Setter Property="Foreground" Value="Gray" />
             <Setter Property="FontSize" Value="17" />
         </Style>
 
@@ -277,7 +277,7 @@
                 <RowDefinition Height="35"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="440"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="60"></RowDefinition>
             </Grid.RowDefinitions>
 
@@ -301,6 +301,9 @@
 
             <Border Grid.Row="2" BorderBrush="LightGray" >
                 <DockPanel Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <!--<DockPanel.Style>
+                        
+                    </DockPanel.Style>-->
                     <ListBox HorizontalAlignment="Stretch" 
                              Visibility="{Binding ElementName=StandardModeBtn, Path=IsChecked, Converter={StaticResource BooleanToVisibleConverter}}" 
                              SelectedItem="{Binding SelectedEvent, Mode=TwoWay}" 
@@ -355,11 +358,11 @@
                             </Style>
                         </ListBox.ItemContainerStyle>
                     </ListBox>
-                    <userControls:DayScheduler 
-                        
+                    <userControls:DayScheduler
                         Visibility="{Binding ElementName=AdvancedModeBtn, Path=IsChecked, Converter={StaticResource BooleanToVisibleConverter}}" 
                         SelectedEventItem="{Binding SelectedEvent, Mode=TwoWay}" 
-                        Width="380" 
+                        Width="380"
+                        Height="400"
                         x:Name="ActualDayScheduler" />
                 </DockPanel>
             </Border>
@@ -455,47 +458,54 @@
                         </Button>-->
                         </StackPanel>
                     </DockPanel>
-                    <DockPanel Height="140" Margin="0,0,0,5">
-                        <Border Background="#FFF2F8FD" Width="150" Height="145" CornerRadius="0,12,12,0">
-                            <StackPanel Height="145" Margin="20,0,0,10">
+                    <Border Background="#FFFCFDFF">
+                        <DockPanel Height="160" Margin="0,0,0,5">
+                            <DockPanel.Style>
+                                <Style TargetType="{x:Type DockPanel}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=AdvancedModeBtn, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DockPanel.Style>
+                      
+                            <StackPanel Height="145" Margin="10,0,0,10" DockPanel.Dock="Left">
                                 <Label Padding="0,5,0,5" 
-                                       HorizontalAlignment="Left" 
-                                       Width="110" 
-                                       Content="Début"></Label>
-                                <userControls:HourSelector 
-                                Width="100" 
-                                Height="70"
-                                HorizontalAlignment="Left"
-                                HourValue="{Binding ShowHour, Mode=TwoWay}"
-                                MinutesValue="{Binding ShowMinutes, Mode=TwoWay}"
-                                ></userControls:HourSelector>
+                                           HorizontalAlignment="Left" 
+                                           Width="110" 
+                                           Content="Début"></Label>
+                                <userControls:HourSelector
+                                    Height="75"
+                                    HorizontalAlignment="Left"
+                                    HourValue="{Binding ShowHour, Mode=TwoWay}"
+                                    MinutesValue="{Binding ShowMinutes, Mode=TwoWay}"
+                                    ></userControls:HourSelector>
                                 <TextBlock Margin="0,8,0,0" FontWeight="DemiBold" Foreground="#FF909090" Text="{Binding Start, StringFormat={}{0:dd MMMM}}">
-                                    
+
                                 </TextBlock>
                             </StackPanel>
-                        </Border>
-                        <Border Height="145" Background="#FFF2F8FD" CornerRadius="12,0,0,12" Width="150" DockPanel.Dock="Right" >
-                            <StackPanel Height="145" Margin="0,0,20,10">
+                            <StackPanel Height="145" Margin="0,0,10,10" DockPanel.Dock="Right">
                                 <Label Padding="0,5,0,5" 
-                                       x:Name="EndLabel"
-                                       Content="" 
-                                       HorizontalAlignment="Right"></Label>
+                                           x:Name="EndLabel"
+                                           Content="" 
+                                           HorizontalAlignment="Right"></Label>
                                 <userControls:HourSelector
-                                    x:Name="LengthOrEndHourControl"
-                                    Width="100" 
-                                    Height="70"
-                                    HorizontalAlignment="Right"
-                                    HourValue="{Binding ShowLengthHour, Mode=TwoWay}"
-                                    MinutesValue="{Binding ShowLengthMinutes, Mode=TwoWay}"
-                                    ></userControls:HourSelector>
+                                        x:Name="LengthOrEndHourControl"
+                                        Height="75"
+                                        HorizontalAlignment="Right"
+                                        HourValue="{Binding ShowLengthHour, Mode=TwoWay}"
+                                        MinutesValue="{Binding ShowLengthMinutes, Mode=TwoWay}"
+                                        ></userControls:HourSelector>
                                 <TextBlock Margin="0,8,0,0" FontWeight="DemiBold" Foreground="#FF909090" HorizontalAlignment="Right" Text="{Binding End, StringFormat={}{0:dd MMMM}}" />
                             </StackPanel>
-                        </Border>
-                        <StackPanel Width="60" Height="40" VerticalAlignment="Center"  DockPanel.Dock="Right">
-                            <RadioButton Checked="LengthSetting_Checked" GroupName="EndHourSetting" Content="Durée" Margin="0,0,0,10"></RadioButton>
-                            <RadioButton Checked="EndHourSetting_Checked" GroupName="EndHourSetting"  IsChecked="True" Content="Fin"></RadioButton>
-                        </StackPanel>
-                    </DockPanel>
+                            <StackPanel Width="60" Height="40" VerticalAlignment="Center"  DockPanel.Dock="Right">
+                                <RadioButton Checked="LengthSetting_Checked" GroupName="EndHourSetting" Content="Durée" Margin="0,0,0,10"></RadioButton>
+                                <RadioButton Checked="EndHourSetting_Checked" GroupName="EndHourSetting"  IsChecked="True" Content="Fin"></RadioButton>
+                            </StackPanel>
+                      
+                        </DockPanel>
+                    </Border>
                     <DockPanel Margin="0,15,0,15">
                         <StackPanel Margin="10,0,0,0" DockPanel.Dock="Left"  Orientation="Horizontal">
                             <Label Width="120" Padding="0" Content="Employeur :"></Label>

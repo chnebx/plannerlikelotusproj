@@ -348,19 +348,20 @@ namespace Experiment.Utilities
             }
         }
 
-        public static List<Event> QueryDB(string employerQuery, string formuleQuery, string locationQuery, string titleQuery)
+        public static List<Event> QueryDB(string employerQuery, string formuleQuery, string locationQuery, string titleQuery, string commentQuery)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 var evts = conn.Query<Event>(
                     "Select * From Events WHERE LocationID IN (Select Id From Locations WHERE TownName LIKE ?) AND " +
                     "EmployerID IN (Select Id FROM Employers WHERE FirstName LIKE ? OR LastName LIKE ?) AND " +
-                    "Name Like ? AND FormuleID IN (Select Id FROM Formules WHERE Name LIKE ?)",
+                    "Name Like ? AND FormuleID IN (Select Id FROM Formules WHERE Name LIKE ?) AND Comment LIKE ?",
                     locationQuery + "%",
                     employerQuery + "%",
                     employerQuery + "%",
                     titleQuery + "%",
-                    formuleQuery + "%"
+                    formuleQuery + "%",
+                    commentQuery + "%"
                     );
                 if (evts.Count > 0)
                 {

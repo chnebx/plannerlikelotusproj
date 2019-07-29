@@ -8,7 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="600"
              Width="250"
-             Height="250"
              MouseLeave="UserControl_MouseLeave"
              x:Name="mainControl"
              >
@@ -38,7 +37,7 @@
     <Grid x:Name="SchedulerContainerGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
-            <RowDefinition Height="250"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <TextBlock DataContext="{Binding ElementName=mainControl}" Text="{Binding ScrollInfo}" x:Name="scrollInfoText" Grid.Row="0" HorizontalAlignment="Center"></TextBlock>
         <Border Grid.Row="1">

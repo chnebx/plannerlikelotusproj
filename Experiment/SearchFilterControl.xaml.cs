@@ -103,6 +103,7 @@ namespace Experiment
             string employerQuery = txtBoxFilterEmployer.Text;
             string titleQuery = txtBoxFilterTitle.Text;
             string locationQuery = txtBoxFilterLocation.Text;
+            string commentQuery = txtBoxFilterComment.Text;
             string formulesQuery = "";
 
             if (!FilterMod.ContainsFilter(filterFunc))
@@ -130,7 +131,7 @@ namespace Experiment
             FilterMod.RefreshFilter();
             if (FilterMod.IsFilterActive)
             {
-                eventsResults = DBHandler.QueryDB(employerQuery, formulesQuery, locationQuery, titleQuery);
+                eventsResults = DBHandler.QueryDB(employerQuery, formulesQuery, locationQuery, titleQuery, commentQuery);
             }
             else
             {

@@ -15,7 +15,7 @@ namespace Experiment.Converters
             double actualHeight = System.Convert.ToDouble(value);
             if (!double.IsNaN(actualHeight) && actualHeight > 0)
             {
-                int fontSize = (int)(actualHeight * .5);
+                int fontSize = (int)(actualHeight * .60);
                 return fontSize;
             }
             return 12;

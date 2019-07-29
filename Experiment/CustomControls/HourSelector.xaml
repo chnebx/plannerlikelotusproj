@@ -24,7 +24,7 @@
                                 </Border>
                                 <ContentPresenter>
                                     <ContentPresenter.Content>
-                                        <Image RenderSize="10.0,10.0"  VerticalAlignment="Center" HorizontalAlignment="Center" Source="../Pictures/UpArrow.png" />
+                                        <Image  Margin="0,1,0,1" RenderSize="10.0,10.0"  VerticalAlignment="Center" HorizontalAlignment="Center" Source="../Pictures/UpArrow.png" />
                                     </ContentPresenter.Content>
                                 </ContentPresenter>
                             </Grid>
@@ -48,7 +48,7 @@
                                 </Border>
                                 <ContentPresenter>
                                     <ContentPresenter.Content>
-                                        <Image RenderSize="10.0,10.0"  VerticalAlignment="Center" HorizontalAlignment="Center" Source="../Pictures/DownArrow.png" />
+                                        <Image Margin="0,1,0,1" RenderSize="10.0,10.0"  VerticalAlignment="Center" HorizontalAlignment="Center" Source="../Pictures/DownArrow.png" />
                                     </ContentPresenter.Content>
                                 </ContentPresenter>
                             </Grid>
@@ -60,9 +60,9 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height=".2*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height=".2*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"></ColumnDefinition>
@@ -75,24 +75,30 @@
         <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="HourSecondDigitIncreaseBtn" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" FontSize="8"></Button>
         <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="MinutesFirstDigitIncreaseBtn" Grid.Row="0" Grid.Column="3" FontSize="8"></Button>
         <Button Style="{StaticResource UpArrowBtn}" Click="DigitBtns_Click" Content="^" x:Name="MinutesSecondDigitIncreaseBtn" Grid.Row="0" Grid.Column="4" FontSize="8"></Button>
-        <TextBox Foreground="gray"  FontSize="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid},  Path=ActualHeight, Converter={StaticResource HourControlFontsizeConverter}}" 
-                  x:Name="txtHour"
-                  Text="{Binding HourValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                  Grid.Row="1" 
-                  Grid.Column="0" 
-                  Grid.ColumnSpan="2"
-                  MaxLength="2"
-                  PreviewTextInput="TxtHour_PreviewTextInput"
-                  TextChanged="TxtHour_TextChanged"
-                  />
-        <TextBlock Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" Margin="0,0,0,3" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" Text=":"></TextBlock>
+        <TextBox Foreground="#FFA0A0A0" FontFamily="Arial" FontWeight="Bold" FontSize="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid},  Path=ActualHeight, Converter={StaticResource HourControlFontsizeConverter}}" 
+                x:Name="txtHour"
+                Background="Transparent"
+                BorderThickness="0"
+                Text="{Binding HourValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                Grid.Row="1" 
+                Grid.Column="0" 
+                Grid.ColumnSpan="2"
+                MaxLength="2"
+                PreviewTextInput="TxtHour_PreviewTextInput"
+                TextChanged="TxtHour_TextChanged"
+                />
+        <TextBlock Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" Margin="5,0,5,3" FontSize="35" VerticalAlignment="Center" HorizontalAlignment="Center" Text=":"></TextBlock>
         <TextBox x:Name="txtMinutes" 
                  Text="{Binding MinutesValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                 Foreground="gray"
+                 Foreground="#FFA0A0A0"
+                 Background="Transparent"
+                 BorderThickness="0"
                  MaxLength="2" 
                  Grid.Column="3" 
                  Grid.Row="1" 
                  Grid.ColumnSpan="2"
+                 FontFamily="Arial"
+                 FontWeight="Bold"
                  FontSize="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid},  Path=ActualHeight, Converter={StaticResource HourControlFontsizeConverter}}"
                  PreviewTextInput="TxtHour_PreviewTextInput"
                  TextChanged="TxtMinutes_TextChanged"
