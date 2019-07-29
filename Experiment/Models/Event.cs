@@ -382,10 +382,6 @@ namespace Experiment.Models
                     {
                         hourValue = 24 + hourValue;
                     }
-                    //if (hourValue < 0)
-                    //{
-                    //    hourValue = 0;
-                    //}
                     hourValue = hourValue % 24;
                     DateTime newStart = new DateTime(Start.Year, Start.Month, Start.Day, hourValue, Start.Minute, Start.Second);
                     TimeSpan inc = new TimeSpan(LengthHour, LengthMinutes, 0);
@@ -452,6 +448,10 @@ namespace Experiment.Models
                     if (endHourValue < 0)
                     {
                         endHourValue = 24 + endHourValue;
+                        if (End.Day != Start.Day)
+                        {
+                            End = End.AddDays(-1);
+                        }
                     }
                     endHourValue = endHourValue % 24;
                     int currentEndDay = End.Day;
@@ -462,22 +462,22 @@ namespace Experiment.Models
                         {
                             newEnd = newEnd.AddDays(1);
                         }
-                    } else
-                    {
-                        if (newEnd.Day > Start.Day)
-                        {
-                            newEnd.AddDays(-1);
-                        }
-                    }
+                    } 
+
                     if (newEnd <= parentStack.UpperLimitHour)
                     {
                         End = newEnd;
                         _showEndHour = value;
-                        updateDuration();
-                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
-                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
-                        if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
+
+                    } else if (newEnd > parentStack.UpperLimitHour && newEnd.AddDays(-1) > Start.Add(new TimeSpan(0,20,0)))
+                    {
+                        End = newEnd.AddDays(-1);
+                        _showEndHour = value;
                     }
+                    updateDuration();
+                    if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowEndHour"));
+                    if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthHour"));
+                    if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ShowLengthMinutes"));
                 }
             }
         }

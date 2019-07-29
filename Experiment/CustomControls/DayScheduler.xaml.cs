@@ -304,28 +304,42 @@ namespace Experiment.CustomControls
             column.Children.Add(upper);
         }
 
+        private int getIndex(Event evt, List<Event> evtsList)
+        {
+            for (int i = 0; i < evtsList.Count; i++)
+            {
+                if (evt == evtsList[i])
+                {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
         private void DrawEvents()
         {
             //IEnumerable<Event> eventList = TodayEvents.Where(ev => ev.Start.Date == ev.End.Date && !ev.AllDay).OrderBy(ev => ev.Start);
             
             column.Children.Clear();
-            double columnWidth = EventsGrid.ColumnDefinitions[1].Width.Value;
+            //double columnWidth = EventsGrid.ColumnDefinitions[1].Width.Value;
+            double columnWidth = 320;
             DrawLimits();
             foreach (Event e in DrawnEventsList)
             {
                 //column.Width = columnWidth;
 
                 double oneHourHeight = 50;// column.ActualHeight / 46;
-                /*
-                var concurrentEvents = TodayEvents.Where(e1 => ((e1.Start <= e.Start && e1.End > e.Start) ||
+
+                var concurrentEvents = DrawnEventsList.Where(e1 => ((e1.Start <= e.Start && e1.End > e.Start) ||
                                                                 (e1.Start > e.Start && e1.Start < e.End)) &&
                                                                 e1.End.Date == e1.Start.Date).OrderBy(ev => ev.Start);
-                                                                */
 
-                //double marginTop = oneHourHeight * (e.Start.Hour + (e.Start.Minute / 60.0));
-                //double width = columnWidth / (concurrentEvents.Count());
-                //double marginLeft = width * getIndex(e, concurrentEvents.ToList());
-                double width = 320;
+
+                double marginTop = oneHourHeight * (e.Start.Hour + (e.Start.Minute / 60.0));
+                double width = columnWidth / (concurrentEvents.Count());
+                double marginLeft = width * getIndex(e, concurrentEvents.ToList());
+                Console.WriteLine(marginLeft);
+                //double width = 320;
                 //EventUserControl wEvent = new EventUserControl(e, true);
                 Border wEvent = new Border();
                 Border containedTitle = new Border();
@@ -347,6 +361,7 @@ namespace Experiment.CustomControls
                 wEvent.Child = containedTitle;
                 wEvent.DataContext = e;
                 wEvent.Width = width;
+                Canvas.SetLeft(wEvent, marginLeft);
                 wEvent.CornerRadius = new CornerRadius(5);
                 Binding backgroundBinding = new Binding("ColorFill");
                 backgroundBinding.Source = e;
@@ -403,6 +418,7 @@ namespace Experiment.CustomControls
                 IsDragging = false;
                 IsResizing = false;
                 SelectedEventItem = (Event)(draggedItem).DataContext;
+                DrawEvents();
             }
         }
 
