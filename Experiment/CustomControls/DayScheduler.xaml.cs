@@ -509,9 +509,8 @@ namespace Experiment.CustomControls
                 }
                 infoPopup.IsOpen = true;
                 Point viewerLocationPoint = Mouse.GetPosition(SchedulerContainerGrid);
-                
                 Event actualDraggedEvent = (Event)draggedItem.DataContext;
-                double length = (canvasRelativePosition.Y - itemRelativePosition.Y);
+                double length = SnapToGrid(canvasRelativePosition.Y - itemRelativePosition.Y);
                 infoPopup.VerticalOffset = canvasRelativePosition.Y;
                 int hours = (int)length / 50;
                 int minutes = (int)((length - (hours * 50)) * 60/50);
@@ -567,12 +566,11 @@ namespace Experiment.CustomControls
                         if (compare > actualDraggedEvent.End.AddMinutes(-20))
                         {
                             actualDraggedEvent.Start = actualDraggedEvent.End.AddMinutes(-20);
-                            actualDraggedEvent.updateDuration();
                         } else
                         {
                             actualDraggedEvent.Start = compare;
-                            actualDraggedEvent.updateDuration();
                         }
+                        actualDraggedEvent.updateDuration();
                         debutLabel.Text = actualDraggedEvent.Start.Hour.ToString("00") + " : " + actualDraggedEvent.Start.Minute.ToString("00");
                         finLabel.Text = actualDraggedEvent.End.Hour.ToString("00") + " : " + actualDraggedEvent.End.Minute.ToString("00");
                     } else if (OnEventPosition.Y > registeredSize - 5)
@@ -619,6 +617,24 @@ namespace Experiment.CustomControls
                     //}
                 }              
             }   
+        }
+
+        private double SnapToGrid(double offset)
+        {
+            double topOffset = offset;     
+            double ySnap = topOffset % 50;
+
+            if (ySnap <= 50 / 2.0)
+            {
+                ySnap *= -1;
+            }
+            else
+            {
+                ySnap = 50 - ySnap;
+            }
+
+            ySnap += topOffset;
+            return ySnap;
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
