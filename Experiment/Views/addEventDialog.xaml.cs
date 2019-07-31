@@ -31,7 +31,6 @@ namespace Experiment.Views
         private string _additionalTimeInfo;
         private Point mouseLocation;
         public ObservableCollection<Event> eventsFromStack { get; set; }
-        public EventStack actualEventStack;
         private Event _selectedEvent;
         public Day actualDay { get; set; }
         private Event crossingEvt = null;
@@ -83,6 +82,20 @@ namespace Experiment.Views
             {
                 _additionalTimeInfo = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("AdditionalTimeInfo"));
+            }
+        }
+
+        private EventStack _actualEventStack;
+        public EventStack actualEventStack
+        {
+            get
+            {
+                return _actualEventStack;
+            }
+            set
+            {
+                _actualEventStack = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("actualEventStack"));
             }
         }
 
@@ -153,10 +166,6 @@ namespace Experiment.Views
             }
             Left = mouseLocation.X;
             Top = mouseLocation.Y;
-            
-            Binding CanvasGridBinding = new Binding("eventsFromStack");
-            CanvasGridBinding.Source = this;
-            CanvasGridBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             if (GlobalSettings.IsGraphModeAdvancedByDefault)
             {
                 AdvancedModeBtn.IsChecked = true;
@@ -164,7 +173,7 @@ namespace Experiment.Views
             {
                 StandardModeBtn.IsChecked = true;
             }
-            ActualDayScheduler.SetBinding(DayScheduler.DrawnEventsListProperty, CanvasGridBinding);
+            ActualDayScheduler.evtStack = actualEventStack;
             ActualDayScheduler.CurrentDay = actualDay.Date;
             ActualDayScheduler.LowerLimit = actualEventStack.LowerLimitHour;
             ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;

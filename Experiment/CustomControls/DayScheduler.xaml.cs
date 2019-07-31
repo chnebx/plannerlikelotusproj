@@ -44,6 +44,9 @@ namespace Experiment.CustomControls
         public double UpperLimitMarginTop { get; set; }
         private Line creationLine;
         private Border CreationInfo;
+        private EventStack _evtStack;
+
+
 
         public DayScheduler()
         {
@@ -68,6 +71,18 @@ namespace Experiment.CustomControls
             CreationInfo.Child = contentText;
             CreationInfo.Visibility = Visibility.Collapsed;
             //DrawEvents();
+        }
+
+        public EventStack evtStack
+        {
+            get
+            {
+                return _evtStack;
+            }
+            set
+            {
+                _evtStack = value;
+            }
         }
 
         public DateTime LowerLimit
@@ -191,9 +206,9 @@ namespace Experiment.CustomControls
 
         public void SelectDefault()
         {
-            if (DrawnEventsList.Count > 0)
+            if (evtStack.Events.Count > 0)
             {
-                ScrollToEvent(DrawnEventsList[0]);
+                ScrollToEvent(evtStack.Events[0]);
             }
         }
 
@@ -232,11 +247,14 @@ namespace Experiment.CustomControls
             get { return (ObservableCollection<Event>)GetValue(DrawnEventsListProperty); }
             set { SetValue(DrawnEventsListProperty, value); }
         }
+      
+
+        // Using a DependencyProperty as the backing store for evtStack.  This enables animation, styling, binding, etc...
+        
 
         // Using a DependencyProperty as the backing store for DrawnEventsList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DrawnEventsListProperty =
-            DependencyProperty.Register("DrawnEventsList", typeof(ObservableCollection<Event>), typeof(DayScheduler), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnEventsListChanged))
-            );
+            DependencyProperty.Register("DrawnEventsList", typeof(ObservableCollection<Event>), typeof(DayScheduler), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnEventsListChanged)));
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -345,13 +363,13 @@ namespace Experiment.CustomControls
             double columnWidth = 320;
             DrawLimits();
             
-            foreach (Event e in DrawnEventsList)
+            foreach (Event e in evtStack.Events)
             {
                 //column.Width = columnWidth;
 
                 double oneHourHeight = 50;// column.ActualHeight / 46;
 
-                var concurrentEvents = DrawnEventsList.Where(e1 => ((e1.Start <= e.Start && e1.End > e.Start) ||
+                var concurrentEvents = evtStack.Events.Where(e1 => ((e1.Start <= e.Start && e1.End > e.Start) ||
                                                                 (e1.Start > e.Start && e1.Start < e.End)) &&
                                                                 e1.End.Date == e1.Start.Date).OrderBy(ev => ev.Start);
 
@@ -425,9 +443,9 @@ namespace Experiment.CustomControls
                 Canvas.SetZIndex(draggedItem, 1);
                 Event selected = (Event)(draggedItem.DataContext);
                 //ScrollToEvent(selected);
-                for (int i = 0; i < DrawnEventsList.Count; i++)
+                for (int i = 0; i < evtStack.Events.Count; i++)
                 {
-                    if (selected.Clashes(DrawnEventsList[i]))
+                    if (selected.Clashes(evtStack.Events[i]))
                     {
                         Canvas.SetZIndex(draggedItem, Canvas.GetZIndex(draggedItem) + 1);
                     }
@@ -489,7 +507,7 @@ namespace Experiment.CustomControls
             if (IsDeleting)
             {
                 if ((((Event)((Border)sender).DataContext) != null)){
-                    DrawnEventsList.Remove(((Event)((Border)sender).DataContext));
+                    evtStack.Events.Remove(((Event)((Border)sender).DataContext));
                     Refresh();
                 }
             }
@@ -741,7 +759,12 @@ namespace Experiment.CustomControls
 
         private void CreateModeTgBtn_Checked(object sender, RoutedEventArgs e)
         {
+            if (IsDeleting)
+            {
+                DeleteModeTgBtn.IsChecked = false;
+            }
             IsCreating = true;
+
         }
 
         private void CreateModeTgBtn_Unchecked(object sender, RoutedEventArgs e)
@@ -751,6 +774,10 @@ namespace Experiment.CustomControls
 
         private void DeleteModeTgBtn_Checked(object sender, RoutedEventArgs e)
         {
+            if (IsCreating)
+            {
+                CreateModeTgBtn.IsChecked = false;
+            }
             IsDeleting = true;
         }
 
@@ -779,13 +806,16 @@ namespace Experiment.CustomControls
                     Band = actualBand,
                     CurrentFormule = actualBand.Formules[0],
                     Start = init,
-                    End = init.Add(new TimeSpan(0, 20, 0)),
+                    End = init.Add(new TimeSpan(1, 0, 0)),
                     Name = "Aucun Titre",
                     LocationName = null
                 };
-                DrawnEventsList.Add(newEvent);
+                newEvent.updateDuration();
+                evtStack.AddEvent(newEvent);
                 IsCreating = false;
             }
+            Refresh();
+            CreateModeTgBtn.IsChecked = false;
         }
 
 
