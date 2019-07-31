@@ -24,7 +24,6 @@ namespace Experiment.CustomControls
         public ObservableCollection<Event> GridEvents;
         //public Event SelectedEventItem { get; set; }
         public static string DayTitle { get; set; }
-        private int selectedSnap { get; set; }
         public Border actualSelectedEventBorder { get; set; }
         public Border draggedItem;
         public Border previousItem;
@@ -449,7 +448,6 @@ namespace Experiment.CustomControls
             previousItem = draggedItem;
             Border selection = (Border)sender;
             draggedItem = selection;
-            //SelectedEventItem = (Event)(selection).DataContext;
             registeredSize = draggedItem.Height;
             OnEventPosition = Mouse.GetPosition(draggedItem);
             if (OnEventPosition.Y < 5 || OnEventPosition.Y > draggedItem.Height - 5)
@@ -495,7 +493,6 @@ namespace Experiment.CustomControls
         private void Event_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             Point OnEventPositionHover = Mouse.GetPosition((Border)sender);
-            Console.WriteLine(selectedSnap);
             if (OnEventPositionHover.Y < 5 || OnEventPositionHover.Y > ((Border)sender).Height - 5)
             {
                 ((Border)sender).Cursor = Cursors.SizeNS;
@@ -528,8 +525,7 @@ namespace Experiment.CustomControls
                 {
                     hours = 23;
                     minutes = 59;
-                    length = 1199.5; // 23 * 50(var) + ( ( 59 * 50(var) ) / 60 )
-                    
+                    length = 1199.5; // 23 * 50(var) + ( ( 59 * 50(var) ) / 60 )  
                 }
 
                 if (viewerLocationPoint.Y < 30)
@@ -560,7 +556,7 @@ namespace Experiment.CustomControls
                 } else if (IsResizing)
                 {
                     ((Border)sender).Cursor = Cursors.SizeNS;
-                    double EndLength = (canvasRelativePosition.Y - itemRelativePosition.Y) + registeredSize;
+                    double EndLength = SnapToGrid((canvasRelativePosition.Y - itemRelativePosition.Y) + registeredSize);
                     int endHour = ((int)EndLength / 50);
                     int endMinutes = (int)((EndLength - (endHour * 50)) * 60 / 50);
                     if (OnEventPosition.Y < 5)
