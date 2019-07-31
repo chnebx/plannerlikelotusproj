@@ -1,5 +1,6 @@
 ﻿using Experiment.Converters;
 using Experiment.Models;
+using Experiment.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,6 +42,8 @@ namespace Experiment.CustomControls
         private double GridSize = (double)50/60;
         public double LowerLimitMarginTop { get; set; }
         public double UpperLimitMarginTop { get; set; }
+        private Line creationLine;
+        private Border CreationInfo;
 
         public DayScheduler()
         {
@@ -51,6 +54,19 @@ namespace Experiment.CustomControls
             IsDragging = false;
             IsCreating = false;
             CurrentDay = new DateTime();
+            creationLine = new Line();
+            creationLine.Stroke = System.Windows.Media.Brushes.Red;
+            creationLine.StrokeThickness = 2;
+            creationLine.Visibility = Visibility.Collapsed;
+            CreationInfo = new Border();
+            CreationInfo.Width = 80;
+            CreationInfo.Background = Brushes.Red;
+            CreationInfo.CornerRadius = new CornerRadius(0, 0, 5, 5);
+            TextBlock contentText = new TextBlock();
+            contentText.HorizontalAlignment = HorizontalAlignment.Center;
+            contentText.Foreground = Brushes.White;
+            CreationInfo.Child = contentText;
+            CreationInfo.Visibility = Visibility.Collapsed;
             //DrawEvents();
         }
 
@@ -328,6 +344,7 @@ namespace Experiment.CustomControls
             //double columnWidth = EventsGrid.ColumnDefinitions[1].Width.Value;
             double columnWidth = 320;
             DrawLimits();
+            
             foreach (Event e in DrawnEventsList)
             {
                 //column.Width = columnWidth;
@@ -392,6 +409,8 @@ namespace Experiment.CustomControls
                 wEvent.AddHandler(Mouse.PreviewMouseUpOutsideCapturedElementEvent, new RoutedEventHandler(Event_PreviewMouseUpOutsideCapturedElementEvent));
                 column.Children.Add(wEvent);
             }
+            column.Children.Add(creationLine);
+            column.Children.Add(CreationInfo);
         }
 
         private void CleanDrag()
@@ -469,7 +488,6 @@ namespace Experiment.CustomControls
         {
             if (IsDeleting)
             {
-                Console.WriteLine((((Event)((Border)sender).DataContext).Name));
                 if ((((Event)((Border)sender).DataContext) != null)){
                     DrawnEventsList.Remove(((Event)((Border)sender).DataContext));
                     Refresh();
@@ -657,8 +675,43 @@ namespace Experiment.CustomControls
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
-        { 
+        {
             ScrollInfo = DetermineTimeOfDayScroll(Mouse.GetPosition(column).Y);
+            if (IsCreating)
+            { 
+                Point canvasRelativePosition = Mouse.GetPosition(column);
+                double length = SnapToGrid(canvasRelativePosition.Y);
+                int hours = (int)length / 50;
+                int minutes = (int)((length - (hours * 50)) * 60 / 50);
+                if (hours < LowerLimit.Hour || LowerLimit.Hour == hours && minutes < LowerLimit.Minute) // < 0
+                {
+                    hours = LowerLimit.Hour;
+                    minutes = LowerLimit.Minute;
+                    length = 0;
+                }
+                else if (hours > 23 || hours == 23 && minutes > 59)
+                {
+                    hours = 23;
+                    minutes = 59;
+                    length = 1199.5; // 23 * 50(var) + ( ( 59 * 50(var) ) / 60 )  
+                }
+                creationLine.Visibility = Visibility.Visible;
+                CreationInfo.Visibility = Visibility.Visible;
+                creationLine.X1 = 0;
+                creationLine.X2 = 320;
+                creationLine.Y1 = length;
+                creationLine.Y2 = length;
+                ((TextBlock)CreationInfo.Child).Text = hours.ToString("00") + ":" + minutes.ToString("00");
+                
+                CreationInfo.Margin = new Thickness(120, length, 0, 0);
+            } else
+            {
+               if (creationLine.Visibility == Visibility.Visible || CreationInfo.Visibility == Visibility.Visible)
+                {
+                    creationLine.Visibility = Visibility.Collapsed;
+                    CreationInfo.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         private void ComboBoxSnapType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -705,6 +758,37 @@ namespace Experiment.CustomControls
         {
             IsDeleting = false;
         }
+
+        private void Column_MouseMove(object sender, MouseEventArgs e)
+        {
+
+           
+        }
+
+        private void Sv_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (IsCreating)
+            {
+                Band actualBand = DBHandler.getDefaultBand();
+                double length = creationLine.Y1;
+                int hours = (int)length / 50;
+                int minutes = (int)((length - (hours * 50)) * 60 / 50);
+                DateTime init = new DateTime(LowerLimit.Date.Year, LowerLimit.Date.Month, LowerLimit.Date.Day, hours, minutes, 0);
+                Event newEvent = new Event
+                {
+                    Band = actualBand,
+                    CurrentFormule = actualBand.Formules[0],
+                    Start = init,
+                    End = init.Add(new TimeSpan(0, 20, 0)),
+                    Name = "Aucun Titre",
+                    LocationName = null
+                };
+                DrawnEventsList.Add(newEvent);
+                IsCreating = false;
+            }
+        }
+
+
 
 
         //System.Windows.Point ScrollMousePoint1 = new System.Windows.Point();

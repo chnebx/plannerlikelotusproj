@@ -42,7 +42,7 @@
         </Grid.RowDefinitions>
         <TextBlock DataContext="{Binding ElementName=mainControl}" Text="{Binding ScrollInfo}" x:Name="scrollInfoText" Grid.Row="0" HorizontalAlignment="Center"></TextBlock>
         <Border Grid.Row="1">
-            <ScrollViewer MouseMove="Canvas_MouseMove" x:Name="sv">
+            <ScrollViewer MouseMove="Canvas_MouseMove" MouseLeftButtonUp="Sv_MouseLeftButtonUp" x:Name="sv">
                 <global:SchedulerGrid x:Name="EventsGrid" ShowCustomGridLines="True" GridLineBrush="#FF8EA2E6" GridLineThickness="0.5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="45"></ColumnDefinition>
@@ -171,7 +171,9 @@
                     <TextBlock Style="{StaticResource backgroundText}" Grid.Column="1" Grid.Row="23" Grid.RowSpan="8" Text="MIDI" />
                     <TextBlock Style="{StaticResource backgroundText}" Grid.Column="1" Grid.Row="35" Grid.RowSpan="8" Text="SOIR" />
                     <TextBlock Style="{StaticResource backgroundText}" Grid.Column="1" Grid.Row="47" Grid.RowSpan="8" Text="NUIT" />
+                    
                     <Canvas x:Name="column"
+                            MouseMove="Column_MouseMove"
                             Grid.Column="1" 
                             Grid.Row="0" 
                             Grid.RowSpan="74" 
@@ -194,7 +196,8 @@
                                 </StackPanel>
                             </Border>
                         </Popup>
-                    </Canvas >
+                    </Canvas>
+                    
                 </global:SchedulerGrid>
             </ScrollViewer>
         </Border>
