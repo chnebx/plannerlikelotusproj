@@ -199,8 +199,8 @@
             </ScrollViewer>
         </Border>
         <DockPanel Grid.Row="2" Width="400" Height="30">
-            <Button Width="30" Height="30" Content="+" Margin="0,0,5,0"></Button>
-            <Button Width="30" Height="30" Content="-"></Button>
+            <ToggleButton x:Name="CreateModeTgBtn" Checked="CreateModeTgBtn_Checked" Unchecked="CreateModeTgBtn_Unchecked" Width="30" Height="30" Content="+" Margin="0,0,5,0"></ToggleButton>
+            <ToggleButton x:Name="DeleteModeTgBtn" Checked="DeleteModeTgBtn_Checked" Unchecked="DeleteModeTgBtn_Unchecked" Width="30" Height="30" Content="-"></ToggleButton>
             <CheckBox Unchecked="SnapToGridCheckBox_Unchecked" x:Name="SnapToGridCheckBox"  Width="120" Margin="8,0,2,0" Content="Grille Magnétique" ></CheckBox>
             <ComboBox Margin="0" SelectionChanged="ComboBoxSnapType_SelectionChanged" HorizontalAlignment="Left" Width="100" Height="30">
                 <ComboBox.Style>

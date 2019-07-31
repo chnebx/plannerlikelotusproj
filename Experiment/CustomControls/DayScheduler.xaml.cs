@@ -32,6 +32,8 @@ namespace Experiment.CustomControls
         Point OnEventPosition;
         private bool IsResizing;
         private bool IsDragging;
+        private bool IsCreating;
+        private bool IsDeleting;
         private string _scrollInfo;
         private DateTime _lowerLimit;
         private DateTime _upperLimit;
@@ -47,6 +49,7 @@ namespace Experiment.CustomControls
             DrawnEventsList = new ObservableCollection<Event>();
             DrawnEventsList.CollectionChanged += new NotifyCollectionChangedEventHandler(DrawnEventsList_CollectionChanged);
             IsDragging = false;
+            IsCreating = false;
             CurrentDay = new DateTime();
             //DrawEvents();
         }
@@ -464,17 +467,26 @@ namespace Experiment.CustomControls
 
         private void Event_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            
-            if(draggedItem != null)
+            if (IsDeleting)
+            {
+                Console.WriteLine((((Event)((Border)sender).DataContext).Name));
+                if ((((Event)((Border)sender).DataContext) != null)){
+                    DrawnEventsList.Remove(((Event)((Border)sender).DataContext));
+                    Refresh();
+                }
+            }
+
+            if (draggedItem != null)
             {
                 CleanDrag();
                 return;
-            }
+            } 
 
-            if (!IsDragging)
-            {            
-                return;
-            }
+            
+            //if (!IsDragging)
+            //{            
+            //    return;
+            //} 
 
         }
 
@@ -672,6 +684,26 @@ namespace Experiment.CustomControls
         private void SnapToGridCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             GridSize = (double)50 / 60;
+        }
+
+        private void CreateModeTgBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            IsCreating = true;
+        }
+
+        private void CreateModeTgBtn_Unchecked(object sender, RoutedEventArgs e)
+        {
+            IsCreating = false;
+        }
+
+        private void DeleteModeTgBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            IsDeleting = true;
+        }
+
+        private void DeleteModeTgBtn_Unchecked(object sender, RoutedEventArgs e)
+        {
+            IsDeleting = false;
         }
 
 
