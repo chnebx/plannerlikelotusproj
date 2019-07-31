@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Experiment.CustomControls"
+             xmlns:conv="clr-namespace:Experiment.Converters"
              xmlns:global="clr-namespace:Experiment"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800"
@@ -13,6 +14,8 @@
              >
     <UserControl.Resources>
         <global:SchedulerGrid x:Key="SchedulerGrid" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"></global:SchedulerGrid>
+        <conv:IsEqualOrGreaterConverter x:Key="IsEqualOrGreaterConverter"></conv:IsEqualOrGreaterConverter>
+        <conv:IsEmptyToBooleanConverter x:Key="IsEmptyToBooleanConverter"></conv:IsEmptyToBooleanConverter>
         <Style TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Foreground" Value="#FF999999" />
@@ -202,8 +205,28 @@
             </ScrollViewer>
         </Border>
         <DockPanel Grid.Row="2" Width="400" Height="30">
-            <ToggleButton x:Name="CreateModeTgBtn" Checked="CreateModeTgBtn_Checked" Unchecked="CreateModeTgBtn_Unchecked" Width="30" Height="30" Content="+" Margin="0,0,5,0"></ToggleButton>
-            <ToggleButton x:Name="DeleteModeTgBtn" Checked="DeleteModeTgBtn_Checked" Unchecked="DeleteModeTgBtn_Unchecked" Width="30" Height="30" Content="-"></ToggleButton>
+            <ToggleButton x:Name="CreateModeTgBtn" Checked="CreateModeTgBtn_Checked" Unchecked="CreateModeTgBtn_Unchecked" Width="30" Height="30" Content="+" Margin="0,0,5,0">
+                <ToggleButton.Style>
+                    <Style TargetType="{x:Type ToggleButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding actualEventStack.Events.Count,  Converter={StaticResource IsEqualOrGreaterConverter}, ConverterParameter=3 }" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+            <ToggleButton x:Name="DeleteModeTgBtn" Checked="DeleteModeTgBtn_Checked" Unchecked="DeleteModeTgBtn_Unchecked" Width="30" Height="30" Content="-">
+                <ToggleButton.Style>
+                    <Style TargetType="{x:Type ToggleButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding actualEventStack.Events.Count, Converter={StaticResource IsEmptyToBooleanConverter}}" Value="True" >
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
             <CheckBox Unchecked="SnapToGridCheckBox_Unchecked" x:Name="SnapToGridCheckBox"  Width="120" Margin="8,0,2,0" Content="Grille Magnétique" ></CheckBox>
             <ComboBox Margin="0" SelectionChanged="ComboBoxSnapType_SelectionChanged" HorizontalAlignment="Left" Width="100" Height="30">
                 <ComboBox.Style>

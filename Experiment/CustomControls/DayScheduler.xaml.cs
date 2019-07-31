@@ -362,7 +362,6 @@ namespace Experiment.CustomControls
             //double columnWidth = EventsGrid.ColumnDefinitions[1].Width.Value;
             double columnWidth = 320;
             DrawLimits();
-            
             foreach (Event e in evtStack.Events)
             {
                 //column.Width = columnWidth;

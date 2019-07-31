@@ -126,6 +126,8 @@
     <Compile Include="Converters\DurationToHeightConverter.cs" />
     <Compile Include="Converters\HourControlFontsizeConverter.cs" />
     <Compile Include="Converters\InvertedOpacityToFullVisibilityConverter.cs" />
+    <Compile Include="Converters\IsEmptyToBooleanConverter.cs" />
+    <Compile Include="Converters\IsEqualOrGreaterConverter.cs" />
     <Compile Include="Converters\OpacityToFullVisibilityConverter.cs" />
     <Compile Include="Converters\SearchStringToHeaderColorConverter.cs" />
     <Compile Include="Converters\SearchStringToVisibleConverter.cs" />
