@@ -276,7 +276,7 @@
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="35"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="60"></RowDefinition>
             </Grid.RowDefinitions>
@@ -371,7 +371,7 @@
                     <Style TargetType="{x:Type DockPanel}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=AdvancedModeBtn, Path=IsChecked}" Value="True">
-                                <Setter Property="Visibility" Value="Hidden"></Setter>
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

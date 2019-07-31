@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:Experiment.CustomControls"
              xmlns:global="clr-namespace:Experiment"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="600"
-             Width="250"
+             d:DesignHeight="800" d:DesignWidth="800"
+             Width="450"
              MouseLeave="UserControl_MouseLeave"
              x:Name="mainControl"
              >
@@ -38,6 +38,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
         </Grid.RowDefinitions>
         <TextBlock DataContext="{Binding ElementName=mainControl}" Text="{Binding ScrollInfo}" x:Name="scrollInfoText" Grid.Row="0" HorizontalAlignment="Center"></TextBlock>
         <Border Grid.Row="1">
@@ -193,23 +194,35 @@
                                 </StackPanel>
                             </Border>
                         </Popup>
-                        <!--<Line
-                            X1="0" Y1="{Binding LowerLimitMarginTop}"
-                            X2="300" Y2="{Binding LowerLimitMarginTop}"
-                            Stroke="Red"
-                            StrokeThickness="2"
-                            >
-                        </Line>-->
-                        <!--<Line
-                            X1="0" Y1="{Binding UpperLimitMarginTop}"
-                            X2="{Binding ElementName=column, Path=ActualWidth}" Y2="{Binding UpperLimitMarginTop}"
-                            Stroke="Red"
-                            StrokeThickness="2"
-                            >
-                        </Line>-->
                     </Canvas >
                 </global:SchedulerGrid>
             </ScrollViewer>
         </Border>
+        <DockPanel Grid.Row="2" Width="400" Height="30">
+            <Button Width="30" Height="30" Content="+" Margin="0,0,5,0"></Button>
+            <Button Width="30" Height="30" Content="-"></Button>
+            <CheckBox Unchecked="SnapToGridCheckBox_Unchecked" x:Name="SnapToGridCheckBox"  Width="120" Margin="8,0,2,0" Content="Grille Magnétique" ></CheckBox>
+            <ComboBox Margin="0" SelectionChanged="ComboBoxSnapType_SelectionChanged" HorizontalAlignment="Left" Width="100" Height="30">
+                <ComboBox.Style>
+                    <Style TargetType="{x:Type ComboBox}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=SnapToGridCheckBox, Path=IsChecked}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=SnapToGridCheckBox, Path=IsChecked}" Value="True">
+                                <Setter Property="IsEnabled" Value="True"></Setter>
+                                <Setter Property="SelectedIndex" Value="0"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Style>
+                <ComboBox.Items>
+                    <ComboBoxItem Content="Heures"></ComboBoxItem>
+                    <ComboBoxItem Content="30 Minutes"></ComboBoxItem>
+                    <ComboBoxItem Content="10 Minutes"></ComboBoxItem>
+                    <ComboBoxItem Content="5 Minutes"></ComboBoxItem>
+                </ComboBox.Items>
+            </ComboBox>
+        </DockPanel>
     </Grid>
 </UserControl>

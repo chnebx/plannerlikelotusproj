@@ -24,6 +24,7 @@ namespace Experiment.CustomControls
         public ObservableCollection<Event> GridEvents;
         //public Event SelectedEventItem { get; set; }
         public static string DayTitle { get; set; }
+        private int selectedSnap { get; set; }
         public Border actualSelectedEventBorder { get; set; }
         public Border draggedItem;
         public Border previousItem;
@@ -36,6 +37,7 @@ namespace Experiment.CustomControls
         private DateTime _lowerLimit;
         private DateTime _upperLimit;
         public DateTime CurrentDay;
+        private double GridSize = (double)50/60;
         public double LowerLimitMarginTop { get; set; }
         public double UpperLimitMarginTop { get; set; }
 
@@ -492,7 +494,8 @@ namespace Experiment.CustomControls
 
         private void Event_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            Point OnEventPositionHover = Mouse.GetPosition((Border)sender); 
+            Point OnEventPositionHover = Mouse.GetPosition((Border)sender);
+            Console.WriteLine(selectedSnap);
             if (OnEventPositionHover.Y < 5 || OnEventPositionHover.Y > ((Border)sender).Height - 5)
             {
                 ((Border)sender).Cursor = Cursors.SizeNS;
@@ -622,15 +625,15 @@ namespace Experiment.CustomControls
         private double SnapToGrid(double offset)
         {
             double topOffset = offset;     
-            double ySnap = topOffset % 50;
+            double ySnap = topOffset % GridSize;
 
-            if (ySnap <= 50 / 2.0)
+            if (ySnap <= GridSize / 2.0)
             {
                 ySnap *= -1;
             }
             else
             {
-                ySnap = 50 - ySnap;
+                ySnap = GridSize - ySnap;
             }
 
             ySnap += topOffset;
@@ -648,6 +651,31 @@ namespace Experiment.CustomControls
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         { 
             ScrollInfo = DetermineTimeOfDayScroll(Mouse.GetPosition(column).Y);
+        }
+
+        private void ComboBoxSnapType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int value = ((ComboBox)sender).SelectedIndex;
+            switch (value)
+            {
+                case 0:
+                    GridSize = 50;
+                    break;
+                case 1:
+                    GridSize = 25;
+                    break;
+                case 2:
+                    GridSize = (double)500 / 60;
+                    break;
+                case 3:
+                    GridSize = (double)250 / 60;
+                    break;
+            }
+        }
+
+        private void SnapToGridCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            GridSize = (double)50 / 60;
         }
 
 
