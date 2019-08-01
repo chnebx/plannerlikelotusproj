@@ -45,15 +45,15 @@ namespace Experiment.CustomControls
         private Line creationLine;
         private Border CreationInfo;
         private EventStack _evtStack;
-
+        public ObservableCollection<Border> DrawnEventsList;
 
 
         public DayScheduler()
         {
             InitializeComponent();
             GridEvents = new ObservableCollection<Event>();
-            DrawnEventsList = new ObservableCollection<Event>();
-            DrawnEventsList.CollectionChanged += new NotifyCollectionChangedEventHandler(DrawnEventsList_CollectionChanged);
+            DrawnEventsList = new ObservableCollection<Border>();
+            //DrawnEventsList.CollectionChanged += new NotifyCollectionChangedEventHandler(DrawnEventsList_CollectionChanged);
             IsDragging = false;
             IsCreating = false;
             CurrentDay = new DateTime();
@@ -82,6 +82,11 @@ namespace Experiment.CustomControls
             set
             {
                 _evtStack = value;
+                foreach (Event e in evtStack.Events)
+                {
+                    DrawnEventsList.Add(createBorderEvent(e));
+                }
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("evtStack"));
             }
         }
 
@@ -160,48 +165,7 @@ namespace Experiment.CustomControls
         private static void OnSelectedEventChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             
-            //var instance = d as DayScheduler;
-            //var old = (Event)e.OldValue;
-
-
-            //if (instance.previousItem != null && (Event)(instance.previousItem.DataContext) == old)
-            //{
-            //    instance.previousItem.BorderThickness = new Thickness(0);
-            //}
-            //if (e.NewValue != null && instance.draggedItem != null)
-            //{
-            //    if (instance.SelectedEventItem != (Event)(instance.draggedItem.DataContext))
-            //    {
-            //        List<Border> collection = instance.column.Children.OfType<Border>().ToList<Border>();
-            //        for (int i = 0; i < collection.Count<Border>(); i++)
-            //        {
-            //            if ((Event)collection[i].DataContext == (Event)e.NewValue)
-            //            {
-            //                instance.draggedItem.BorderThickness = new Thickness(0);
-            //                instance.draggedItem = collection[i];
-            //            }
-            //        }
-            //    }
-            //    instance.draggedItem.BorderThickness = new Thickness(2);
-            //}
-            //else if (e.NewValue != null)
-            //{
-
-            //    List<Border> collection = instance.column.Children.OfType<Border>().ToList<Border>();
-            //    for (int i = 0; i < collection.Count<Border>(); i++)
-            //    {
-            //        if ((Event)collection[i].DataContext == (Event)e.NewValue)
-            //        {
-            //            instance.draggedItem = collection[i];
-            //        }
-
-            //    }
-            //    instance.draggedItem.BorderThickness = new Thickness(2);
-            //}
-            //if (instance.draggedItem == null)
-            //{
-            //    return;
-            //}
+         
         }
 
         public void SelectDefault()
@@ -210,6 +174,73 @@ namespace Experiment.CustomControls
             {
                 ScrollToEvent(evtStack.Events[0]);
             }
+        }
+
+        public void AddAndUpdate(Event e)
+        {
+            if (DrawnEventsList.Count < 3)
+            {
+                DrawnEventsList.Add(createBorderEvent(e));
+            }
+            Refresh();
+        }
+
+        public void DeleteAndUpdate(Event e)
+        {
+            for (int i = 0; i < DrawnEventsList.Count; i++)
+            {
+                if (DrawnEventsList[i].DataContext == e)
+                {
+                    DrawnEventsList.RemoveAt(i);
+                }
+            }
+            Refresh();
+        }
+
+        private Border createBorderEvent(Event e)
+        {
+            Border wEvent = new Border();
+            Border containedTitle = new Border();
+            TextBlock Title = new TextBlock();
+            Title.FontSize = 16;
+            Title.FontWeight = FontWeights.Bold;
+            containedTitle.Child = Title;
+            containedTitle.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#88ffffff"));
+            containedTitle.Opacity = 0.5;
+            containedTitle.Height = 20;
+            containedTitle.VerticalAlignment = VerticalAlignment.Top;
+            containedTitle.HorizontalAlignment = HorizontalAlignment.Center;
+            containedTitle.CornerRadius = new CornerRadius(0, 0, 10, 10);
+            containedTitle.IsHitTestVisible = false;
+            Title.VerticalAlignment = VerticalAlignment.Center;
+            Title.HorizontalAlignment = HorizontalAlignment.Center;
+            Title.Padding = new Thickness(20);
+            wEvent.Child = containedTitle;
+            wEvent.DataContext = e;
+            wEvent.Width = 320;
+            wEvent.CornerRadius = new CornerRadius(5);
+            Binding backgroundBinding = new Binding("ColorFill");
+            backgroundBinding.Source = e;
+            backgroundBinding.Converter = new BrushToGradientConverter();
+            Binding marginTopBinding = new Binding("Start");
+            marginTopBinding.Source = e;
+            marginTopBinding.Converter = new DateTimeToMarginTopConverter();
+            Binding heightBinding = new Binding("Duration");
+            heightBinding.Source = e;
+            heightBinding.Converter = new DurationToHeightConverter();
+            Binding titleBinding = new Binding("Name");
+            titleBinding.Source = e;
+            wEvent.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ebbc2e"));
+            Title.SetBinding(TextBlock.TextProperty, titleBinding);
+            wEvent.SetBinding(Border.MarginProperty, marginTopBinding);
+            wEvent.SetBinding(Border.BackgroundProperty, backgroundBinding);
+            wEvent.SetBinding(Border.HeightProperty, heightBinding);
+            wEvent.PreviewMouseLeftButtonDown += Event_PreviewMouseLeftButtonDown;
+            wEvent.PreviewMouseLeftButtonUp += Event_PreviewMouseLeftButtonUp;
+            wEvent.PreviewMouseMove += Event_PreviewMouseMove;
+            wEvent.AddHandler(Mouse.PreviewMouseDownOutsideCapturedElementEvent, new RoutedEventHandler(Event_PreviewMouseDownOutsideCapturedElementEvent));
+            wEvent.AddHandler(Mouse.PreviewMouseUpOutsideCapturedElementEvent, new RoutedEventHandler(Event_PreviewMouseUpOutsideCapturedElementEvent));
+            return wEvent;
         }
 
         public string DetermineTimeOfDayScroll(double scrollValue)
@@ -242,13 +273,6 @@ namespace Experiment.CustomControls
             }
         }
 
-        public ObservableCollection<Event> DrawnEventsList
-        {
-            get { return (ObservableCollection<Event>)GetValue(DrawnEventsListProperty); }
-            set { SetValue(DrawnEventsListProperty, value); }
-        }
-      
-
         // Using a DependencyProperty as the backing store for evtStack.  This enables animation, styling, binding, etc...
         
 
@@ -261,7 +285,7 @@ namespace Experiment.CustomControls
         private static void OnEventsListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var instance = d as DayScheduler;
-            var old = (ObservableCollection<Event>)e.OldValue;
+            var old = (ObservableCollection<Border>)e.OldValue;
             if (old != null)
             {
                 
@@ -271,7 +295,7 @@ namespace Experiment.CustomControls
             if (e.NewValue != null)
             {
                 
-                instance.DrawnEventsList = ((ObservableCollection<Event>)e.NewValue);
+                instance.DrawnEventsList = ((ObservableCollection<Border>)e.NewValue);
                 instance.DrawnEventsList.CollectionChanged += instance.DrawnEventsList_CollectionChanged;
               
             }
@@ -290,7 +314,7 @@ namespace Experiment.CustomControls
 
         public void ScrollToEvent(Event evt)
         {
-            if (DrawnEventsList.Contains(evt))
+            if (evtStack.Events.Contains(evt))
             {
                 double position = evt.Start.Hour * 50;
                 if (position - 50 > 0)
@@ -301,7 +325,7 @@ namespace Experiment.CustomControls
             }
         }
 
-        private void DrawLimits()
+        public void DrawLimits()
         {
             if (LowerLimit != null)
             {
@@ -356,22 +380,20 @@ namespace Experiment.CustomControls
 
         private void DrawEvents()
         {
-            //IEnumerable<Event> eventList = TodayEvents.Where(ev => ev.Start.Date == ev.End.Date && !ev.AllDay).OrderBy(ev => ev.Start);
-            
             column.Children.Clear();
             //double columnWidth = EventsGrid.ColumnDefinitions[1].Width.Value;
             double columnWidth = 320;
             DrawLimits();
-            foreach (Event e in evtStack.Events)
+            //foreach (Event e in evtStack.Events)
+            foreach(Border elem in DrawnEventsList)
             {
                 //column.Width = columnWidth;
 
                 double oneHourHeight = 50;// column.ActualHeight / 46;
-
+                Event e = (Event)elem.DataContext;
                 var concurrentEvents = evtStack.Events.Where(e1 => ((e1.Start <= e.Start && e1.End > e.Start) ||
                                                                 (e1.Start > e.Start && e1.Start < e.End)) &&
                                                                 e1.End.Date == e1.Start.Date).OrderBy(ev => ev.Start);
-
 
                 double marginTop = oneHourHeight * (e.Start.Hour + (e.Start.Minute / 60.0));
                 double width = columnWidth;
@@ -381,50 +403,10 @@ namespace Experiment.CustomControls
                     width = columnWidth / (concurrentEvents.Count());
                     marginLeft = width * getIndex(e, concurrentEvents.ToList());
                 }
-                Border wEvent = new Border();
-                Border containedTitle = new Border();
-                TextBlock Title = new TextBlock();
-                Title.FontSize = 16;
-                Title.FontWeight = FontWeights.Bold;
-                containedTitle.Child = Title;
-                containedTitle.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#88ffffff"));
-                containedTitle.Opacity = 0.5;
-                containedTitle.Height = 20;
-                containedTitle.VerticalAlignment = VerticalAlignment.Top;
-                containedTitle.HorizontalAlignment = HorizontalAlignment.Center;
-                containedTitle.Margin = new Thickness(0, 0, 0, 0);
-                containedTitle.CornerRadius = new CornerRadius(0,0,10,10);
-                containedTitle.IsHitTestVisible = false;
-                Title.VerticalAlignment = VerticalAlignment.Center;
-                Title.HorizontalAlignment = HorizontalAlignment.Center;
-                Title.Padding = new Thickness(20);
-                wEvent.Child = containedTitle;
-                wEvent.DataContext = e;
-                wEvent.Width = width;
-                Canvas.SetLeft(wEvent, marginLeft);
-                wEvent.CornerRadius = new CornerRadius(5);
-                Binding backgroundBinding = new Binding("ColorFill");
-                backgroundBinding.Source = e;
-                backgroundBinding.Converter = new BrushToGradientConverter();
-                Binding marginTopBinding = new Binding("Start");
-                marginTopBinding.Source = e;
-                marginTopBinding.Converter = new DateTimeToMarginTopConverter();
-                Binding heightBinding = new Binding("Duration");
-                heightBinding.Source = e;
-                heightBinding.Converter = new DurationToHeightConverter();
-                Binding titleBinding = new Binding("Name");
-                titleBinding.Source = e;
-                wEvent.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#ebbc2e"));
-                Title.SetBinding(TextBlock.TextProperty, titleBinding);
-                wEvent.SetBinding(Border.MarginProperty, marginTopBinding);
-                wEvent.SetBinding(Border.BackgroundProperty, backgroundBinding);
-                wEvent.SetBinding(Border.HeightProperty, heightBinding);
-                wEvent.PreviewMouseLeftButtonDown += Event_PreviewMouseLeftButtonDown;
-                wEvent.PreviewMouseLeftButtonUp += Event_PreviewMouseLeftButtonUp;
-                wEvent.PreviewMouseMove += Event_PreviewMouseMove;
-                wEvent.AddHandler(Mouse.PreviewMouseDownOutsideCapturedElementEvent, new RoutedEventHandler(Event_PreviewMouseDownOutsideCapturedElementEvent));
-                wEvent.AddHandler(Mouse.PreviewMouseUpOutsideCapturedElementEvent, new RoutedEventHandler(Event_PreviewMouseUpOutsideCapturedElementEvent));
-                column.Children.Add(wEvent);
+
+                Canvas.SetLeft(elem, marginLeft);
+                elem.Width = width;
+                column.Children.Add(elem);
             }
             column.Children.Add(creationLine);
             column.Children.Add(CreationInfo);
@@ -507,6 +489,8 @@ namespace Experiment.CustomControls
             {
                 if ((((Event)((Border)sender).DataContext) != null)){
                     evtStack.Events.Remove(((Event)((Border)sender).DataContext));
+                    evtStack.updateEvts();
+                    DrawnEventsList.Remove(DrawnEventsList.First<Border>((x) => (Border)sender == x));
                     Refresh();
                 }
             }
@@ -811,6 +795,7 @@ namespace Experiment.CustomControls
                 };
                 newEvent.updateDuration();
                 evtStack.AddEvent(newEvent);
+                AddAndUpdate(newEvent);
                 IsCreating = false;
             }
             Refresh();
