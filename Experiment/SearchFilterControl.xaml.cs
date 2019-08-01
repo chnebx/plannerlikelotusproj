@@ -31,6 +31,7 @@ namespace Experiment
         public ObservableCollection<Formule> formules { get; set; }
         public List<Event> eventsResults { get; set; }
         public CollectionViewSource evts = null;
+        private string formulesQuery = "";
 
         public SearchFilterControl()
         {
@@ -104,7 +105,6 @@ namespace Experiment
             string titleQuery = txtBoxFilterTitle.Text;
             string locationQuery = txtBoxFilterLocation.Text;
             string commentQuery = txtBoxFilterComment.Text;
-            string formulesQuery = "";
 
             if (!FilterMod.ContainsFilter(filterFunc))
             {

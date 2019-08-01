@@ -82,12 +82,22 @@ namespace Experiment.CustomControls
             set
             {
                 _evtStack = value;
-                foreach (Event e in evtStack.Events)
-                {
-                    DrawnEventsList.Add(createBorderEvent(e));
-                }
+                refreshGraph();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("evtStack"));
             }
+        }
+
+        public void refreshGraph()
+        {
+            if (DrawnEventsList.Count > 0)
+            {
+                DrawnEventsList.Clear();
+            }
+            foreach (Event e in evtStack.Events)
+            {
+                DrawnEventsList.Add(createBorderEvent(e));
+            }
+            Refresh();
         }
 
         public DateTime LowerLimit
@@ -490,6 +500,8 @@ namespace Experiment.CustomControls
                 if ((((Event)((Border)sender).DataContext) != null)){
                     evtStack.Events.Remove(((Event)((Border)sender).DataContext));
                     evtStack.updateEvts();
+                    DBHandler.DeleteEvent(((Event)((Border)sender).DataContext));
+                   
                     DrawnEventsList.Remove(DrawnEventsList.First<Border>((x) => (Border)sender == x));
                     Refresh();
                 }

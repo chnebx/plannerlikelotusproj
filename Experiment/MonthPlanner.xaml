@@ -323,10 +323,9 @@
                                                     <Border
                                                         BorderThickness="2"
                                                         PreviewMouseDown="Event_PreviewMouseDown"
-                                                 
                                                         Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"
                                                         CornerRadius="6"    
-                                                >
+                                                        >
                                                         <Border.Style>
                                                             <Style TargetType="{x:Type Border}">
                                                                 <Style.Triggers>
@@ -344,7 +343,7 @@
                                                         </Border.Style>
                                                         <Grid>
                                                             <Viewbox MaxWidth="200" Margin="4,0,4,0">
-                                                                <TextBlock FontWeight="Bold" Foreground="#FFFFFFEF" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                <TextBlock FontWeight="Bold" Foreground="#FF494949" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                     <TextBlock.Text>
                                                                         <MultiBinding StringFormat=" {0:HH:mm} - {1:HH:mm}  {2}">
                                                                             <Binding Path="Start"></Binding>
@@ -352,9 +351,9 @@
                                                                             <Binding Path="ShortName"></Binding>
                                                                         </MultiBinding>
                                                                     </TextBlock.Text>
-                                                                    <TextBlock.Effect>
+                                                                    <!--<TextBlock.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="1" Color="#FF000000" />
-                                                                    </TextBlock.Effect>
+                                                                    </TextBlock.Effect>-->
                                                                 </TextBlock>
                                                             </Viewbox>
                                                         </Grid>
@@ -381,7 +380,6 @@
                                                     <Setter Property="Grid.Row" Value="{Binding Path=Row}"></Setter>
                                                     <Setter Property="Grid.RowSpan" Value="{Binding Path=RowSpan}"></Setter>
                                                 </Style>
-
                                             </ItemsControl.ItemContainerStyle>
                                         </ItemsControl>
                                     </Border>

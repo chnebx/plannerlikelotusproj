@@ -293,7 +293,7 @@ namespace Experiment.Views
             toggleCreateMode();
             SelectedEvent = initializeNewEvent();
             actualEventStack.AddEvent(SelectedEvent);
-            ActualDayScheduler.AddAndUpdate(SelectedEvent);
+            ActualDayScheduler.refreshGraph();
         }
 
         private void toggleCreateMode()
@@ -353,9 +353,9 @@ namespace Experiment.Views
 
         private void RedDeleteBtn_Click(object sender, RoutedEventArgs e)
         {
-            ActualDayScheduler.DeleteAndUpdate(SelectedEvent);
             DBHandler.DeleteEvent(SelectedEvent);
             actualEventStack.RemoveEvent(eventsList.SelectedIndex);
+            ActualDayScheduler.refreshGraph();
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
