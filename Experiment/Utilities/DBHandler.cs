@@ -374,6 +374,33 @@ namespace Experiment.Utilities
                 
         }
 
+        public static List<Event> QueryDB2(List<string> queries, List<string> args)
+        {
+            string finalQuery = "Select * from events WHERE ";
+            for(int i = 0; i < queries.Count; i++)
+            {
+                finalQuery += queries[i];
+                if (i < (queries.Count - 1))
+                {
+                    finalQuery += " AND ";
+                }
+            }
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                Console.WriteLine(finalQuery);
+                var evts = conn.Query<Event>(finalQuery, args.ToArray());
+                if (evts.Count > 0)
+                {
+                    return evts;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+        }
+
 
         public static ObservableCollection<EventStack> getEvents(int year)
         {
