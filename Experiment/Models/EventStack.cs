@@ -22,7 +22,7 @@ namespace Experiment.Models
         private bool _isFull;
         private int _columnSpan;
         private int _rowSpan;
-        private int _colSpan;
+        //private int _colSpan;
         private string _dayNumber;
         private Event _crossingEvt = null;
         private bool _isFilterResult;

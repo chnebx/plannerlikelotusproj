@@ -31,7 +31,7 @@ namespace Experiment.Models
         private int bandID;
         private int _row;
         private bool _isSelected;
-        private int _rowSpan;
+        private int _rowSpan = 6;
         private int _columnSpan;
         private int _column;
         private string _name;
