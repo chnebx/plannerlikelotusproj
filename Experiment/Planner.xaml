@@ -392,7 +392,7 @@
                                     </Viewbox>-->
                                 <!--<TextBlock FontSize="12" Margin="5,0,0,0" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light" Background="{x:Null}"></TextBlock>-->
                                 <Canvas>
-                                    <TextBlock FontSize="12" Margin="5,0,0,0" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light" Background="{x:Null}"></TextBlock>
+                                    <TextBlock FontSize="12" Margin="5,0,0,0" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light"></TextBlock>
                                     <Popup AllowsTransparency="True" IsOpen="{Binding EditMode, UpdateSourceTrigger=PropertyChanged}">
                                         <Border Background="White" Height="80" Width="150" CornerRadius="10">
                                             <Grid>
