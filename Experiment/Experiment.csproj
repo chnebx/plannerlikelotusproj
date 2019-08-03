@@ -173,6 +173,9 @@
     <Compile Include="Views\DefineLocationDialogWindow.xaml.cs">
       <DependentUpon>DefineLocationDialogWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DuplicateEventWindow.xaml.cs">
+      <DependentUpon>DuplicateEventWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Calendar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -222,6 +225,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DefineLocationDialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DuplicateEventWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

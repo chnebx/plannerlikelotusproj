@@ -506,7 +506,13 @@ namespace Experiment.Views
             ActualDayScheduler.ScrollToEvent(actualEvt);
         }
 
-       
+        private void DuplicateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DuplicateEventWindow duplicatewindow = new DuplicateEventWindow();
+            duplicatewindow.ShowDialog();
+        }
+
+
 
         /*
         private void ChckBoxTomorrow_Checked(object sender, RoutedEventArgs e)

@@ -628,7 +628,7 @@
                         </StackPanel>
                     </DockPanel>
                     <DockPanel Margin="10,0,0,0"
-                               HorizontalAlignment="Left" Width="285">
+                               HorizontalAlignment="Left" Width="380">
                         <Label Padding="0,5,0,5" DockPanel.Dock="Top"  Content="Commentaires :">
                         </Label>
                         <RichTextBox Margin="0,0,0,0" DockPanel.Dock="Left" Width="280" x:Name="RichTxtComment" Height="70">
@@ -638,6 +638,7 @@
                                 </Paragraph>
                             </FlowDocument>
                         </RichTextBox>
+                        <Button x:Name="DuplicateBtn" DockPanel.Dock="Right" VerticalAlignment="Top" Width="70" Height="40" Content="Dupliquer" Click="DuplicateBtn_Click"></Button>
                     </DockPanel>
                 </StackPanel>
             </Border>
