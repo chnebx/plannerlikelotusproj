@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Experiment.Models;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -25,9 +26,11 @@ namespace Experiment.CustomControls
         List<string> monthNames;
         List<int> years = new List<int>();
         List<int> repeatYearsCount = new List<int>();
+        Event actualEvt = null;
 
-        public DateSelectionModule()
+        public DateSelectionModule(Event evt)
         {
+            actualEvt = evt;
             InitializeComponent();
             initializeLists();
             LoadMonthsCombos();
@@ -71,17 +74,17 @@ namespace Experiment.CustomControls
         public void LoadDaysCombo()
         {
             cmbDays.ItemsSource = Days;
-            cmbDays.SelectedValue = DateTime.Now.Day;
+            cmbDays.SelectedValue = actualEvt.Start.Day;
         }
         public void LoadYearCombo()
         {
             cmbYear.ItemsSource = years;
-            cmbYear.SelectedValue = DateTime.Now.Year;
+            cmbYear.SelectedValue = actualEvt.Start.Year + 1;
         }
         public void LoadMonthsCombos()
         {
             cmdMonths.ItemsSource = monthNames;
-            cmdMonths.SelectedValue = DateTimeFormatInfo.CurrentInfo.GetMonthName(DateTime.Now.Month);
+            cmdMonths.SelectedValue = DateTimeFormatInfo.CurrentInfo.GetMonthName(actualEvt.Start.Month);
         }
 
         private void cmdMonths_SelectionChanged(object sender, SelectionChangedEventArgs e)

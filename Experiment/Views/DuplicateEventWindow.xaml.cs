@@ -1,4 +1,5 @@
 ﻿using Experiment.CustomControls;
+using Experiment.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,23 +22,31 @@ namespace Experiment.Views
     /// </summary>
     public partial class DuplicateEventWindow : Window
     {
+        private Event actualEvt = null;
         public ObservableCollection<DateSelectionModule> modules { get; set; }
-        public DuplicateEventWindow()
+        public DuplicateEventWindow(Event evt)
         {
             InitializeComponent();
             this.DataContext = this;
+            actualEvt = evt;
             modules = new ObservableCollection<DateSelectionModule>();
-            modules.Add(new DateSelectionModule());
+            modules.Add(new DateSelectionModule(actualEvt));
         }
 
         private void BtnAddDuplicateDate_Click(object sender, RoutedEventArgs e)
         {
-            modules.Add(new DateSelectionModule());
+            modules.Add(new DateSelectionModule(actualEvt));
         }
 
         private void BtnRemoveDuplicateDate_Click(object sender, RoutedEventArgs e)
         {
             modules.RemoveAt(duplicateDateModulesList.SelectedIndex);
+        }
+
+        private void btnValider_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = true;
+            this.Close();
         }
     }
 }

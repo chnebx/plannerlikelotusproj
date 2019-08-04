@@ -508,7 +508,7 @@ namespace Experiment.Views
 
         private void DuplicateBtn_Click(object sender, RoutedEventArgs e)
         {
-            DuplicateEventWindow duplicatewindow = new DuplicateEventWindow();
+            DuplicateEventWindow duplicatewindow = new DuplicateEventWindow(SelectedEvent);
             duplicatewindow.ShowDialog();
         }
 
