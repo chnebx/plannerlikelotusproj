@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Experiment.CustomControls.DateSelectionModule"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Experiment.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Height="48" Width="600">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="80" />
+        </Grid.ColumnDefinitions>
+        <ComboBox Grid.Column="0" Height="30" HorizontalAlignment="Stretch" Margin="2,2,2,2" Name="cmbDays"  Width="98" />
+        <ComboBox Grid.Column="1" Height="30" HorizontalAlignment="Stretch" Margin="2,2,2,2" Name="cmdMonths"  Width="98" SelectionChanged="cmdMonths_SelectionChanged" />
+        <ComboBox Grid.Column="2" Height="30" HorizontalAlignment="Stretch" Margin="2,2,8,2" Name="cmbYear"  Width="98" SelectionChanged="cmbYear_SelectionChanged" >
+            <ComboBox.Style>
+                <Style TargetType="{x:Type ComboBox}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=repeatCheckBox, Path=IsChecked}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                            <Setter Property="Foreground" Value="#FFDEDEDE"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ComboBox.Style>
+        </ComboBox>
+        <CheckBox x:Name="repeatCheckBox" Grid.Column="3" Width="180" Height="30" HorizontalAlignment="Stretch" Margin="2" VerticalContentAlignment="Center" Content="Répéter tous les ans pendant"/>
+        <StackPanel Grid.Column="4" Orientation="Horizontal">
+            <ComboBox x:Name="cmbRepeatCount" IsEditable="True" Width="40" Height="30" HorizontalAlignment="Stretch">
+                <ComboBox.Style>
+                    <Style TargetType="{x:Type ComboBox}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=repeatCheckBox, Path=IsChecked}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=repeatCheckBox, Path=IsChecked}" Value="True">
+                                <Setter Property="IsEnabled" Value="True"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Style>
+            </ComboBox>
+            <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="ans"/>
+        </StackPanel>
+       
+    </Grid>
+</UserControl>

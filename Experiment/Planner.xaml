@@ -357,8 +357,8 @@
                 <ItemsControl x:Name="DayShow" ItemsSource="{Binding yearDays}">
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type local1:Day}">
-                            <!-- Much better and faster but has to be implemented
-                            <Canvas>
+                             <!--Much better and faster but has to be implemented-->
+                            <Canvas Margin="0.2">
                                 <Canvas.Style>
                                     <Style TargetType="{x:Type Canvas}">
                                         <Style.Triggers>
@@ -374,9 +374,9 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Canvas.Style>
-                                <TextBlock FontSize="12" Margin="5,0,0,0" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light"></TextBlock>
-                            </Canvas>-->
-                            <Border 
+                                <TextBlock FontSize="12" Canvas.Left="5" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light"></TextBlock>
+                            </Canvas>
+                            <!--<Border 
                                 MouseUp="EventCreateHandler"
                                 MouseLeave="Border_MouseLeave"
                                 MouseEnter="Border_MouseEnter"
@@ -448,7 +448,7 @@
                                         </Border>
                                     </Popup>
                                 </Canvas>
-                            </Border>
+                            </Border>-->
                         </DataTemplate>
                     </ItemsControl.Resources>
                     <ItemsControl.ItemContainerStyle>
