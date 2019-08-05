@@ -48,8 +48,8 @@ namespace Experiment
             get { return (DateTime)GetValue(targetTimerProperty); }
             set { SetValue(targetTimerProperty, value); }
         }
-        public Border previousCell;
-        public Border selectedCell;
+        public Canvas previousCell;
+        public Canvas selectedCell;
         public Predicate<Event> previousFormuleFilter = null;
         public GradientStop gradStop0 = new GradientStop();
         public LinearGradientBrush defaultMonthBrush = new LinearGradientBrush();
@@ -191,25 +191,38 @@ namespace Experiment
             }
         }
 
+        private void ToggleDayEditMode(Canvas actualCell)
+        {
+            var actualDay = (Day)actualCell.DataContext;
+            if (actualDay.EditMode == true)
+            {
+                actualDay.EditMode = false;
+            }
+            else
+            {
+                actualDay.EditMode = true;
+            }
+        }
+
         private void Border_MouseEnter(object sender, MouseEventArgs e)
         {
-            var selectedItem = ((Border)sender).DataContext;
+            var selectedItem = ((Canvas)sender).DataContext;
             var actualDay = (Day)selectedItem;
             if (_previousHoveredRow != -1)
             {
                 monthControls[_previousHoveredRow].Background = CalendarSource.defaultMonthBrush;
             }
-            monthControls[((Day)(((Border)sender).DataContext)).Row].Background = CalendarSource.hoveredMonthBrush;
+            monthControls[((Day)(((Canvas)sender).DataContext)).Row].Background = CalendarSource.hoveredMonthBrush;
             hoveredDate.Text = actualDay.DayFullName;
         }
 
         private void Border_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (_previousHoveredRow == ((Day)(((Border)sender).DataContext)).Row)
+            if (_previousHoveredRow == ((Day)(((Canvas)sender).DataContext)).Row)
             {
                 return;
             }
-            _previousHoveredRow = ((Day)(((Border)sender).DataContext)).Row;
+            _previousHoveredRow = ((Day)(((Canvas)sender).DataContext)).Row;
             hoveredDate.Text = "(Aucune date)";
         }
 
@@ -232,10 +245,10 @@ namespace Experiment
 
         private void EventCreateHandler(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Border)
+            if (sender is Canvas)
             {
 
-                var elt = (Border)sender;
+                var elt = (Canvas)sender;
                 Day selectedDay = (Day)elt.DataContext;
                 DateTime current = selectedDay.Date;
                 Point pointToWindow = Mouse.GetPosition(this);
@@ -285,34 +298,6 @@ namespace Experiment
             
         }
 
-        private void ToggleDayEditMode(Border actualCell)
-        {
-            var actualDay = (Day)actualCell.DataContext;
-            if (actualDay.EditMode == true)
-            {
-                ToggleDayBrush(actualCell, false);
-                actualDay.EditMode = false;
-            } else
-            {
-                ToggleDayBrush(actualCell, true);
-                actualDay.EditMode = true;
-            }
-        }
-
-        private void ToggleDayBrush(Border actualCell, bool active)
-        {
-            if (!active)
-            {
-                actualCell.BorderBrush = Brushes.DarkGray;
-                actualCell.BorderThickness = new Thickness(0.2);
-            }
-            else
-            {
-                actualCell.BorderBrush = Brushes.LightSteelBlue;
-                actualCell.BorderThickness = new Thickness(3);
-            }
-
-        }
 
         private void EventsView_Filter(object sender, FilterEventArgs e)
         {  
@@ -407,9 +392,9 @@ namespace Experiment
         private void Day_Drop(object sender, DragEventArgs e)
         {
             object context;
-            if (sender is Border)
+            if (sender is Canvas)
             {
-                context = ((Border)sender).DataContext;
+                context = ((Canvas)sender).DataContext;
             } else
             {
                 context = ((Grid)sender).DataContext;

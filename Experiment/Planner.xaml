@@ -358,7 +358,14 @@
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type local1:Day}">
                              <!--Much better and faster but has to be implemented-->
-                            <Canvas Margin="0.2">
+                            <Canvas Margin="0.2"
+                                    MouseUp="EventCreateHandler"
+                                    MouseLeave="Border_MouseLeave"
+                                    MouseEnter="Border_MouseEnter"
+                                    AllowDrop="True"
+                                    Drop="Day_Drop"
+                                    x:Name="canvasCell"
+                                    >
                                 <Canvas.Style>
                                     <Style TargetType="{x:Type Canvas}">
                                         <Style.Triggers>
@@ -374,7 +381,62 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Canvas.Style>
-                                <TextBlock FontSize="12" Canvas.Left="5" Text="{Binding DayNum, Mode=OneTime}" Foreground="#FF595959" FontWeight="Light"></TextBlock>
+                                <TextBlock FontSize="12" Canvas.Left="5" Text="{Binding DayNum, Mode=OneTime}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=canvasCell, Path=IsMouseOver}" Value="False">
+                                                    <Setter Property="Foreground" Value="#FF595959" />
+                                                    <Setter Property="FontWeight" Value="Light" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding ElementName=canvasCell, Path=IsMouseOver}" Value="True">
+                                                    <Setter Property="Foreground" Value="#FF76B1EC" />
+                                                    <Setter Property="FontWeight" Value="Bold" />
+                                                </DataTrigger>
+                                                
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <Popup AllowsTransparency="True" IsOpen="{Binding EditMode, UpdateSourceTrigger=PropertyChanged}">
+                                    <Border Background="White" Height="80" Width="150" CornerRadius="10">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="30"></RowDefinition>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                            </Grid.RowDefinitions>
+
+                                            <Border CornerRadius="10,10,0,0" Grid.Row="0">
+                                                <Border.Style>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding DayType}" Value="Enabled">
+                                                                <Setter Property="Background" Value="#FFEEEEEE" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsWE}" Value="True">
+                                                                <Setter Property="Background" Value="#FFE6C775" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                                <Setter Property="Background" Value="#FF9393F0" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding DayTitle}"></TextBlock>
+                                            </Border>
+                                            <Button 
+                                                Style="{StaticResource AddGreenBtn}"
+                                                Width="90"
+                                                Height="30"
+                                                Content="Ajouter"
+                                                FontSize="15"
+                                                Click="AddEvent_Click"
+                                                Grid.Row="1"
+                                                >
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </Popup>
                             </Canvas>
                             <!--<Border 
                                 MouseUp="EventCreateHandler"

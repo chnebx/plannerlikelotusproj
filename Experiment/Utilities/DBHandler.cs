@@ -387,7 +387,6 @@ namespace Experiment.Utilities
             }
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                Console.WriteLine(finalQuery);
                 var evts = conn.Query<Event>(finalQuery, args.ToArray());
                 if (evts.Count > 0)
                 {
