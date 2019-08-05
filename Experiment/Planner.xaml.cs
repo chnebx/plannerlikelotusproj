@@ -193,14 +193,17 @@ namespace Experiment
 
         private void ToggleDayEditMode(Canvas actualCell)
         {
-            var actualDay = (Day)actualCell.DataContext;
-            if (actualDay.EditMode == true)
+            if (actualCell.DataContext is Day)
             {
-                actualDay.EditMode = false;
-            }
-            else
-            {
-                actualDay.EditMode = true;
+                var actualDay = (Day)actualCell.DataContext;
+                if (actualDay.EditMode == true)
+                {
+                    actualDay.EditMode = false;
+                }
+                else
+                {
+                    actualDay.EditMode = true;
+                }
             }
         }
 

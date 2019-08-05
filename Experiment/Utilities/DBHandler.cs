@@ -409,11 +409,13 @@ namespace Experiment.Utilities
                 {
                     int id = -1;
                     DateTime comparedTo = evtStacks[i].EventStackDay;
-                    var existingStack = conn.Table<EventStack>().Where(x => x.EventStackDay == comparedTo).Select(x => x).FirstOrDefault<EventStack>();
+                    var existingStack = conn.GetAllWithChildren<EventStack>().Where(x => x.EventStackDay == comparedTo).Select(x => x).FirstOrDefault<EventStack>();
                     if (existingStack != null)
                     {
                         id = existingStack.Id;
                         existingStack.AddEvent(evtStacks[i].Events[0]);
+                        conn.Table<Event>();
+                        conn.InsertWithChildren(evtStacks[i].Events[0]);
                         conn.UpdateWithChildren(existingStack);
                     } else
                     {
