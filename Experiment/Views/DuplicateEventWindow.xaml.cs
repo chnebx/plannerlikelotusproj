@@ -1,5 +1,6 @@
 ﻿using Experiment.CustomControls;
 using Experiment.Models;
+using Experiment.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,9 +44,53 @@ namespace Experiment.Views
             modules.RemoveAt(duplicateDateModulesList.SelectedIndex);
         }
 
+        private List<EventStack> defineDuplicateEvents()
+        {
+            List<EventStack> evts = new List<EventStack>();
+            int day;
+            int month;
+            int year;
+            if (modules.Count > 0)
+            {
+                for (int i = 0; i < modules.Count; i++)
+                {
+                    int count = 1;
+                    day = (int)modules[i].cmbDays.SelectedValue;
+                    month = (int)modules[i].cmbMonths.SelectedIndex + 1;
+                    year = (int)modules[i].cmbYear.SelectedValue;
+                    if (modules[i].repeatCheckBox.IsChecked == true)
+                    {
+                        count = (int)modules[i].cmbRepeatCount.SelectedValue;
+                    }
+                    for (int j = 0; j < count; j++)
+                    {
+                        EventStack newEvtStack = new EventStack();
+                        Event clonedEvt = actualEvt.Clone();
+                        clonedEvt.Id = 0;
+                        clonedEvt.Start = new DateTime(year, month, day, clonedEvt.Start.Hour, clonedEvt.Start.Minute, 0);
+                        clonedEvt.End = new DateTime(year, month, day, clonedEvt.End.Hour, clonedEvt.End.Minute, 0);
+                        newEvtStack.EventStackDay = new DateTime(year, month, day, 0, 0, 0);
+                        if (actualEvt.Start.Day != actualEvt.End.Day)
+                        {
+                            clonedEvt.End = clonedEvt.End.AddDays(1);
+                        }
+                        newEvtStack.AddEvent(clonedEvt);
+                        evts.Add(newEvtStack);
+                        year++;
+                    }
+                }
+            }
+            return evts;
+        }
+
         private void btnValider_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
+            List<EventStack> results = defineDuplicateEvents();
+            if (results.Count > 0)
+            {
+                DBHandler.AddOrReplaceEventStacks(results);
+            }
             this.Close();
         }
     }

@@ -15,7 +15,7 @@
             <ColumnDefinition Width="80" />
         </Grid.ColumnDefinitions>
         <ComboBox Grid.Column="0" Height="30" HorizontalAlignment="Stretch" Margin="2,2,2,2" Name="cmbDays"  Width="98" />
-        <ComboBox Grid.Column="1" Height="30" HorizontalAlignment="Stretch" Margin="2,2,2,2" Name="cmdMonths"  Width="98" SelectionChanged="cmdMonths_SelectionChanged" />
+        <ComboBox Grid.Column="1" Height="30" HorizontalAlignment="Stretch" Margin="2,2,2,2" Name="cmbMonths"  Width="98" SelectionChanged="cmdMonths_SelectionChanged" />
         <ComboBox Grid.Column="2" Height="30" HorizontalAlignment="Stretch" Margin="2,2,8,2" Name="cmbYear"  Width="98" SelectionChanged="cmbYear_SelectionChanged" >
             <ComboBox.Style>
                 <Style TargetType="{x:Type ComboBox}">

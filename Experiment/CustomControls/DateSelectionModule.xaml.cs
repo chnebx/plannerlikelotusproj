@@ -49,7 +49,7 @@ namespace Experiment.CustomControls
         }
         public void initalizeDaysArray()
         {
-            int month = DateTimeFormatInfo.CurrentInfo.MonthNames.ToList().IndexOf(cmdMonths.SelectedValue.ToString()) + 1;
+            int month = DateTimeFormatInfo.CurrentInfo.MonthNames.ToList().IndexOf(cmbMonths.SelectedValue.ToString()) + 1;
             Days = new int[DateTime.DaysInMonth(Convert.ToInt32(cmbYear.SelectedValue), month)];
             for (int i = 0; i < Days.Count(); i++)
             {
@@ -83,13 +83,13 @@ namespace Experiment.CustomControls
         }
         public void LoadMonthsCombos()
         {
-            cmdMonths.ItemsSource = monthNames;
-            cmdMonths.SelectedValue = DateTimeFormatInfo.CurrentInfo.GetMonthName(actualEvt.Start.Month);
+            cmbMonths.ItemsSource = monthNames;
+            cmbMonths.SelectedValue = DateTimeFormatInfo.CurrentInfo.GetMonthName(actualEvt.Start.Month);
         }
 
         private void cmdMonths_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmdMonths.SelectedValue != null)
+            if (cmbMonths.SelectedValue != null)
             {
                 initalizeDaysArray();
                 LoadDaysCombo();

@@ -401,6 +401,29 @@ namespace Experiment.Utilities
 
         }
 
+        public static void AddOrReplaceEventStacks(List<EventStack> evtStacks)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.BeginTransaction();
+                for (int i = 0; i < evtStacks.Count; i++)
+                {
+                    int id = -1;
+                    DateTime comparedTo = evtStacks[i].EventStackDay;
+                    var existingStack = conn.Table<EventStack>().Where(x => x.EventStackDay == comparedTo).Select(x => x).FirstOrDefault<EventStack>();
+                    if (existingStack != null)
+                    {
+                        id = existingStack.Id;
+                        existingStack.AddEvent(evtStacks[i].Events[0]);
+                        conn.UpdateWithChildren(existingStack);
+                    } else
+                    {
+                        conn.InsertWithChildren(evtStacks[i]);
+                    }
+                }
+                conn.Commit();
+            }
+        }
 
         public static ObservableCollection<EventStack> getEvents(int year)
         {
