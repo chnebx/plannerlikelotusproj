@@ -283,6 +283,7 @@ namespace Experiment
                 }
                 Point pointToWindow = Mouse.GetPosition(this);
                 Point pointToScreen = PointToScreen(pointToWindow);
+                EventsUtilities.UpdateLimits(evtStack);
                 addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
                 if (addDialog.ShowDialog() == true)
                 {
@@ -326,7 +327,7 @@ namespace Experiment
                 {
                     eventsCollection.Add(freshEvent);
                     DBHandler.AddEventStack(freshEvent);
-                }
+                } 
             }
             selectedCell = null;
             //if (freshEvent.Current.Date < eventsInfo.UpcomingEvent.Current.Date && freshEvent.Current.Date > DateTime.Now)

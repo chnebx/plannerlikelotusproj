@@ -172,39 +172,36 @@ namespace Experiment.Utilities
             }
         }
 
-        public static void UpdateNeighborsLimits(EventStack evtStack)
-        {
-            ObservableCollection<EventStack> events = DBHandler.getEvents(evtStack.EventStackDay.Date.Year);
-            EventStack previousEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(1) == evtStack.EventStackDay.Date);
-            DateTime start;
-            DateTime end;
-            if (previousEvtStack != null && evtStack.Events.First().Start.Hour < 12)
-            {
-                if (evtStack.Events.Count != 0)
-                {
-                    start = evtStack.Events.FirstOrDefault<Event>().Start;
-                }
-                else
-                {
-                    //start = new DateTime();
-                    return;
-                }
-                previousEvtStack.UpperLimitHour = start;
-            }
-            EventStack nextEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(-1) == evtStack.EventStackDay.Date);
-            if (nextEvtStack != null && evtStack.IsOver2Days())
-            {
-                if (evtStack.Events.Count != 0)
-                {
-                    end = evtStack.Events.Last<Event>().End;
-                }
-                else
-                {
-                    return;
-                }
-
-                nextEvtStack.LowerLimitHour = end;
-            }
-        }
+        //public static void UpdateNeighborsLimits(EventStack evtStack)
+        //{
+        //    ObservableCollection<EventStack> events = DBHandler.getEvents(evtStack.EventStackDay.Date.Year);
+        //    EventStack previousEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(1) == evtStack.EventStackDay.Date);
+        //    DateTime start;
+        //    DateTime end;
+        //    List<EventStack> results = new List<EventStack>();
+        //    if (previousEvtStack != null && evtStack.Events.First().Start.Hour < 12)
+        //    {
+        //        if (evtStack.Events.Count != 0)
+        //        {
+        //            start = evtStack.Events.FirstOrDefault<Event>().Start;
+        //            previousEvtStack.UpperLimitHour = start;
+        //            results.Add(previousEvtStack);
+        //        }
+        //    }
+        //    EventStack nextEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(-1) == evtStack.EventStackDay.Date);
+        //    if (nextEvtStack != null && evtStack.IsOver2Days())
+        //    {
+        //        if (evtStack.Events.Count != 0)
+        //        {
+        //            end = evtStack.Events.Last<Event>().End;
+        //            nextEvtStack.LowerLimitHour = end;
+        //            results.Add(nextEvtStack);
+        //        }  
+        //    }
+        //    if (results.Count > 0)
+        //    {
+        //        DBHandler.UpdateList(results);
+        //    }
+        //}
     }
 }

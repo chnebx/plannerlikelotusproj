@@ -173,6 +173,7 @@ namespace Experiment
             EventStack evtStack = (EventStack)elt.DataContext;
             Point pointToWindow = Mouse.GetPosition(this);
             Point pointToScreen = PointToScreen(pointToWindow);
+            EventsUtilities.UpdateLimits(evtStack);
             addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
             if (addDialog.ShowDialog() == true)
             {

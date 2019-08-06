@@ -489,6 +489,17 @@ namespace Experiment.Utilities
             }
         }
 
+        public static void UpdateList(List<EventStack> evtsList)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                for (int i = 0; i < evtsList.Count; i++)
+                {
+                    conn.Update(evtsList[i]);
+                }
+            }
+        }
+
         public static void DeleteEventStack(EventStack evt)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
@@ -687,6 +698,23 @@ namespace Experiment.Utilities
                 Band actualBand = conn.GetWithChildren<Band>(1);
                 return actualBand.Formules;
             }
+        }
+
+        public static Dictionary<string, EventStack> GetOverlappingSurroundingEventStacks(EventStack actual)
+        {
+            Dictionary<string, EventStack> results = new Dictionary<string, EventStack>();
+            DateTime previous = actual.EventStackDay.AddDays(-1);
+            DateTime next = actual.EventStackDay.AddDays(1);
+            EventStack previousStack;
+            EventStack nextStack;
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                previousStack = conn.Query<EventStack>("Select FROM EventStacks WHERE EventStackDay = ? AND IsOverlapping = 1", previous).ToList<EventStack>().FirstOrDefault<EventStack>();
+                nextStack = conn.Query<EventStack>("Select FROM EventStacks WHERE EventStackDay = ? AND IsOverlapping = 1", next).ToList<EventStack>().FirstOrDefault<EventStack>();
+            }
+            results.Add("Previous", previousStack);
+            results.Add("Next", nextStack);
+            return results;
         }
 
         public static ObservableCollection<Employer> getEmployers()
