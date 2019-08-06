@@ -567,7 +567,8 @@ namespace Experiment.Utilities
                         nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?",
                            FromStack.Id
                            );
-                    } 
+                    }
+                    nonAsyncConn.Update(ToStack);
                 }
             }
             );
@@ -599,12 +600,13 @@ namespace Experiment.Utilities
                     new DateTime(newOne.EventStackDay.Year, newOne.EventStackDay.Month, newOne.EventStackDay.Day, evt.End.Hour, evt.End.Minute, 0).AddDays(dayInterval).Ticks,
                     evt.Id
                     );
+                    nonAsyncConn.Update(previous);
                 } else
                 {
                     evt.EventStackId = newOneId;
                     nonAsyncConn.InsertWithChildren(evt);
                 }
-                
+                nonAsyncConn.Update(newOne);
                 if (previous.Events.Count == 0)
                 {
                     nonAsyncConn.Execute("DELETE FROM EventStacks WHERE Id = ?", previous.Id);

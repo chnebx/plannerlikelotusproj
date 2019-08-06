@@ -143,7 +143,6 @@ namespace Experiment.Views
                 }
             } else //if parameterProvided isEvent
             {
-                Console.WriteLine("event");
                 actualEventStack = (EventStack)((Event)parameterProvided).parentStack;
                 val = actualEventStack.EventStackDay;
                 actualDay = new Day(val);
@@ -229,47 +228,52 @@ namespace Experiment.Views
 
         private void BtnAjouter_Click(object sender, RoutedEventArgs e)
         {
-            actualEventStack.updateEvts();
-            List<Event> invalids = new List<Event>();
-            for (int i = 0; i < actualEventStack.Events.Count; i++)
+            
+            if (actualEventStack.Events.Count > 0)
             {
-                if (
-                    actualEventStack.Events[i].ActualEmployer == null ||
-                    actualEventStack.Events[i].LocationName == null
-                    )
-                { 
-                    invalids.Add(actualEventStack.Events[i]);
-                    actualEventStack.Events[i].IsValid = false;
-                }
-            }
-            if (invalids.Count > 0)
-            {
-                string results = "";
-                for (int j = 0; j < invalids.Count; j++)
+                actualEventStack.updateEvts();
+                List<Event> invalids = new List<Event>();
+                for (int i = 0; i < actualEventStack.Events.Count; i++)
                 {
-                    results += invalids[j].Name;
-                    if (j < invalids.Count - 1)
+                    if (
+                        actualEventStack.Events[i].ActualEmployer == null ||
+                        actualEventStack.Events[i].LocationName == null
+                        )
                     {
-                        results += ", ";
+                        invalids.Add(actualEventStack.Events[i]);
+                        actualEventStack.Events[i].IsValid = false;
                     }
                 }
-                MessageBoxResult errorMsgResult = MessageBox.Show(String.Format("Les évènements suivants sont incomplets : {0} . Fermer quand même ??", results), "Attention", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                switch (errorMsgResult)
+                if (invalids.Count > 0)
                 {
-                    case MessageBoxResult.Yes:
-                        break;
-                    case MessageBoxResult.No:
-                        return;
+                    string results = "";
+                    for (int j = 0; j < invalids.Count; j++)
+                    {
+                        results += invalids[j].Name;
+                        if (j < invalids.Count - 1)
+                        {
+                            results += ", ";
+                        }
+                    }
+                    MessageBoxResult errorMsgResult = MessageBox.Show(String.Format("Les évènements suivants sont incomplets : {0} . Fermer quand même ??", results), "Attention", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    switch (errorMsgResult)
+                    {
+                        case MessageBoxResult.Yes:
+                            break;
+                        case MessageBoxResult.No:
+                            return;
+                    }
                 }
-            }
-            else
-            {
-                for (int j = 0; j < actualEventStack.Events.Count; j++)
+                else
                 {
-                    actualEventStack.Events[j].IsValid = true;
+                    for (int j = 0; j < actualEventStack.Events.Count; j++)
+                    {
+                        actualEventStack.Events[j].IsValid = true;
+                    }
                 }
+                EventsUtilities.UpdateNeighborsLimits(actualEventStack);
+                actualEventStack.UpdateIsOverlapping();
             }
-            EventsUtilities.UpdateNeighborsLimits(actualEventStack);
             this.DialogResult = true;
             //Close();
 

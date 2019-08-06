@@ -32,7 +32,7 @@ namespace Experiment.Models
         private ObservableCollection<Event> _events;
         private DateTime _EventStackDay;
         private int _spanLength;
-
+        private bool _isOverlapping = false;
         
         public EventStack()
         {
@@ -87,6 +87,19 @@ namespace Experiment.Models
             {
                 _events = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Events"));
+            }
+        }
+
+        public bool IsOverlapping
+        {
+            get
+            {
+                return _isOverlapping;
+            }
+            set
+            {
+                _isOverlapping = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("IsOverlapping"));
             }
         }
 
@@ -333,6 +346,7 @@ namespace Experiment.Models
                 newEvent.updateDates(EventStackDay.Year, EventStackDay.Month, EventStackDay.Day);
                 Events.Add(newEvent);
                 updateEvts();
+                UpdateIsOverlapping();
             }
         }
 
@@ -400,6 +414,10 @@ namespace Experiment.Models
             }
 
             Events.RemoveAt(index);
+            if (Events.Count > 0)
+            {
+                UpdateIsOverlapping();
+            }
             updateEvts();
         }
 
@@ -467,6 +485,16 @@ namespace Experiment.Models
                 return true;
             }
             return false;
+        }
+
+        public void UpdateIsOverlapping()
+        {
+            if (Events.Last().End.Day != Events.Last().Start.Day)
+            {
+                _isOverlapping = true;
+                return;
+            }
+            _isOverlapping = false;
         }
 
         public void sortEvents()
