@@ -176,8 +176,6 @@ namespace Experiment.Views
             ActualDayScheduler.CurrentDay = actualDay.Date;
             ActualDayScheduler.LowerLimit = actualEventStack.LowerLimitHour;
             ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;
-            Console.WriteLine("LowerHour : " + actualEventStack.LowerLimitHour);
-            Console.WriteLine("UpperHour : " + actualEventStack.UpperLimitHour);
             ActualDayScheduler.Refresh();
             ActualDayScheduler.SelectDefault();
             

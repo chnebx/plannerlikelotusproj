@@ -47,6 +47,7 @@ namespace Experiment.Views
         private List<EventStack> defineDuplicateEvents()
         {
             List<EventStack> evts = new List<EventStack>();
+            List<EventStack> evtsCollection = DBHandler.getEventsFrom(DateTime.Now.Year).OrderBy((x) => x.EventStackDay).ToList<EventStack>();
             int day;
             int month;
             int year;
@@ -78,8 +79,11 @@ namespace Experiment.Views
                                 clonedEvt.End = clonedEvt.End.AddDays(1);
                             }
                             newEvtStack.AddEvent(clonedEvt);
-                            evts.Add(newEvtStack);
-                            year++;
+                            if (CheckIfPossibleClashes(newEvtStack, evtsCollection) is null)
+                            {
+                                evts.Add(newEvtStack);
+                                year++;
+                            }
                         }
                     }
                     
@@ -88,10 +92,25 @@ namespace Experiment.Views
             return evts;
         }
 
-        private bool CheckIfPossibleClashes(EventStack actual)
+        private List<EventStack> CheckIfPossibleClashes(EventStack actual, List<EventStack> evenStacksList)
         {
-            return true;
-
+            List<EventStack> clashingEvtStacks = EventsUtilities.FindClashingEvtStacks(actual, evenStacksList);
+            if (clashingEvtStacks != null)
+            {
+                Console.WriteLine("items found : " + clashingEvtStacks.Count);
+                foreach(EventStack evtStack in clashingEvtStacks)
+                {
+                    Console.WriteLine(evtStack.EventStackDay);
+                    foreach(Event evt in evtStack.Events)
+                    {
+                        Console.WriteLine(evt.Name);
+                    }
+                }
+                return clashingEvtStacks;
+            } else
+            {
+                return null;
+            }
         }
 
         private void btnValider_Click(object sender, RoutedEventArgs e)

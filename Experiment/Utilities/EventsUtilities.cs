@@ -172,6 +172,98 @@ namespace Experiment.Utilities
             }
         }
 
+        public static List<EventStack> FindClashingEvtStacks(EventStack item, List<EventStack> orderedList)
+        {
+            int min = 0;
+            int max = orderedList.Count - 1;
+            int previousGuess = 0;
+            if (item.EventStackDay < orderedList[min].EventStackDay 
+                || item.EventStackDay > orderedList[max].EventStackDay
+                || item.Events.Count == 0)
+            {
+                return null;
+            }
+            int guess = (min + max) / 2;
+            int count = 1;
+            while (min <= max)
+            {
+                if (item.EventStackDay < orderedList[guess].EventStackDay)
+                {
+                    max = guess - 1;
+                }
+                if (item.EventStackDay > orderedList[guess].EventStackDay)
+                {
+                    min = guess + 1;
+                }
+                if (item.EventStackDay == orderedList[guess].EventStackDay)
+                {
+                    List<EventStack> results = FindNeighbours(guess, item, orderedList);
+
+                    if (orderedList[guess].IsClashingEvent(item.Events.First())) {
+                        results.Add(item);
+                    }
+                    Console.WriteLine("found after " + count + " attempts");
+                    if (results.Count > 0)
+                    {
+                        return results;
+                    }
+                    return null;
+                }
+                previousGuess = guess;
+                guess = (min + max) / 2;
+                count++;
+            }
+            List<EventStack> lastResults = FindNeighbours(previousGuess, item, orderedList);
+            if (lastResults.Count > 0)
+            {
+                return lastResults;
+            }
+            Console.WriteLine("not found after " + count + " attempts");
+            return null;
+        } 
+
+        private static List<EventStack> FindNeighbours(int lastGuess, EventStack item, List<EventStack> orderedList)
+        {
+            List<EventStack> result = new List<EventStack>();
+            int evtStackBeforeIndex = lastGuess - 1;
+            int evtStackAfterIndex = lastGuess + 1;
+            if (orderedList[lastGuess].EventStackDay.AddDays(-1) == item.EventStackDay || orderedList[lastGuess].EventStackDay.AddDays(1) == item.EventStackDay)
+            {
+                if (orderedList[lastGuess].EventStackDay.AddDays(-1) == item.EventStackDay)
+                {
+                    evtStackAfterIndex = lastGuess;
+                    if (orderedList[evtStackAfterIndex - 1].EventStackDay.AddDays(1) == item.EventStackDay)
+                    {
+                        evtStackBeforeIndex = evtStackAfterIndex - 1;
+                    }
+                } else
+                {
+                    evtStackBeforeIndex = lastGuess;
+                    if (orderedList[evtStackBeforeIndex + 1].EventStackDay.AddDays(-1) == item.EventStackDay)
+                    {
+                        evtStackAfterIndex = evtStackBeforeIndex + 1;
+                    }
+                }
+            } 
+            
+            if (evtStackBeforeIndex >= 0)
+            {
+                if (orderedList[evtStackBeforeIndex].IsOverlapping
+                    && orderedList[evtStackBeforeIndex].Events.Last().End > item.Events.First().Start)
+                {
+ 
+                    result.Add(orderedList[evtStackBeforeIndex]);
+                }
+            }
+            if (evtStackAfterIndex <= orderedList.Count - 1)
+            {
+                if (orderedList[evtStackAfterIndex].Events.First().Start < item.Events.Last().End)
+                {
+                    result.Add(orderedList[evtStackAfterIndex]);
+                }
+            }
+            return result;
+        }
         //public static void UpdateNeighborsLimits(EventStack evtStack)
         //{
         //    ObservableCollection<EventStack> events = DBHandler.getEvents(evtStack.EventStackDay.Date.Year);

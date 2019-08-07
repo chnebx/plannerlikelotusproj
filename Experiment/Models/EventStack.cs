@@ -421,6 +421,21 @@ namespace Experiment.Models
             updateEvts();
         }
 
+        public bool IsClashingEvent(Event evt)
+        {
+            if (evt != null)
+            {
+                for (int i = 0; i < Events.Count; i++)
+                {
+                    if (Events[i].Clashes(evt) == true)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public List<int> CheckClash(Event evt)
         {
             List<int> foundIndices = new List<int>();

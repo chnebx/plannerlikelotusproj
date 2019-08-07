@@ -441,6 +441,20 @@ namespace Experiment.Utilities
             }
         }
 
+        public static ObservableCollection<EventStack> getEventsFrom(int year)
+        {
+            var beginYear = new DateTime(year, 1, 1);
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var events = conn.GetAllWithChildren<EventStack>(x => x.EventStackDay >= beginYear, recursive: true);
+                if (events.Count > 0)
+                {
+                    return new ObservableCollection<EventStack>(events);
+                }
+                return new ObservableCollection<EventStack>();
+            }
+        }
+
         public static ObservableCollection<EventStack> getEvents(int year, int month)
         {
             var beginMonth = new DateTime(year, month, 1);
@@ -486,17 +500,6 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.InsertOrReplaceWithChildren(evt, recursive: true);
-            }
-        }
-
-        public static void UpdateList(List<EventStack> evtsList)
-        {
-            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
-            {
-                for (int i = 0; i < evtsList.Count; i++)
-                {
-                    conn.Update(evtsList[i]);
-                }
             }
         }
 
