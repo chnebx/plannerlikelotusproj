@@ -20,11 +20,19 @@
         <ItemsControl Grid.Row="1" ItemsSource="{Binding ClashElements}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="0,0,0,10" Orientation="Horizontal" Width="200">
-                        <Border Margin="0,0,20,0" Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}" Width="40" Height="40" CornerRadius="10">
-                        </Border>
-                        <TextBlock FontWeight="Bold" FontSize="29" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=Name}"></TextBlock>
-                    </StackPanel>
+                    <Border CornerRadius="5">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFF3F3F3" Offset="0"/>
+                                <GradientStop Color="#FFFDFDFD" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel Margin="0,0,0,10" Orientation="Horizontal" Width="200">
+                            <Border Margin="0,0,20,0" Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}" Width="40" Height="40" CornerRadius="10">
+                            </Border>
+                            <TextBlock FontWeight="Bold" FontSize="29" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=Name}"></TextBlock>
+                        </StackPanel>
+                    </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
@@ -34,7 +42,7 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
         <StackPanel Height="50" HorizontalAlignment="Center" Grid.Row="3" Orientation="Horizontal">
-            <Button IsDefault="True" Click="CloseBtn_Click" Content="Retour" Width="240" ></Button>
+            <Button IsDefault="True" Click="CloseBtn_Click" Content="Retour" Width="140" ></Button>
         </StackPanel>
     </Grid>
 </Window>

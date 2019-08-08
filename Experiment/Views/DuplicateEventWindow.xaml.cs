@@ -48,18 +48,14 @@ namespace Experiment.Views
         {
             List<EventStack> evts = new List<EventStack>();
             List<EventStack> evtsCollection = DBHandler.getEventsFrom(DateTime.Now.Year).OrderBy((x) => x.EventStackDay).ToList<EventStack>();
-            int day;
-            int month;
             int year;
             if (modules.Count > 0)
             {
                 for (int i = 0; i < modules.Count; i++)
                 {
                     int count = 1;
-                    day = (int)modules[i].cmbDays.SelectedValue;
-                    month = (int)modules[i].cmbMonths.SelectedIndex + 1;
-                    year = (int)modules[i].cmbYear.SelectedValue;
-                    DateTime timeCheck = new DateTime(year, month, day, 0, 0, 0);
+                    DateTime timeCheck = modules[i].GetDate();
+                    year = timeCheck.Year;
                     if (timeCheck >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0))
                     {
                         if (modules[i].repeatCheckBox.IsChecked == true)
@@ -71,9 +67,9 @@ namespace Experiment.Views
                             EventStack newEvtStack = new EventStack();
                             Event clonedEvt = actualEvt.Clone();
                             clonedEvt.Id = 0;
-                            clonedEvt.Start = new DateTime(year, month, day, clonedEvt.Start.Hour, clonedEvt.Start.Minute, 0);
-                            clonedEvt.End = new DateTime(year, month, day, clonedEvt.End.Hour, clonedEvt.End.Minute, 0);
-                            newEvtStack.EventStackDay = new DateTime(year, month, day, 0, 0, 0);
+                            clonedEvt.Start = new DateTime(timeCheck.Year, timeCheck.Month, timeCheck.Day, clonedEvt.Start.Hour, clonedEvt.Start.Minute, 0);
+                            clonedEvt.End = new DateTime(timeCheck.Year, timeCheck.Month, timeCheck.Day, clonedEvt.End.Hour, clonedEvt.End.Minute, 0);
+                            newEvtStack.EventStackDay = timeCheck;
                             if (actualEvt.Start.Day != actualEvt.End.Day)
                             {
                                 clonedEvt.End = clonedEvt.End.AddDays(1);

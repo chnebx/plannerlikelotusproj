@@ -401,10 +401,10 @@ namespace Experiment.CustomControls
 
                 double oneHourHeight = 50;// column.ActualHeight / 46;
                 Event e = (Event)elem.DataContext;
+                Console.WriteLine(e.Name);
                 var concurrentEvents = evtStack.Events.Where(e1 => ((e1.Start <= e.Start && e1.End > e.Start) ||
-                                                                (e1.Start > e.Start && e1.Start < e.End)) &&
-                                                                e1.End.Date == e1.Start.Date).OrderBy(ev => ev.Start);
-
+                                                                (e1.Start > e.Start && e1.Start < e.End))).OrderBy(ev => ev.Start);
+              
                 double marginTop = oneHourHeight * (e.Start.Hour + (e.Start.Minute / 60.0));
                 double width = columnWidth;
                 double marginLeft = 0;
