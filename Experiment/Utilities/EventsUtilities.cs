@@ -202,7 +202,7 @@ namespace Experiment.Utilities
                     if (orderedList[guess].IsClashingEvent(item.Events.First())) {
                         results.Add(item);
                     }
-                    Console.WriteLine("found after " + count + " attempts");
+                    //Console.WriteLine("found after " + count + " attempts");
                     if (results.Count > 0)
                     {
                         return results;
@@ -218,7 +218,7 @@ namespace Experiment.Utilities
             {
                 return lastResults;
             }
-            Console.WriteLine("not found after " + count + " attempts");
+            //Console.WriteLine("not found after " + count + " attempts");
             return null;
         } 
 
@@ -227,24 +227,22 @@ namespace Experiment.Utilities
             List<EventStack> result = new List<EventStack>();
             int evtStackBeforeIndex = lastGuess - 1;
             int evtStackAfterIndex = lastGuess + 1;
-            if (orderedList[lastGuess].EventStackDay.AddDays(-1) == item.EventStackDay || orderedList[lastGuess].EventStackDay.AddDays(1) == item.EventStackDay)
+
+            if (orderedList[lastGuess].EventStackDay.AddDays(-1) == item.EventStackDay)
             {
-                if (orderedList[lastGuess].EventStackDay.AddDays(-1) == item.EventStackDay)
+                evtStackAfterIndex = lastGuess;
+                if (orderedList[evtStackAfterIndex - 1].EventStackDay.AddDays(1) == item.EventStackDay)
                 {
-                    evtStackAfterIndex = lastGuess;
-                    if (orderedList[evtStackAfterIndex - 1].EventStackDay.AddDays(1) == item.EventStackDay)
-                    {
-                        evtStackBeforeIndex = evtStackAfterIndex - 1;
-                    }
-                } else
-                {
-                    evtStackBeforeIndex = lastGuess;
-                    if (orderedList[evtStackBeforeIndex + 1].EventStackDay.AddDays(-1) == item.EventStackDay)
-                    {
-                        evtStackAfterIndex = evtStackBeforeIndex + 1;
-                    }
+                    evtStackBeforeIndex = evtStackAfterIndex - 1;
                 }
-            } 
+            } else if (orderedList[lastGuess].EventStackDay.AddDays(1) == item.EventStackDay)
+            {
+                evtStackBeforeIndex = lastGuess;
+                if (orderedList[evtStackBeforeIndex + 1].EventStackDay.AddDays(-1) == item.EventStackDay)
+                {
+                    evtStackAfterIndex = evtStackBeforeIndex + 1;
+                }
+            }
             
             if (evtStackBeforeIndex >= 0)
             {

@@ -1,6 +1,7 @@
 ﻿using Experiment.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -20,17 +21,35 @@ namespace Experiment.CustomControls
     /// <summary>
     /// Logique d'interaction pour DateSelectionModule.xaml
     /// </summary>
-    public partial class DateSelectionModule : UserControl
+    public partial class DateSelectionModule : UserControl, INotifyPropertyChanged
     {
         int[] Days = new int[31];
         List<string> monthNames;
         List<int> years = new List<int>();
         List<int> repeatYearsCount = new List<int>();
+        bool initialized = false;
         Event actualEvt = null;
+        private bool _isValid = false;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsValid
+        {
+            get
+            {
+                return _isValid;
+            }
+            set
+            {
+                _isValid = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("IsValid"));
+            }
+        }
 
         public DateSelectionModule(Event evt)
         {
             actualEvt = evt;
+            this.DataContext = this;
             InitializeComponent();
             initializeLists();
             LoadMonthsCombos();
@@ -39,13 +58,14 @@ namespace Experiment.CustomControls
             LoadDaysCombo();
             InitializeRepeatComboList();
             LoadRepeatYearsCombo();
+            initialized = true;
         }
 
         public void initializeLists()
         {
             monthNames = DateTimeFormatInfo.CurrentInfo.MonthNames.ToList<string>();
             monthNames.RemoveAt(monthNames.Count - 1);
-            years = Enumerable.Range(DateTime.Now.Year - 60, 100).ToList();
+            years = Enumerable.Range(DateTime.Now.Year, 100).ToList();
         }
         public void initalizeDaysArray()
         {
@@ -73,14 +93,61 @@ namespace Experiment.CustomControls
 
         public void LoadDaysCombo()
         {
+            int previousValue = -1;
+            if (initialized)
+            {
+                previousValue = (int)cmbDays.SelectedValue;
+            }
             cmbDays.ItemsSource = Days;
-            cmbDays.SelectedValue = actualEvt.Start.Day;
+            
+            if (initialized && previousValue - 1 < Days.Count())
+            {
+                cmbDays.SelectedValue = previousValue;
+
+            } else 
+            {
+                if (actualEvt.Start.Day <= Days.Count())
+                {
+                    cmbDays.SelectedValue = actualEvt.Start.Day;
+                } else
+                {
+                    cmbDays.SelectedValue = 1;
+                }
+                    
+            }
+            if (initialized)
+            {
+                IsValid = CheckValidity();
+            }
         }
+
+        private bool CheckValidity()
+        {
+            if (initialized)
+            {
+                DateTime timeCheck = GetDate();
+                if (timeCheck < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public DateTime GetDate()
+        {
+            int day = (int)cmbDays.SelectedValue;
+            int month = (int)cmbMonths.SelectedIndex + 1;
+            int year = (int)cmbYear.SelectedValue;
+            return new DateTime(year, month, day, 0, 0, 0);
+        }
+
         public void LoadYearCombo()
         {
             cmbYear.ItemsSource = years;
             cmbYear.SelectedValue = actualEvt.Start.Year + 1;
         }
+
         public void LoadMonthsCombos()
         {
             cmbMonths.ItemsSource = monthNames;
@@ -103,6 +170,11 @@ namespace Experiment.CustomControls
                 initalizeDaysArray();
                 LoadDaysCombo();
             }
+        }
+
+        private void CmbDays_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            IsValid = CheckValidity();
         }
     }
 

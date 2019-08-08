@@ -60,7 +60,7 @@ namespace Experiment.Views
                     month = (int)modules[i].cmbMonths.SelectedIndex + 1;
                     year = (int)modules[i].cmbYear.SelectedValue;
                     DateTime timeCheck = new DateTime(year, month, day, 0, 0, 0);
-                    if (timeCheck > DateTime.Now)
+                    if (timeCheck >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0))
                     {
                         if (modules[i].repeatCheckBox.IsChecked == true)
                         {
@@ -85,8 +85,7 @@ namespace Experiment.Views
                                 year++;
                             }
                         }
-                    }
-                    
+                    }  
                 }
             }
             return evts;
@@ -97,15 +96,15 @@ namespace Experiment.Views
             List<EventStack> clashingEvtStacks = EventsUtilities.FindClashingEvtStacks(actual, evenStacksList);
             if (clashingEvtStacks != null)
             {
-                Console.WriteLine("items found : " + clashingEvtStacks.Count);
-                foreach(EventStack evtStack in clashingEvtStacks)
-                {
-                    Console.WriteLine(evtStack.EventStackDay);
-                    foreach(Event evt in evtStack.Events)
-                    {
-                        Console.WriteLine(evt.Name);
-                    }
-                }
+                //Console.WriteLine("items found : " + clashingEvtStacks.Count);
+                //foreach(EventStack evtStack in clashingEvtStacks)
+                //{
+                //    Console.WriteLine(evtStack.EventStackDay);
+                //    foreach(Event evt in evtStack.Events)
+                //    {
+                //        Console.WriteLine(evt.Name);
+                //    }
+                //}
                 return clashingEvtStacks;
             } else
             {
@@ -113,15 +112,33 @@ namespace Experiment.Views
             }
         }
 
+        private bool CheckDatesValidity()
+        {
+            for (int i = 0; i < modules.Count; i++)
+            {
+                if (!modules[i].IsValid)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void btnValider_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
-            List<EventStack> results = defineDuplicateEvents();
-            if (results.Count > 0)
+            if (CheckDatesValidity())
             {
-                DBHandler.AddOrReplaceEventStacks(results);
+                this.DialogResult = true;
+                List<EventStack> results = defineDuplicateEvents();
+                if (results.Count > 0)
+                {
+                    DBHandler.AddOrReplaceEventStacks(results);
+                }
+                this.Close();
+            } else
+            {
+                MessageBox.Show("Une ou plusieurs dates présentent un problème", "Dates non valides", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            this.Close();
         }
     }
 }
