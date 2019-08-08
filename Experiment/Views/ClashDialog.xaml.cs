@@ -32,7 +32,7 @@ namespace Experiment.Views
             actualStack = evtStack;
             _foundIndices = foundIndices;
             ClashElements = new ObservableCollection<Event>();
-            HeaderTxt.Text = "Il existe des conflits :";
+            HeaderTxt.Text = "Conflits présents :";
             buildClashElements();
         }
 

@@ -438,6 +438,7 @@ namespace Experiment.Models
 
         public List<int> CheckClash(Event evt)
         {
+            HashSet<int> results = new HashSet<int>();
             List<int> foundIndices = new List<int>();
             if (evt != null)
             {
@@ -451,6 +452,7 @@ namespace Experiment.Models
             }
             else
             {
+                
                 bool conflictFound;
                 for (int i = 0; i < Events.Count - 1; i++)
                 {
@@ -459,17 +461,22 @@ namespace Experiment.Models
                     {
                         if (Events[i].Clashes(Events[j]) == true)
                         {
+                            results.Add(j);
                             conflictFound = true;
                         }
                     }
                     if (conflictFound == true)
                     {
-                        foundIndices.Add(i);
+                        results.Add(i);
+                        //foundIndices.Add(i);
                     }
                 }
             }
+            foundIndices = results.ToList<int>();
             return foundIndices;
         }
+
+        
 
         public void updateEvts()
         {
