@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Experiment.Views"
         xmlns:conv ="clr-namespace:Experiment.Converters"
         mc:Ignorable="d"
-        Title="Clash" Height="400" Width="340">
+        Title="Conflits" Height="400" Width="340">
     <Window.Resources>
         <conv:BrushToGradientConverter x:Key="BrushToGradientConverter"></conv:BrushToGradientConverter>
     </Window.Resources>
@@ -27,16 +27,45 @@
                                 <GradientStop Color="#FFFDFDFD" Offset="1"/>
                             </LinearGradientBrush>
                         </Border.Background>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5" Height="62" Width="280">
-                            <Border VerticalAlignment="Center" BorderBrush="#FF999999" BorderThickness="2" Margin="10,0,20,0" Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}" 
-                                    Width="42" Height="42" CornerRadius="4">
+                        <Grid Width="280">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <!--<StackPanel Orientation="Horizontal" Margin="0,0,0,5" Height="62" Width="280">-->
+                            <Border Grid.Column="0" VerticalAlignment="Center" BorderBrush="#FF999999" BorderThickness="2" Margin="10,0,20,0" Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}" 
+                                        Width="42" Height="42" CornerRadius="4">
                             </Border>
-                            <StackPanel Margin="0,0,0,0">
+                            <StackPanel Grid.Column="1">
                                 <TextBlock FontWeight="Bold" FontSize="24" Foreground="#FFB2B2B2" Text="{Binding Path=Name}"></TextBlock>
-                                <Button VerticalAlignment="Bottom" Content="Supprimer" FontSize="10" HorizontalAlignment="Left" Width="60" Height="20" />
+                                <Button x:Name="DeleteEvtBtn" Click="DeleteEvtBtn_Click" VerticalAlignment="Bottom" Content="Supprimer" FontSize="10" HorizontalAlignment="Left" Width="60" Height="20" />
                             </StackPanel>
-                            
-                        </StackPanel>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <StackPanel.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="FontWeight" Value="DemiBold"></Setter>
+                                        <Setter Property="FontSize" Value="15"></Setter>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <TextBlock Foreground="#FFACACAC">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Début : {0:00}:{1:00}">
+                                            <Binding Path="Start.Hour"></Binding>
+                                            <Binding Path="Start.Minute"></Binding>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBlock Foreground="#FFACACAC">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Fin :      {0:00}:{1:00}">
+                                            <Binding Path="End.Hour"></Binding>
+                                            <Binding Path="End.Minute"></Binding>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

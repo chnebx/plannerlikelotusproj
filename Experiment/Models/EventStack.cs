@@ -421,6 +421,8 @@ namespace Experiment.Models
             updateEvts();
         }
 
+        
+
         public bool IsClashingEvent(Event evt)
         {
             if (evt != null)

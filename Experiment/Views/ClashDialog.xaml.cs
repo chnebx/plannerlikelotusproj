@@ -61,8 +61,19 @@ namespace Experiment.Views
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
             Close();
+        }
+
+        private void DeleteEvtBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Event clickedEvent = (Event)(((Button)sender).DataContext);
+            actualStack.RemoveEvent(actualStack.Events.IndexOf(clickedEvent));
+            ClashElements.Remove(clickedEvent);
+            if (ClashElements.Count < 2)
+            {
+                this.DialogResult = true;
+                this.Close();
+            }
         }
     }
 }

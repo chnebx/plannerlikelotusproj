@@ -371,10 +371,9 @@ namespace Experiment.Views
 
                 if (newClashDialog.ShowDialog() == true)
                 {
-                    newClashDialog.Close();
-                    e.Cancel = true;
+                    //ActualDayScheduler.refreshGraph();
                     return;
-                }
+                } 
                 e.Cancel = true;
             }
         }
