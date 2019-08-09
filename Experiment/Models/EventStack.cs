@@ -478,13 +478,10 @@ namespace Experiment.Models
             return foundIndices;
         }
 
-        
-
-        public void updateEvts()
+        public void updateEventsGrid()
         {
             if (Events.Count > 1)
             {
-                sortEvents();
                 int incrementRow = 0;
                 double val = 6 / Events.Count;
                 SpanLength = (int)Math.Floor(val);
@@ -494,12 +491,19 @@ namespace Experiment.Models
                     incrementRow += SpanLength;
                     Events[i].RowSpan = SpanLength;
                 }
-            } else if (Events.Count == 1)
+            }
+            else if (Events.Count == 1)
             {
                 Events[0].Row = 0;
                 Events[0].RowSpan = 6;
                 SpanLength = 6;
             }
+        }
+
+        public void updateEvts()
+        {
+            sortEvents();
+            updateEventsGrid();
         }
 
         public bool IsOver2Days()
@@ -523,26 +527,30 @@ namespace Experiment.Models
 
         public void sortEvents()
         {
-            int i = 0;
-            int j = 0;
-            int flag = 0;
-            Event val;
-            int n = Events.Count;
-            for (i = 1; i < n; i++)
+            if (Events.Count > 1)
             {
-                val = Events[i];
-                flag = 0;
-                for (j = i - 1; j >= 0 && flag != 1;)
+                int i = 0;
+                int j = 0;
+                int flag = 0;
+                Event val;
+                int n = Events.Count;
+                for (i = 1; i < n; i++)
                 {
-                    if (val.Start < Events[j].Start)
+                    val = Events[i];
+                    flag = 0;
+                    for (j = i - 1; j >= 0 && flag != 1;)
                     {
-                        Events[j + 1] = Events[j];
-                        j--;
-                        Events[j + 1] = val;
+                        if (val.Start < Events[j].Start)
+                        {
+                            Events[j + 1] = Events[j];
+                            j--;
+                            Events[j + 1] = val;
+                        }
+                        else flag = 1;
                     }
-                    else flag = 1;
                 }
             }
+            
         }
 
     }

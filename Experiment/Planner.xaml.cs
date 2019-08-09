@@ -155,7 +155,7 @@ namespace Experiment
             eventsCollection = DBHandler.getEvents(currentYear);
             for (int i = 0; i < eventsCollection.Count; i++)
             {
-                eventsCollection[i].updateEvts();
+                eventsCollection[i].updateEventsGrid();
             }
             var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
             FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);

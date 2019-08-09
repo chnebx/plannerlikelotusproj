@@ -114,7 +114,7 @@ namespace Experiment
             eventsCollection = DBHandler.getEvents(date.Year, date.Month);
             for (int i = 0; i < eventsCollection.Count; i++)
             {
-                eventsCollection[i].updateEvts();
+                eventsCollection[i].updateEventsGrid();
             }
             FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
             eventsShow.ItemsSource = eventsCollection;
