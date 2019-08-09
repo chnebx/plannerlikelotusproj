@@ -1,4 +1,5 @@
 ﻿using Experiment.Models;
+using Experiment.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,6 +26,8 @@ namespace Experiment.Views
         private ObservableCollection<Event> _clashElements;
         private EventStack actualStack;
         private List<int> _foundIndices;
+        public List<int> DeletedEventIds = new List<int>();
+        bool OutsideStacks = false;
         public ClashDialog(EventStack evtStack, List<int> foundIndices)
         {
             InitializeComponent();
@@ -34,6 +37,15 @@ namespace Experiment.Views
             ClashElements = new ObservableCollection<Event>();
             HeaderTxt.Text = "Conflits présents :";
             buildClashElements();
+        }
+
+        public ClashDialog(List<Event> evts)
+        {
+            InitializeComponent();
+            DataContext = this;
+            ClashElements = evts != null ? new ObservableCollection<Event>(evts) : new ObservableCollection<Event>();
+            HeaderTxt.Text = "Conflits présents :";
+            OutsideStacks = true;
         }
 
         public ObservableCollection<Event> ClashElements
@@ -67,13 +79,21 @@ namespace Experiment.Views
         private void DeleteEvtBtn_Click(object sender, RoutedEventArgs e)
         {
             Event clickedEvent = (Event)(((Button)sender).DataContext);
-            actualStack.RemoveEvent(actualStack.Events.IndexOf(clickedEvent));
+            clickedEvent.parentStack.RemoveEvent(clickedEvent.parentStack.Events.IndexOf(clickedEvent));
             ClashElements.Remove(clickedEvent);
-            if (ClashElements.Count < 2)
+            int validCount = 1;
+            if (OutsideStacks)
+            {
+                validCount = 0;
+                DeletedEventIds.Add(clickedEvent.Id);
+                DBHandler.DeleteEvent(clickedEvent); 
+            }
+            if (ClashElements.Count == validCount)
             {
                 this.DialogResult = true;
                 this.Close();
             }
+
         }
     }
 }

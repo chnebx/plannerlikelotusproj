@@ -470,7 +470,6 @@ namespace Experiment.Models
                     if (conflictFound == true)
                     {
                         results.Add(i);
-                        //foundIndices.Add(i);
                     }
                 }
             }

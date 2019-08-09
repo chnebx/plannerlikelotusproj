@@ -533,7 +533,14 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.CreateTable<Event>();
-                conn.Delete<Event>(evt.Id);
+                var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
+                conn.Execute(deleteEventQuery, evt.Id);
+                if (evt.parentStack.Events.Count <= 1)
+                {
+                    var deleteEventStackQuery = "DELETE FROM EventStacks WHERE Id = ?";
+                    conn.Execute(deleteEventStackQuery, evt.EventStackId);
+                }
+                //conn.Delete<Event>(evt.Id);
             }
         }
 

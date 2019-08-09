@@ -257,7 +257,7 @@ namespace Experiment
                 Point pointToWindow = Mouse.GetPosition(this);
                 Point pointToScreen = PointToScreen(pointToWindow);
                 
-                if (selectedCell != null)
+                if (selectedCell != null && selectedCell.DataContext is Day)
                 {
                     var previousDay = (Day)selectedCell.DataContext;
                     ToggleDayEditMode(selectedCell);

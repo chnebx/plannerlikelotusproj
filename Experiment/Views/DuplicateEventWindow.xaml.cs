@@ -47,6 +47,9 @@ namespace Experiment.Views
         private List<EventStack> defineDuplicateEvents()
         {
             List<EventStack> evts = new List<EventStack>();
+            List<Event> conflictingEvents = new List<Event>();
+            Dictionary<int, EventStack> ClashingElements = new Dictionary<int, EventStack>();
+            Dictionary<int, DateSelectionModule> ClashingModules = new Dictionary<int, DateSelectionModule>();
             List<EventStack> evtsCollection = DBHandler.getEventsFrom(DateTime.Now.Year).OrderBy((x) => x.EventStackDay).ToList<EventStack>();
             int year;
             if (modules.Count > 0)
@@ -75,21 +78,66 @@ namespace Experiment.Views
                                 clonedEvt.End = clonedEvt.End.AddDays(1);
                             }
                             newEvtStack.AddEvent(clonedEvt);
-                            if (CheckIfPossibleClashes(newEvtStack, evtsCollection) is null)
+                            timeCheck = timeCheck.AddYears(1);
+                            List<EventStack> conflictingStacks = CheckIfPossibleClashes(newEvtStack, evtsCollection);
+                            if (conflictingStacks is null)
                             {
+                                // No conflicting EventStacks
                                 evts.Add(newEvtStack);
-                                year++;
+                                if (count > 1)
+                                {
+                                    modules[i].cmbRepeatCount.SelectedValue = count - 1;
+                                } else
+                                {
+                                    modules.RemoveAt(i);
+                                }
+                            } else
+                            {
+                                for (int k = 0; k < conflictingStacks.Count; k++)
+                                {
+                                    for (int l = 0; l < conflictingStacks[k].Events.Count; l++)
+                                    {
+                                        if (conflictingStacks[k].Events[l].Clashes(newEvtStack.Events.First()))
+                                        {
+                                            conflictingEvents.Add(conflictingStacks[k].Events[l]);
+                                            ClashingElements.Add(conflictingStacks[k].Events[l].Id, newEvtStack);
+                                            ClashingModules.Add(conflictingStacks[k].Events[l].Id, modules[i]);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }  
+                }
+                if (conflictingEvents.Count > 0)
+                {
+                    ClashDialog clashPrompt = new ClashDialog(conflictingEvents);
+                    if (clashPrompt.ShowDialog() == false)
+                    {
+                        for (int i = 0; i < clashPrompt.DeletedEventIds.Count; i++)
+                        {
+                            evts.Add(ClashingElements[clashPrompt.DeletedEventIds[i]]);
+                            DateSelectionModule clashingMod = ClashingModules[clashPrompt.DeletedEventIds[i]];
+                            if ((bool)clashingMod.repeatCheckBox.IsChecked)
+                            {
+                                if ((int)clashingMod.cmbRepeatCount.SelectedValue >= 2)
+                                {
+                                    clashingMod.cmbRepeatCount.SelectedValue = (int)clashingMod.cmbRepeatCount.SelectedValue - 1;
+                                } else
+                                {
+                                    modules.Remove(clashingMod);
+                                }
+                            }
+                        }
+                    } 
                 }
             }
             return evts;
         }
 
-        private List<EventStack> CheckIfPossibleClashes(EventStack actual, List<EventStack> evenStacksList)
+        private List<EventStack> CheckIfPossibleClashes(EventStack actual, List<EventStack> eventStacksList)
         {
-            List<EventStack> clashingEvtStacks = EventsUtilities.FindClashingEvtStacks(actual, evenStacksList);
+            List<EventStack> clashingEvtStacks = EventsUtilities.FindClashingEvtStacks(actual, eventStacksList);
             if (clashingEvtStacks != null)
             {
                 //Console.WriteLine("items found : " + clashingEvtStacks.Count);
@@ -124,13 +172,13 @@ namespace Experiment.Views
         {
             if (CheckDatesValidity())
             {
-                this.DialogResult = true;
+                //this.DialogResult = true;
                 List<EventStack> results = defineDuplicateEvents();
                 if (results.Count > 0)
                 {
                     DBHandler.AddOrReplaceEventStacks(results);
                 }
-                this.Close();
+                //this.Close();
             } else
             {
                 MessageBox.Show("Une ou plusieurs dates présentent un problème", "Dates non valides", MessageBoxButton.OK, MessageBoxImage.Warning);
