@@ -31,12 +31,12 @@ namespace Experiment.Views
             this.DataContext = this;
             actualEvt = evt;
             modules = new ObservableCollection<DateSelectionModule>();
-            modules.Add(new DateSelectionModule(actualEvt));
+            modules.Add(new DateSelectionModule(actualEvt, true));
         }
 
         private void BtnAddDuplicateDate_Click(object sender, RoutedEventArgs e)
         {
-            modules.Add(new DateSelectionModule(actualEvt));
+            modules.Add(new DateSelectionModule(actualEvt, true));
         }
 
         private void BtnRemoveDuplicateDate_Click(object sender, RoutedEventArgs e)
@@ -48,8 +48,8 @@ namespace Experiment.Views
         {
             List<EventStack> evts = new List<EventStack>();
             List<Event> conflictingEvents = new List<Event>();
-            Dictionary<int, EventStack> ClashingElements = new Dictionary<int, EventStack>();
-            Dictionary<int, DateSelectionModule> ClashingModules = new Dictionary<int, DateSelectionModule>();
+            Dictionary<Event, EventStack> ClashingElements = new Dictionary<Event, EventStack>();
+            Dictionary<EventStack, DateSelectionModule> ClashingModules = new Dictionary<EventStack, DateSelectionModule>();
             List<EventStack> evtsCollection = DBHandler.getEventsFrom(DateTime.Now.Year).OrderBy((x) => x.EventStackDay).ToList<EventStack>();
             int year;
             if (modules.Count > 0)
@@ -84,7 +84,7 @@ namespace Experiment.Views
                             {
                                 // No conflicting EventStacks
                                 evts.Add(newEvtStack);
-                                if (count > 1)
+                                if (count >= 2)
                                 {
                                     modules[i].cmbRepeatCount.SelectedValue = count - 1;
                                 } else
@@ -100,8 +100,8 @@ namespace Experiment.Views
                                         if (conflictingStacks[k].Events[l].Clashes(newEvtStack.Events.First()))
                                         {
                                             conflictingEvents.Add(conflictingStacks[k].Events[l]);
-                                            ClashingElements.Add(conflictingStacks[k].Events[l].Id, newEvtStack);
-                                            ClashingModules.Add(conflictingStacks[k].Events[l].Id, modules[i]);
+                                            ClashingElements.Add(conflictingStacks[k].Events[l], newEvtStack);
+                                            ClashingModules.Add(newEvtStack, modules[i]);
                                         }
                                     }
                                 }
@@ -111,25 +111,49 @@ namespace Experiment.Views
                 }
                 if (conflictingEvents.Count > 0)
                 {
+                    List<DateTime> DatesToRedistribute = new List<DateTime>();
                     ClashDialog clashPrompt = new ClashDialog(conflictingEvents);
                     if (clashPrompt.ShowDialog() == false)
                     {
-                        for (int i = 0; i < clashPrompt.DeletedEventIds.Count; i++)
+                        for (int i = 0; i < clashPrompt.DeletedEvents.Count; i++)
                         {
-                            evts.Add(ClashingElements[clashPrompt.DeletedEventIds[i]]);
-                            DateSelectionModule clashingMod = ClashingModules[clashPrompt.DeletedEventIds[i]];
+                            if (ClashingElements.ContainsKey(clashPrompt.DeletedEvents[i]))
+                            {
+                                evts.Add(ClashingElements[clashPrompt.DeletedEvents[i]]);
+                                ClashingElements.Remove(clashPrompt.DeletedEvents[i]);
+                            }
+                        }
+                        foreach (KeyValuePair<EventStack, DateSelectionModule> val in ClashingModules)
+                        {
+                            DateSelectionModule clashingMod = val.Value;
                             if ((bool)clashingMod.repeatCheckBox.IsChecked)
                             {
                                 if ((int)clashingMod.cmbRepeatCount.SelectedValue >= 2)
                                 {
                                     clashingMod.cmbRepeatCount.SelectedValue = (int)clashingMod.cmbRepeatCount.SelectedValue - 1;
-                                } else
-                                {
-                                    modules.Remove(clashingMod);
+                                    if ((int)clashingMod.cmbRepeatCount.SelectedValue == 1)
+                                    {
+                                        clashingMod.repeatCheckBox.IsChecked = false;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                modules.Remove(clashingMod);
+                            }
+                            if (ClashingElements.ContainsValue(val.Key))
+                            {
+                                DatesToRedistribute.Add(val.Key.EventStackDay);
+                            }
                         }
-                    } 
+       
+                    }
+                    foreach(DateTime date in DatesToRedistribute)
+                    {
+                        Console.WriteLine(date);
+                        DateSelectionModule newModule = new DateSelectionModule(date, false);
+                        modules.Add(newModule);
+                    }
                 }
             }
             return evts;

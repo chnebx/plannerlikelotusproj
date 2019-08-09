@@ -30,6 +30,7 @@ namespace Experiment.CustomControls
         bool initialized = false;
         Event actualEvt = null;
         private bool _isValid = false;
+        bool increaseYearBy1 = true;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -46,9 +47,28 @@ namespace Experiment.CustomControls
             }
         }
 
-        public DateSelectionModule(Event evt)
+        public DateSelectionModule(Event evt, bool increaseYear)
         {
             actualEvt = evt;
+            increaseYearBy1 = increaseYear;
+            this.DataContext = this;
+            InitializeComponent();
+            initializeLists();
+            LoadMonthsCombos();
+            LoadYearCombo();
+            initalizeDaysArray();
+            LoadDaysCombo();
+            InitializeRepeatComboList();
+            LoadRepeatYearsCombo();
+            initialized = true;
+        }
+
+        public DateSelectionModule(DateTime evtTime, bool increaseYear)
+        {
+            actualEvt = new Event {
+                Start = new DateTime(evtTime.Year, evtTime.Month, evtTime.Day, 0, 0, 0)
+            };
+            increaseYearBy1 = increaseYear;
             this.DataContext = this;
             InitializeComponent();
             initializeLists();
@@ -145,7 +165,15 @@ namespace Experiment.CustomControls
         public void LoadYearCombo()
         {
             cmbYear.ItemsSource = years;
-            cmbYear.SelectedValue = actualEvt.Start.Year + 1;
+            if (increaseYearBy1)
+            {
+                cmbYear.SelectedValue = actualEvt.Start.Year + 1;
+            }
+            else
+            {
+                cmbYear.SelectedValue = actualEvt.Start.Year;
+            }
+            
         }
 
         public void LoadMonthsCombos()
