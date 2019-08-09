@@ -426,6 +426,14 @@ namespace Experiment.Utilities
             }
         }
 
+        private static void sortEvents(List<EventStack> evts)
+        {
+            foreach(EventStack evtStack in evts)
+            {
+                evtStack.sortEvents();
+            }
+        }
+
         public static ObservableCollection<EventStack> getEvents(int year)
         {
             var beginYear = new DateTime(year, 1, 1);
@@ -435,6 +443,7 @@ namespace Experiment.Utilities
                 var events = conn.GetAllWithChildren<EventStack>(x => x.EventStackDay >= beginYear && x.EventStackDay < endYear, recursive:true);
                 if (events.Count > 0)
                 {
+                    sortEvents(events);
                     return new ObservableCollection<EventStack>(events);
                 }
                 return new ObservableCollection<EventStack>();
@@ -449,6 +458,7 @@ namespace Experiment.Utilities
                 var events = conn.GetAllWithChildren<EventStack>(x => x.EventStackDay >= beginYear, recursive: true);
                 if (events.Count > 0)
                 {
+                    sortEvents(events);
                     return new ObservableCollection<EventStack>(events);
                 }
                 return new ObservableCollection<EventStack>();
@@ -464,6 +474,7 @@ namespace Experiment.Utilities
                 var events = conn.GetAllWithChildren<EventStack>((x) => x.EventStackDay >= beginMonth && x.EventStackDay < endMonth, recursive: true);
                 if (events.Count > 0)
                 {
+                    sortEvents(events);
                     return new ObservableCollection<EventStack>(events);
                 }
                 return new ObservableCollection<EventStack>();
@@ -476,6 +487,7 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 var item = conn.GetWithChildren<EventStack>(id);
+                item.sortEvents();
                 return item;
             }
 

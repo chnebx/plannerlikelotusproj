@@ -161,15 +161,23 @@ namespace Experiment.Utilities
         {
             ObservableCollection<EventStack> events = DBHandler.getEvents(evtStack.EventStackDay.Date.Year);
             EventStack previousEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(1) == evtStack.EventStackDay.Date);
-            if (previousEvtStack != null && previousEvtStack.IsOver2Days())
+            if (previousEvtStack != null && previousEvtStack.IsOverlapping)
             {
+                Console.WriteLine(previousEvtStack.Events.Last().Name);
                 evtStack.LowerLimitHour = previousEvtStack.Events.Last().End;
+            } else
+            {
+                evtStack.LowerLimitHour = new DateTime(evtStack.EventStackDay.Year, evtStack.EventStackDay.Month, evtStack.EventStackDay.Day, 0, 0, 0);
             }
             EventStack nextEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(-1) == evtStack.EventStackDay.Date);
             if (nextEvtStack != null && nextEvtStack.Events.First().Start.Hour < 12)
             {
                 evtStack.UpperLimitHour = nextEvtStack.Events.First().Start;
+            } else
+            {
+                evtStack.UpperLimitHour = new DateTime(evtStack.EventStackDay.Year, evtStack.EventStackDay.Month, evtStack.EventStackDay.Day, 12, 0, 0).AddDays(1);
             }
+
         }
 
         public static List<EventStack> FindClashingEvtStacks(EventStack item, List<EventStack> orderedList)
