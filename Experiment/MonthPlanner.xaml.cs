@@ -169,6 +169,9 @@ namespace Experiment
 
         private void Event_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            _isDraggingEvent = false;
+            _isDraggingEventStack = false;
+            draggedEvent = null;
             var elt = (Border)sender;
             EventStack evtStack = (EventStack)elt.DataContext;
             Point pointToWindow = Mouse.GetPosition(this);
@@ -286,7 +289,7 @@ namespace Experiment
         {
             Point mousePos = e.GetPosition(null);
             Vector diff = StartPoint - mousePos;
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed && (_isDraggingEvent || _isDraggingEventStack))
             {
                 if (
                 Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||

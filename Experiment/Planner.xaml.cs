@@ -248,9 +248,10 @@ namespace Experiment
 
         private void EventCreateHandler(object sender, MouseButtonEventArgs e)
         {
+            _isDraggingItem = false;
+            fromEventStack = null;
             if (sender is Canvas)
             {
-
                 var elt = (Canvas)sender;
                 Day selectedDay = (Day)elt.DataContext;
                 DateTime current = selectedDay.Date;
