@@ -56,7 +56,7 @@ namespace Experiment.Views
             {
                 for (int i = 0; i < modules.Count; i++)
                 {
-                    int count = 1;
+                    int count = 0;
                     DateTime timeCheck = modules[i].GetDate();
                     year = timeCheck.Year;
                     if (timeCheck >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0))
@@ -65,7 +65,7 @@ namespace Experiment.Views
                         {
                             count = (int)modules[i].cmbRepeatCount.SelectedValue;
                         }
-                        for (int j = 0; j < count; j++)
+                        for (int j = 0; j <= count; j++)
                         {
                             EventStack newEvtStack = new EventStack();
                             Event clonedEvt = actualEvt.Clone();
@@ -84,7 +84,7 @@ namespace Experiment.Views
                             {
                                 // No conflicting EventStacks
                                 evts.Add(newEvtStack);
-                                if (count >= 2)
+                                if (count >= 1)
                                 {
                                     modules[i].cmbRepeatCount.SelectedValue = count - 1;
                                 } else
@@ -111,6 +111,7 @@ namespace Experiment.Views
                 }
                 if (conflictingEvents.Count > 0)
                 {
+                    modules.Clear();
                     List<DateTime> DatesToRedistribute = new List<DateTime>();
                     ClashDialog clashPrompt = new ClashDialog(conflictingEvents);
                     if (clashPrompt.ShowDialog() == false)
@@ -150,7 +151,6 @@ namespace Experiment.Views
                     }
                     foreach(DateTime date in DatesToRedistribute)
                     {
-                        Console.WriteLine(date);
                         DateSelectionModule newModule = new DateSelectionModule(date, false);
                         modules.Add(newModule);
                     }
