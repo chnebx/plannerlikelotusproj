@@ -374,7 +374,6 @@ namespace Experiment.CustomControls
             upper.StrokeThickness = 2;
             column.Children.Add(lower);
             column.Children.Add(upper);
-            Console.WriteLine("in actualDayScheduler : " + UpperLimit.Day);
         }
 
         private int getIndex(Event evt, List<Event> evtsList)

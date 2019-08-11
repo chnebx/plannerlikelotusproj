@@ -60,7 +60,6 @@ namespace Experiment.Views
                     int count = 0;
                     DateTime timeCheck = modules[i].GetDate();
                     year = timeCheck.Year;
-                    Console.WriteLine(modules[i].GetDate());
                     if (timeCheck >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0))
                     {
                         

@@ -163,7 +163,6 @@ namespace Experiment.Utilities
             EventStack previousEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(1) == evtStack.EventStackDay.Date);
             if (previousEvtStack != null && previousEvtStack.IsOverlapping)
             {
-                Console.WriteLine(previousEvtStack.Events.Last().Name);
                 evtStack.LowerLimitHour = previousEvtStack.Events.Last().End;
             } else
             {
