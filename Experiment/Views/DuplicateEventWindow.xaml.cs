@@ -52,6 +52,7 @@ namespace Experiment.Views
             Dictionary<EventStack, DateSelectionModule> ClashingModules = new Dictionary<EventStack, DateSelectionModule>();
             List<EventStack> evtsCollection = DBHandler.getEventsFrom(DateTime.Now.Year).OrderBy((x) => x.EventStackDay).ToList<EventStack>();
             int year;
+            
             if (modules.Count > 0)
             {
                 for (int i = 0; i < modules.Count; i++)
@@ -59,14 +60,17 @@ namespace Experiment.Views
                     int count = 0;
                     DateTime timeCheck = modules[i].GetDate();
                     year = timeCheck.Year;
+                    Console.WriteLine(modules[i].GetDate());
                     if (timeCheck >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0))
                     {
+                        
                         if (modules[i].repeatCheckBox.IsChecked == true)
                         {
                             count = (int)modules[i].cmbRepeatCount.SelectedValue;
                         }
                         for (int j = 0; j <= count; j++)
                         {
+                            
                             EventStack newEvtStack = new EventStack();
                             Event clonedEvt = actualEvt.Clone();
                             clonedEvt.Id = 0;
@@ -83,14 +87,13 @@ namespace Experiment.Views
                             if (conflictingStacks is null)
                             {
                                 // No conflicting EventStacks
+                                
                                 evts.Add(newEvtStack);
-                                if (count >= 1)
+                                if (count >= 1 && modules[i].repeatCheckBox.IsChecked == true)
                                 {
                                     modules[i].cmbRepeatCount.SelectedValue = count - 1;
-                                } else
-                                {
-                                    modules.RemoveAt(i);
                                 }
+
                             } else
                             {
                                 for (int k = 0; k < conflictingStacks.Count; k++)
@@ -109,9 +112,10 @@ namespace Experiment.Views
                         }
                     }  
                 }
+                modules.Clear();
                 if (conflictingEvents.Count > 0)
                 {
-                    modules.Clear();
+                    
                     List<DateTime> DatesToRedistribute = new List<DateTime>();
                     ClashDialog clashPrompt = new ClashDialog(conflictingEvents);
                     if (clashPrompt.ShowDialog() == false)
@@ -158,6 +162,7 @@ namespace Experiment.Views
                     }
                 }
             }
+            
             return evts;
         }
 
