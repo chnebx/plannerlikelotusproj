@@ -159,7 +159,7 @@ namespace Experiment.Utilities
 
         public static void UpdateLimits(EventStack evtStack)
         {
-            ObservableCollection<EventStack> events = DBHandler.getEvents(evtStack.EventStackDay.Date.Year);
+            ObservableCollection<EventStack> events = DBHandler.getEventsFrom(evtStack.EventStackDay.Date.AddYears(-1).Year);
             EventStack previousEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(1) == evtStack.EventStackDay.Date);
             if (previousEvtStack != null && previousEvtStack.IsOverlapping)
             {
