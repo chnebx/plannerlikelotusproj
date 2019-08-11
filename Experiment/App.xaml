@@ -5,6 +5,12 @@
              xmlns:conv="clr-namespace:Experiment.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <conv:BrushToBrighterBrushConverter x:Key="BrushToBrighterBrushConverter" />
+        <!--<conv:BrushToBrighterBrushConverter x:Key="BrushToBrighterBrushConverter" />-->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Common/CalendarStyles.xaml">
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

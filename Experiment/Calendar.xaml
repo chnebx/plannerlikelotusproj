@@ -9,6 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <conv:BooleanToVisibleConverter x:Key="BooleanToVisibleConverter"></conv:BooleanToVisibleConverter>
+        
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
