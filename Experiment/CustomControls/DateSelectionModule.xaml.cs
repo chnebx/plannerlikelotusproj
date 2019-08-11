@@ -148,9 +148,11 @@ namespace Experiment.CustomControls
                 DateTime timeCheck = GetDate();
                 if (timeCheck < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0))
                 {
+                    WarningLabel.Text = "Date passée";
                     return false;
                 }
             }
+            WarningLabel.Text = "";
             return true;
         }
 

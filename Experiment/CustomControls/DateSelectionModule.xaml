@@ -11,7 +11,7 @@
             <Style TargetType="{x:Type Border}">
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsValid}" Value="False">
-                        <Setter Property="Background" Value="#FFEEC65D"></Setter>
+                        <Setter Property="Background" Value="#FFF5D683"></Setter>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -59,7 +59,7 @@
                 <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="ans"/>
 
             </StackPanel>
-            <TextBlock Grid.Column="6" Text="Date passée" VerticalAlignment="Center" Margin="15,0,0,0"  FontWeight="Bold" FontSize="24" Foreground="White">
+            <TextBlock x:Name="WarningLabel" Grid.Column="6" Text="Date passée" VerticalAlignment="Center" Margin="15,0,0,0"  FontWeight="Bold" FontSize="24" Foreground="White">
                 <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
                         <Style.Triggers>

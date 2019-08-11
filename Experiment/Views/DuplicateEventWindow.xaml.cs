@@ -152,6 +152,8 @@ namespace Experiment.Views
                     foreach(DateTime date in DatesToRedistribute)
                     {
                         DateSelectionModule newModule = new DateSelectionModule(date, false);
+                        newModule.IsValid = false;
+                        newModule.WarningLabel.Text = "Conflit";
                         modules.Add(newModule);
                     }
                 }
