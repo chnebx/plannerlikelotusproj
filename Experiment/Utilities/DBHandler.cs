@@ -584,12 +584,19 @@ namespace Experiment.Utilities
                     }
                     else
                     {
+                        int ToStackId = ToStack.Id;
+                        if (ToStackId < 1)
+                        {
+                            nonAsyncConn.Insert(ToStack);
+                            ToStackId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+                        }
+                        
                         for (int i = 0; i < ToStack.Events.Count; i++)
                         {
-                            if (ToStack.Events[i].EventStackId != ToStack.Id)
+                            if (ToStack.Events[i].EventStackId != ToStackId)
                             {
                                 nonAsyncConn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? WHERE EventStackId = ?",
-                                    ToStack.Id,
+                                    ToStackId,
                                     ToStack.Events[i].Start.Ticks,
                                     ToStack.Events[i].End.Ticks,
                                     FromStack.Id

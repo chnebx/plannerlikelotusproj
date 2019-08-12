@@ -438,17 +438,38 @@ namespace Experiment.Models
             return false;
         }
 
-        public List<int> CheckClash(Event evt)
+        public List<int> CheckClash(object evt)
         {
             HashSet<int> results = new HashSet<int>();
             List<int> foundIndices = new List<int>();
-            if (evt != null)
+           
+            if (evt is Event)
             {
-                for (int i = 0; i < Events.Count; i++)
+                Event e = (Event)evt;
+                if (evt != null)
                 {
-                    if (Events[i].Clashes(evt) == true)
+                    for (int i = 0; i < Events.Count; i++)
                     {
-                        foundIndices.Add(i);
+                        if (Events[i].Clashes(e))
+                        {
+                            foundIndices.Add(i);
+                        }
+                    }
+                }
+            } else if (evt is EventStack)
+            {
+                EventStack stack = (EventStack)evt;
+                if (stack != null)
+                {
+                    for (int i = 0; i < Events.Count; i++)
+                    {
+                        for (int j = 0; j < stack.Events.Count; j++)
+                        {
+                            if (Events[i].Clashes(stack.Events[j]))
+                            {
+                                foundIndices.Add(i);
+                            }
+                        }
                     }
                 }
             }

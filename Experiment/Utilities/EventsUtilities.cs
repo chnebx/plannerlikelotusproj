@@ -146,9 +146,21 @@ namespace Experiment.Utilities
                 else
                 {
                     EventStack evtStack = (EventStack)data;
+                    bool copying = Keyboard.IsKeyDown(Key.RightCtrl);
                     if (evtStack != actualStack && evtStack.Events.Count + actualStack.Events.Count <= 3)
                     {
-                        if (!Keyboard.IsKeyDown(Key.RightCtrl))
+                        List<int> clashingIndices = actualStack.CheckClash(evtStack);
+                        if (clashingIndices.Count > 0)
+                        {
+                            bool solved;
+                            actualStack = HandleClashes(actualStack, clashingIndices, eventsCollection, out solved);
+                            if (!solved)
+                            {
+                                return;
+                            }
+                        }
+
+                        if (!copying)
                         {
                             for (int i = 0; i < evtStack.Events.Count; i++)
                             {
@@ -175,6 +187,7 @@ namespace Experiment.Utilities
             ClashDialog clashPrompt = new ClashDialog(destinationStack, clashingIndices, true);
             if (clashPrompt.ShowDialog() == true)
             {
+                DateTime currentActualStackDay = destinationStack.EventStackDay;
                 foreach (Event e in clashPrompt.DeletedEvents)
                 {
                     destinationStack.RemoveEvent(destinationStack.Events.IndexOf(e));
@@ -184,7 +197,7 @@ namespace Experiment.Utilities
                     eventsList.Remove(destinationStack);
                     destinationStack = new EventStack
                     {
-                        Current = destinationStack.Current
+                        EventStackDay = currentActualStackDay
                     };
                     eventsList.Add(destinationStack);
                 }
