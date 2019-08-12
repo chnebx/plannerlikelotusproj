@@ -677,10 +677,20 @@ namespace Experiment.Models
 
         public bool Clashes(Event evt)
         {
-            return evt.Start>= this.Start && evt.Start <= this.End ||
-            evt.End >= this.Start && evt.End <= this.End ||
-            evt.Start >= this.Start && evt.End <= this.End ||
-            evt.Start <= this.Start && evt.End >= this.End;
+            DateTime evtStart = new DateTime(this.Start.Year, this.Start.Month, this.Start.Day, evt.Start.Hour, evt.Start.Minute, 0);
+            DateTime evtEnd = evtStart.Add(evt.End - evt.Start);
+            //Console.WriteLine(evtStart);
+            //Console.WriteLine(evtEnd);
+            return evtStart >= this.Start && evtStart <= this.End ||
+            evtEnd >= this.Start && evtEnd <= this.End ||
+            evtStart >= this.Start && evtEnd <= this.End ||
+            evtStart <= this.Start && evtEnd >= this.End;
+
+            
+            //return evtStart.Start >= this.Start && evt.Start <= this.End ||
+            //evt.End >= this.Start && evt.End <= this.End ||
+            //evt.Start >= this.Start && evt.End <= this.End ||
+            //evt.Start <= this.Start && evt.End >= this.End;
         }
 
         public Event Clone()

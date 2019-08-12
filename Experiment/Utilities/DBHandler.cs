@@ -535,7 +535,7 @@ namespace Experiment.Utilities
                 conn.CreateTable<Event>();
                 var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
                 conn.Execute(deleteEventQuery, evt.Id);
-                if (evt.parentStack.Events.Count <= 1)
+                if (evt.parentStack.Events.Count < 1)
                 {
                     var deleteEventStackQuery = "DELETE FROM EventStacks WHERE Id = ?";
                     conn.Execute(deleteEventStackQuery, evt.EventStackId);
@@ -623,7 +623,7 @@ namespace Experiment.Utilities
                 {
                     nonAsyncConn.Insert(newOne);
                     newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
-                } 
+                }
                 if (!copy)
                 {
                     nonAsyncConn.Execute(

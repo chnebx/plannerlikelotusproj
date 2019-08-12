@@ -116,7 +116,7 @@ namespace Experiment.Views
                 {
                     
                     List<DateTime> DatesToRedistribute = new List<DateTime>();
-                    ClashDialog clashPrompt = new ClashDialog(conflictingEvents);
+                    ClashDialog clashPrompt = new ClashDialog(conflictingEvents, true);
                     if (clashPrompt.ShowDialog() == false)
                     {
                         for (int i = 0; i < clashPrompt.DeletedEvents.Count; i++)

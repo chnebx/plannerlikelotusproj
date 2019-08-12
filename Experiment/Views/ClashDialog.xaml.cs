@@ -29,7 +29,7 @@ namespace Experiment.Views
         //public List<int> DeletedEventIds = new List<int>();
         public List<Event> DeletedEvents = new List<Event>();
         bool OutsideStacks = false;
-        public ClashDialog(EventStack evtStack, List<int> foundIndices)
+        public ClashDialog(EventStack evtStack, List<int> foundIndices, bool outsideStack)
         {
             InitializeComponent();
             DataContext = this;
@@ -37,10 +37,11 @@ namespace Experiment.Views
             _foundIndices = foundIndices;
             ClashElements = new ObservableCollection<Event>();
             HeaderTxt.Text = "Conflits présents :";
+            OutsideStacks = outsideStack;
             buildClashElements();
         }
 
-        public ClashDialog(List<Event> evts)
+        public ClashDialog(List<Event> evts, bool outsideStack)
         {
             InitializeComponent();
             DataContext = this;

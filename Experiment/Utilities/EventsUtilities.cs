@@ -1,4 +1,5 @@
 ﻿using Experiment.Models;
+using Experiment.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -107,18 +108,32 @@ namespace Experiment.Utilities
                 EventStack actualStack = (EventStack)context;
                 if (data is Event)
                 {
+                    bool copying = Keyboard.IsKeyDown(Key.RightCtrl);
                     Event evt = (Event)data;
                     if (actualStack != previousStack && actualStack.Events.Count < 3)
                     {
-                        if (!Keyboard.IsKeyDown(Key.RightCtrl))
+                        int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
+                        List<int> clashingIndices = actualStack.CheckClash(evt);
+
+                        if (clashingIndices.Count > 0)
                         {
-                            int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
+                            bool solved;
+                            actualStack = HandleClashes(actualStack, clashingIndices, eventsCollection, out solved);
+                            if (!solved)
+                            {
+                                return;
+                            }
+                        }
+
+                        if (!copying)
+                        {
+                            
+                            actualStack.AddEvent(evt);
                             previousStack.RemoveEvent(indexOfPreviousEvt);
                             if (previousStack.Events.Count < 1)
                             {
                                 eventsCollection.Remove(previousStack);
                             }
-                            actualStack.AddEvent(evt);
                             DBHandler.HandleDragEvent(previousStack, actualStack, evt, copy: false);
                         }
                         else
@@ -148,14 +163,39 @@ namespace Experiment.Utilities
                             for (int i = 0; i < evtStack.Events.Count; i++)
                             {
                                 actualStack.AddEvent(evtStack.Events[i].Clone());
-                                DBHandler.HandleDragEventStack(evtStack, actualStack, copy: true);
                             }
+                            DBHandler.HandleDragEventStack(evtStack, actualStack, copy: true);
                         }
                     }
                 }
             }
         }
 
+        private static EventStack HandleClashes(EventStack destinationStack, List<int> clashingIndices, ObservableCollection<EventStack> eventsList, out bool solved)
+        {
+            ClashDialog clashPrompt = new ClashDialog(destinationStack, clashingIndices, true);
+            if (clashPrompt.ShowDialog() == true)
+            {
+                foreach (Event e in clashPrompt.DeletedEvents)
+                {
+                    destinationStack.RemoveEvent(destinationStack.Events.IndexOf(e));
+                }
+                if (destinationStack.Events.Count == 0)
+                {
+                    eventsList.Remove(destinationStack);
+                    destinationStack = new EventStack
+                    {
+                        Current = destinationStack.Current
+                    };
+                    eventsList.Add(destinationStack);
+                }
+                solved = true;
+            } else
+            {
+                solved = false;
+            }
+            return destinationStack;
+        }
 
         public static void UpdateLimits(EventStack evtStack)
         {

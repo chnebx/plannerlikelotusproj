@@ -176,7 +176,6 @@ namespace Experiment.Views
             ActualDayScheduler.CurrentDay = actualDay.Date;
             ActualDayScheduler.LowerLimit = actualEventStack.LowerLimitHour;
             ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;
-            Console.WriteLine("in AddEventDialog : " + actualEventStack.UpperLimitHour);
             ActualDayScheduler.Refresh();
             ActualDayScheduler.SelectDefault();
             
@@ -368,7 +367,7 @@ namespace Experiment.Views
             List<int> valuesConflicting = actualEventStack.CheckClash(null);
             if (valuesConflicting.Count > 0)
             {
-                ClashDialog newClashDialog = new ClashDialog(actualEventStack, valuesConflicting);
+                ClashDialog newClashDialog = new ClashDialog(actualEventStack, valuesConflicting, false);
 
                 if (newClashDialog.ShowDialog() == true)
                 {

@@ -472,8 +472,9 @@ namespace Experiment.Models
                         results.Add(i);
                     }
                 }
+                foundIndices = results.ToList<int>();
             }
-            foundIndices = results.ToList<int>();
+            
             return foundIndices;
         }
 
