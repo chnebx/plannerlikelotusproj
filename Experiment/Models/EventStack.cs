@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using Experiment.Utilities;
+using SQLite;
 using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
@@ -442,7 +443,9 @@ namespace Experiment.Models
         {
             HashSet<int> results = new HashSet<int>();
             List<int> foundIndices = new List<int>();
-           
+            //Gathering lowerLimit and UpperLimit
+            EventsUtilities.UpdateLimits(this);
+
             if (evt is Event)
             {
                 Event e = (Event)evt;

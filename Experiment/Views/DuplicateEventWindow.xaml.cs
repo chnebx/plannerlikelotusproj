@@ -99,7 +99,7 @@ namespace Experiment.Views
                                 {
                                     for (int l = 0; l < conflictingStacks[k].Events.Count; l++)
                                     {
-                                        if (conflictingStacks[k].Events[l].Clashes(newEvtStack.Events.First()))
+                                        if (conflictingStacks[k].Events[l].Clashes(newEvtStack.Events.First().Start, newEvtStack.Events.First().End))
                                         {
                                             conflictingEvents.Add(conflictingStacks[k].Events[l]);
                                             ClashingElements.Add(conflictingStacks[k].Events[l], newEvtStack);
@@ -114,7 +114,7 @@ namespace Experiment.Views
                 modules.Clear();
                 if (conflictingEvents.Count > 0)
                 {
-                    
+                   
                     List<DateTime> DatesToRedistribute = new List<DateTime>();
                     ClashDialog clashPrompt = new ClashDialog(conflictingEvents, true);
                     if (clashPrompt.ShowDialog() == false)
