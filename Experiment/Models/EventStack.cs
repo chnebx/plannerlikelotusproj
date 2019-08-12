@@ -66,6 +66,7 @@ namespace Experiment.Models
             set
             {
                 _EventStackDay = value;
+                _dayNumber = _EventStackDay.Day.ToString();
                 _lowerLimitHour = new DateTime(EventStackDay.Year, EventStackDay.Month, EventStackDay.Day, 0, 0, 0);
                 _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventStackDay"));
