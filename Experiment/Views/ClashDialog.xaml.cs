@@ -25,11 +25,11 @@ namespace Experiment.Views
     {
         private ObservableCollection<Event> _clashElements;
         private EventStack actualStack;
-        private List<int> _foundIndices;
+        private List<Event> _foundIndices;
         //public List<int> DeletedEventIds = new List<int>();
         public List<Event> DeletedEvents = new List<Event>();
         bool OutsideStacks = false;
-        public ClashDialog(EventStack evtStack, List<int> foundIndices, bool outsideStack)
+        public ClashDialog(EventStack evtStack, List<Event> foundIndices, bool outsideStack)
         {
             InitializeComponent();
             DataContext = this;
@@ -67,7 +67,8 @@ namespace Experiment.Views
         {
             for (int i = 0; i < _foundIndices.Count; i++)
             {
-                ClashElements.Add(actualStack.Events[_foundIndices[i]]);
+                //ClashElements.Add(actualStack.Events[_foundIndices[i]]);
+                ClashElements.Add(_foundIndices[i]);
             }
         }
 

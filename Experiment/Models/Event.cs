@@ -679,10 +679,6 @@ namespace Experiment.Models
         {
             DateTime evtStart = new DateTime(this.Start.Year, this.Start.Month, this.Start.Day, evt.Start.Hour, evt.Start.Minute, 0);
             DateTime evtEnd = evtStart.Add(evt.End - evt.Start);
-            Console.WriteLine(evtStart);
-            Console.WriteLine(evtEnd);
-            Console.WriteLine(this.Start);
-            Console.WriteLine(this.End);
             return evtStart >= this.Start && evtStart <= this.End ||
             evtEnd >= this.Start && evtEnd <= this.End ||
             evtStart >= this.Start && evtEnd <= this.End ||

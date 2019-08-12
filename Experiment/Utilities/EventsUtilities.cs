@@ -113,7 +113,7 @@ namespace Experiment.Utilities
                     if (actualStack != previousStack && actualStack.Events.Count < 3)
                     {
                         int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
-                        List<int> clashingIndices = actualStack.CheckClash(evt);
+                        List<Event> clashingIndices = actualStack.CheckClash(evt);
 
                         if (clashingIndices.Count > 0)
                         {
@@ -149,7 +149,7 @@ namespace Experiment.Utilities
                     bool copying = Keyboard.IsKeyDown(Key.RightCtrl);
                     if (evtStack != actualStack && evtStack.Events.Count + actualStack.Events.Count <= 3)
                     {
-                        List<int> clashingIndices = actualStack.CheckClash(evtStack);
+                        List<Event> clashingIndices = actualStack.CheckClash(evtStack);
                         if (clashingIndices.Count > 0)
                         {
                             bool solved;
@@ -182,7 +182,7 @@ namespace Experiment.Utilities
             }
         }
 
-        private static EventStack HandleClashes(EventStack destinationStack, List<int> clashingIndices, ObservableCollection<EventStack> eventsList, out bool solved)
+        private static EventStack HandleClashes(EventStack destinationStack, List<Event> clashingIndices, ObservableCollection<EventStack> eventsList, out bool solved)
         {
             ClashDialog clashPrompt = new ClashDialog(destinationStack, clashingIndices, true);
             if (clashPrompt.ShowDialog() == true)
@@ -190,7 +190,22 @@ namespace Experiment.Utilities
                 DateTime currentActualStackDay = destinationStack.EventStackDay;
                 foreach (Event e in clashPrompt.DeletedEvents)
                 {
-                    destinationStack.RemoveEvent(destinationStack.Events.IndexOf(e));
+                    if (e.parentStack.EventStackDay != destinationStack.EventStackDay)
+                    {
+                        // if conflicting stack is not the destination one
+                        EventStack found = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+                        if (found != null)
+                        {
+                            found.RemoveEvent(found.Events.IndexOf(found.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
+                            if (found.Events.Count == 0)
+                            {
+                                eventsList.Remove(found);
+                            }
+                        } 
+                    } else
+                    {
+                        e.parentStack.RemoveEvent(e.parentStack.Events.IndexOf(e));
+                    }
                 }
                 if (destinationStack.Events.Count == 0)
                 {
@@ -216,6 +231,7 @@ namespace Experiment.Utilities
             if (previousEvtStack != null && previousEvtStack.IsOverlapping)
             {
                 evtStack.LowerLimitHour = previousEvtStack.Events.Last().End;
+                evtStack.LowerLimitEvent = previousEvtStack.Events.Last();
             } else
             {
                 evtStack.LowerLimitHour = new DateTime(evtStack.EventStackDay.Year, evtStack.EventStackDay.Month, evtStack.EventStackDay.Day, 0, 0, 0);
@@ -224,6 +240,7 @@ namespace Experiment.Utilities
             if (nextEvtStack != null && nextEvtStack.Events.First().Start.Hour < 12)
             {
                 evtStack.UpperLimitHour = nextEvtStack.Events.First().Start;
+                evtStack.UpperLimitEvent = nextEvtStack.Events.First();
             } else
             {
                 evtStack.UpperLimitHour = new DateTime(evtStack.EventStackDay.Year, evtStack.EventStackDay.Month, evtStack.EventStackDay.Day, 12, 0, 0).AddDays(1);

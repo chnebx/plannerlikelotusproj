@@ -364,7 +364,7 @@ namespace Experiment.Views
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            List<int> valuesConflicting = actualEventStack.CheckClash(null);
+            List<Event> valuesConflicting = actualEventStack.CheckClash(null);
             if (valuesConflicting.Count > 0)
             {
                 ClashDialog newClashDialog = new ClashDialog(actualEventStack, valuesConflicting, false);

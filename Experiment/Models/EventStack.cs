@@ -31,6 +31,8 @@ namespace Experiment.Models
         private DateTime _upperLimitHour;
         private List<Event> _filteredEvents;
         private ObservableCollection<Event> _events;
+        private Event _upperLimitEvent;
+        private Event _lowerLimitEvent;
         private DateTime _EventStackDay;
         private int _spanLength;
         private bool _isOverlapping = false;
@@ -157,14 +159,6 @@ namespace Experiment.Models
             }
         }
 
-        public int CalculateSpanLength()
-        {
-            double val = 6 / Events.Count;
-            int spanLength = (int)Math.Floor(val);
-            return spanLength;
-        }
-
-
         [Ignore]
         public string DayNumber
         {
@@ -212,6 +206,34 @@ namespace Experiment.Models
             {
                 _crossingEvt = value;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("CrossingEvt"));
+            }
+        }
+
+        [Ignore]
+        public Event LowerLimitEvent
+        {
+            get
+            {
+                return _lowerLimitEvent;
+            }
+            set
+            {
+                _lowerLimitEvent = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LowerLimitEvent"));
+            }
+        }
+
+        [Ignore]
+        public Event UpperLimitEvent
+        {
+            get
+            {
+                return _upperLimitEvent;
+            }
+            set
+            {
+                _upperLimitEvent = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("UpperLimitEvent"));
             }
         }
 
@@ -334,6 +356,13 @@ namespace Experiment.Models
             }
         }
 
+        public int CalculateSpanLength()
+        {
+            double val = 6 / Events.Count;
+            int spanLength = (int)Math.Floor(val);
+            return spanLength;
+        }
+
         public void AddEvent(Event newEvent)
         {
             if (newEvent == null || IsFull)
@@ -439,23 +468,40 @@ namespace Experiment.Models
             return false;
         }
 
-        public List<int> CheckClash(object evt)
+        public List<Event> CheckClash(object evt)
         {
-            HashSet<int> results = new HashSet<int>();
-            List<int> foundIndices = new List<int>();
+            HashSet<Event> results = new HashSet<Event>();
+            List<Event> foundIndices = new List<Event>();
             //Gathering lowerLimit and UpperLimit
             EventsUtilities.UpdateLimits(this);
-
             if (evt is Event)
             {
                 Event e = (Event)evt;
                 if (evt != null)
                 {
+                    if (LowerLimitEvent != null)
+                    {
+                        DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
+                        DateTime end = start.Add(e.End - e.Start);
+                        if (LowerLimitEvent.Clashes(start, end))
+                        {
+                            foundIndices.Add(LowerLimitEvent);
+                        }
+                    }
+                    if (UpperLimitEvent != null)
+                    {
+                        DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
+                        DateTime end = start.Add(e.End - e.Start);
+                        if (UpperLimitEvent.Clashes(start, end))
+                        {
+                            foundIndices.Add(UpperLimitEvent);
+                        }
+                    }
                     for (int i = 0; i < Events.Count; i++)
                     {
                         if (Events[i].Clashes(e))
                         {
-                            foundIndices.Add(i);
+                            foundIndices.Add(Events[i]);
                         }
                     }
                 }
@@ -464,13 +510,35 @@ namespace Experiment.Models
                 EventStack stack = (EventStack)evt;
                 if (stack != null)
                 {
+                    for (int k = 0; k < stack.Events.Count; k++)
+                    {
+                        if (LowerLimitEvent != null)
+                        {
+                            DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, stack.Events[k].Start.Hour, stack.Events[k].Start.Minute, 0);
+                            DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);
+                            if (LowerLimitEvent.Clashes(start, end))
+                            {
+                                foundIndices.Add(LowerLimitEvent);
+                            }
+
+                        }
+                        if (UpperLimitEvent != null)
+                        {
+                            DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, stack.Events[k].Start.Hour, stack.Events[k].Start.Minute, 0);
+                            DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);
+                            if (UpperLimitEvent.Clashes(start, end))
+                            {
+                                foundIndices.Add(UpperLimitEvent);
+                            }
+                        }
+                    }
                     for (int i = 0; i < Events.Count; i++)
                     {
                         for (int j = 0; j < stack.Events.Count; j++)
                         {
                             if (Events[i].Clashes(stack.Events[j]))
                             {
-                                foundIndices.Add(i);
+                                foundIndices.Add(Events[i]);
                             }
                         }
                     }
@@ -487,16 +555,16 @@ namespace Experiment.Models
                     {
                         if (Events[i].Clashes(Events[j]) == true)
                         {
-                            results.Add(j);
+                            results.Add(Events[j]);
                             conflictFound = true;
                         }
                     }
                     if (conflictFound == true)
                     {
-                        results.Add(i);
+                        results.Add(Events[i]);
                     }
                 }
-                foundIndices = results.ToList<int>();
+                foundIndices = results.ToList<Event>();
             }
             
             return foundIndices;
