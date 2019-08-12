@@ -127,7 +127,6 @@ namespace Experiment.Utilities
 
                         if (!copying)
                         {
-                            
                             actualStack.AddEvent(evt);
                             previousStack.RemoveEvent(indexOfPreviousEvt);
                             if (previousStack.Events.Count < 1)
