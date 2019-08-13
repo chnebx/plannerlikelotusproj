@@ -26,8 +26,10 @@ namespace Experiment.Views
         private ObservableCollection<Event> _clashElements;
         private EventStack actualStack;
         private List<Event> _foundIndices;
+        private Dictionary<Event, List<Event>> _foundEvents;
         //public List<int> DeletedEventIds = new List<int>();
         public List<Event> DeletedEvents = new List<Event>();
+        public List<Event> SolvedEvents = new List<Event>();
         bool OutsideStacks = false;
         public ClashDialog(EventStack evtStack, List<Event> foundIndices, bool outsideStack)
         {
@@ -41,11 +43,33 @@ namespace Experiment.Views
             buildClashElements();
         }
 
+        public ClashDialog(EventStack evtStack, Dictionary<Event, List<Event>> foundEventsDict, bool outsideStack)
+        {
+            InitializeComponent();
+            DataContext = this;
+            actualStack = evtStack;
+            _foundEvents = foundEventsDict;
+            ClashElements = new ObservableCollection<Event>();
+            HeaderTxt.Text = "Conflits présents :";
+            OutsideStacks = outsideStack;
+            buildClashElements();
+        }
+
         public ClashDialog(List<Event> evts, bool outsideStack)
         {
             InitializeComponent();
             DataContext = this;
             ClashElements = evts != null ? new ObservableCollection<Event>(evts) : new ObservableCollection<Event>();
+            HeaderTxt.Text = "Conflits présents :";
+            OutsideStacks = true;
+        }
+
+        public ClashDialog(Dictionary<Event, List<Event>> evts, bool outsideStack)
+        {
+            InitializeComponent();
+            DataContext = this;
+            _foundEvents = evts;
+            buildClashElements();
             HeaderTxt.Text = "Conflits présents :";
             OutsideStacks = true;
         }
@@ -65,11 +89,31 @@ namespace Experiment.Views
 
         private void buildClashElements()
         {
-            for (int i = 0; i < _foundIndices.Count; i++)
+            if (ClashElements == null)
             {
-                //ClashElements.Add(actualStack.Events[_foundIndices[i]]);
-                ClashElements.Add(_foundIndices[i]);
+                ClashElements = new ObservableCollection<Event>();
             }
+            if (_foundIndices != null)
+            {
+                for (int i = 0; i < _foundIndices.Count; i++)
+                {
+                    //ClashElements.Add(actualStack.Events[_foundIndices[i]]);
+                    ClashElements.Add(_foundIndices[i]);
+                }
+            } else if (_foundEvents != null)
+            {
+                foreach (KeyValuePair<Event, List<Event>> entries in _foundEvents)
+                {
+                    foreach(Event evt in entries.Value)
+                    {
+                        if (!ClashElements.Contains(evt))
+                        {
+                            ClashElements.Add(evt);
+                        }
+                    }
+                }
+            }
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -84,6 +128,21 @@ namespace Experiment.Views
             Event clickedEvent = (Event)(((Button)sender).DataContext);
             clickedEvent.parentStack.RemoveEvent(clickedEvent.parentStack.Events.IndexOf(clickedEvent));
             ClashElements.Remove(clickedEvent);
+            if (_foundEvents != null)
+            {
+                foreach(KeyValuePair<Event, List<Event>> entries in _foundEvents)
+                {
+                    if (entries.Value.Contains(clickedEvent))
+                    {
+                        entries.Value.Remove(clickedEvent);
+                        if (entries.Value.Count == 0)
+                        {
+                            SolvedEvents.Add(entries.Key);
+                        }
+                    }
+                }
+            }
+            
             int validCount = 1;
             if (OutsideStacks)
             {
@@ -97,7 +156,8 @@ namespace Experiment.Views
                 this.DialogResult = true;
                 this.Close();
             }
-
         }
+
+        
     }
 }

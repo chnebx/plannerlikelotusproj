@@ -93,13 +93,33 @@ namespace Experiment.Utilities
                     {
                         EventStackDay = droppedOnDay.Date
                     };
-                    List<Event> clashingEvents = conflictTest.CheckClash(evtStack);
+                    //List<Event> clashingEvents = conflictTest.CheckClash(evtStack);
+                    Dictionary<Event, List<Event>> clashingEvents = conflictTest.FindClash(evtStack);
                     if (clashingEvents.Count > 0)
                     {
                         bool solved;
-                        HandleClashes(null, clashingEvents, eventsCollection, out solved);
+                        List<Event> solvedEvents;
+                        HandleClashes(null, clashingEvents, eventsCollection, out solved, out solvedEvents);
                         if (!solved)
                         {
+                            if (solvedEvents != null)
+                            {
+                                if (!isCopying)
+                                {
+                                    EventStack newEvtStack = new EventStack
+                                    {
+                                        EventStackDay = droppedOnDay.Date
+                                    };
+                                    for (int i = 0; i < solvedEvents.Count; i++)
+                                    {
+                                        newEvtStack.AddEvent(solvedEvents[i]);
+                                        evtStack.RemoveEvent(evtStack.Events.IndexOf(solvedEvents[i]));
+                                        DBHandler.DeleteEvent(solvedEvents[i]);
+                                    }
+                                    eventsCollection.Add(newEvtStack);
+                                    DBHandler.AddEventStack(newEvtStack);
+                                }
+                            }
                             return;
                         }
                     }
@@ -201,6 +221,97 @@ namespace Experiment.Utilities
                         }
                     }
                 }
+            }
+        }
+
+        private static EventStack HandleClashes(object destination, Dictionary<Event, List<Event>> clashingIndices, ObservableCollection<EventStack> eventsList, out bool solved, out List<Event> solvedEvents)
+        {
+            solvedEvents = null;
+            if (destination is EventStack)
+            {
+                EventStack destinationStack = (EventStack)destination;
+                ClashDialog clashPrompt = new ClashDialog(destinationStack, clashingIndices, true);
+                if (clashPrompt.ShowDialog() == true)
+                {
+                    DateTime currentActualStackDay = destinationStack.EventStackDay;
+                    foreach (Event e in clashPrompt.DeletedEvents)
+                    {
+                        if (e.parentStack.EventStackDay != destinationStack.EventStackDay)
+                        {
+                            // if conflicting stack is not the destination one
+                            EventStack found = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+                            if (found != null)
+                            {
+                                found.RemoveEvent(found.Events.IndexOf(found.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
+                                if (found.Events.Count == 0)
+                                {
+                                    eventsList.Remove(found);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            e.parentStack.RemoveEvent(e.parentStack.Events.IndexOf(e));
+                        }
+                    }
+                    if (destinationStack.Events.Count == 0)
+                    {
+                        eventsList.Remove(destinationStack);
+                        destination = new EventStack
+                        {
+                            EventStackDay = currentActualStackDay
+                        };
+                        eventsList.Add(destinationStack);
+                    }
+                    solved = true;
+                }
+                else
+                {
+                    List<Event> results = clashPrompt.SolvedEvents;
+                    if (results != null)
+                    {
+                        if (results.Count > 0)
+                        {
+                            solvedEvents = results;
+                        }
+                    }
+                    solved = false;
+                }
+                return destinationStack;
+            }
+            else
+            {
+                ClashDialog clashPrompt = new ClashDialog(clashingIndices, true);
+                if (clashPrompt.ShowDialog() == true)
+                {
+                    solved = true;
+                }
+                else
+                {
+                    List<Event> results = clashPrompt.SolvedEvents;
+                    if (results != null)
+                    {
+                        if (results.Count > 0)
+                        {
+                            solvedEvents = results;
+                        }
+                    }
+                    solved = false;
+                }
+                foreach (Event e in clashPrompt.DeletedEvents)
+                {
+                    EventStack found = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+                    if (found != null)
+                    {
+
+                        found.RemoveEvent(found.Events.IndexOf(found.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
+                        if (found.Events.Count == 0)
+                        {
+                            eventsList.Remove(found);
+                        }
+                    }
+                }
+                return null;
             }
         }
 

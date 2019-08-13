@@ -469,6 +469,117 @@ namespace Experiment.Models
             return false;
         }
 
+        public Dictionary<Event, List<Event>> FindClash(object evt)
+        {
+            Dictionary<Event, List<Event>> foundEvents = new Dictionary<Event, List<Event>>();
+            //Gathering lowerLimit and UpperLimit
+            EventsUtilities.UpdateLimits(this);
+            if (evt is Event)
+            {
+                Event e = (Event)evt;
+                foundEvents.Add(e, new List<Event>());
+                if (evt != null)
+                {
+                    if (LowerLimitEvent != null)
+                    {
+                        DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
+                        DateTime end = start.Add(e.End - e.Start);
+                        if (LowerLimitEvent.Clashes(start, end))
+                        {
+                            //foundIndices.Add(LowerLimitEvent);
+                            foundEvents[e].Add(LowerLimitEvent);
+                        }
+                    }
+                    if (UpperLimitEvent != null)
+                    {
+                        DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
+                        DateTime end = start.Add(e.End - e.Start);
+                        if (UpperLimitEvent.Clashes(start, end))
+                        {
+                            foundEvents[e].Add(UpperLimitEvent);
+                        }
+                    }
+                    for (int i = 0; i < Events.Count; i++)
+                    {
+                        if (Events[i].Clashes(e))
+                        {
+                            foundEvents[e].Add(Events[i]);
+                        }
+                    }
+                }
+            }
+            else if (evt is EventStack)
+            {
+                EventStack stack = (EventStack)evt;
+                if (stack != null)
+                {
+                    for (int k = 0; k < stack.Events.Count; k++)
+                    {
+                        foundEvents.Add(stack.Events[k], new List<Event>());
+                        if (LowerLimitEvent != null)
+                        {
+                            DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, stack.Events[k].Start.Hour, stack.Events[k].Start.Minute, 0);
+                            DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);
+                            if (LowerLimitEvent.Clashes(start, end))
+                            {
+                                foundEvents[stack.Events[k]].Add(LowerLimitEvent);
+                            }
+
+                        }
+                        if (UpperLimitEvent != null)
+                        {
+                            DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, stack.Events[k].Start.Hour, stack.Events[k].Start.Minute, 0);
+                            DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);
+                            if (UpperLimitEvent.Clashes(start, end))
+                            {
+                                foundEvents[stack.Events[k]].Add(UpperLimitEvent);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < Events.Count; i++)
+                    {
+                        for (int j = 0; j < stack.Events.Count; j++)
+                        {
+                            if (Events[i].Clashes(stack.Events[j]))
+                            {
+                                foundEvents[stack.Events[j]].Add(Events[i]);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Events.Count - 1; i++)
+                {
+                    foundEvents.Add(Events[i], new List<Event>());
+                    for (int j = i + 1; j < Events.Count; j++)
+                    {
+                        if (Events[i].Clashes(Events[j]) == true)
+                        {
+                            foundEvents[Events[i]].Add(Events[j]);
+                        }
+                    }
+                }
+            }
+            bool containsClashes = false;
+            foreach(KeyValuePair<Event, List<Event>> evts in foundEvents)
+            {
+                if (evts.Value.Count > 0)
+                {
+                    containsClashes = true;
+                }
+            }
+            if (containsClashes)
+            {
+                return foundEvents;
+            } else
+            {
+                return new Dictionary<Event, List<Event>>();
+            }
+            
+        }
+
         public List<Event> CheckClash(object evt)
         {
             HashSet<Event> results = new HashSet<Event>();
