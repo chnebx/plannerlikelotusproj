@@ -132,7 +132,6 @@ namespace Experiment.Utilities
                 EventStack actualStack = (EventStack)context;
                 if (data is Event)
                 {
-                    //bool copying = Keyboard.IsKeyDown(Key.RightCtrl);
                     Event evt = (Event)data;
                     if (actualStack != previousStack && actualStack.Events.Count < 3)
                     {
@@ -170,7 +169,6 @@ namespace Experiment.Utilities
                 else
                 {
                     EventStack evtStack = (EventStack)data;
-                    //bool copying = Keyboard.IsKeyDown(Key.RightCtrl);
                     if (evtStack != actualStack && evtStack.Events.Count + actualStack.Events.Count <= 3)
                     {
                         List<Event> clashingIndices = actualStack.CheckClash(evtStack);
@@ -331,7 +329,7 @@ namespace Experiment.Utilities
                     List<EventStack> results = FindNeighbours(guess, item, orderedList);
 
                     if (orderedList[guess].IsClashingEvent(item.Events.First())) {
-                        results.Add(item);
+                        results.Add(orderedList[guess]);
                     }
                     //Console.WriteLine("found after " + count + " attempts");
                     if (results.Count > 0)

@@ -170,15 +170,6 @@ namespace Experiment.Views
             List<EventStack> clashingEvtStacks = EventsUtilities.FindClashingEvtStacks(actual, eventStacksList);
             if (clashingEvtStacks != null)
             {
-                //Console.WriteLine("items found : " + clashingEvtStacks.Count);
-                //foreach(EventStack evtStack in clashingEvtStacks)
-                //{
-                //    Console.WriteLine(evtStack.EventStackDay);
-                //    foreach(Event evt in evtStack.Events)
-                //    {
-                //        Console.WriteLine(evt.Name);
-                //    }
-                //}
                 return clashingEvtStacks;
             } else
             {
