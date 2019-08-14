@@ -18,7 +18,8 @@ namespace Experiment.Utilities
 
         public ClashHandler(Day destinationDay, EventStack actualStack)
         {
-            IsSolved = false;
+            SolvedEvents = new List<Event>();
+            DeletedEvents = new List<Event>();
             EventStack newStack = new EventStack
             {
                 EventStackDay = destinationDay.Date
@@ -26,6 +27,7 @@ namespace Experiment.Utilities
             Clashes = newStack.FindClash(actualStack);
             if (Clashes.Count > 0)
             {
+                IsSolved = false;
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
@@ -38,7 +40,8 @@ namespace Experiment.Utilities
 
         public ClashHandler(Day destinationDay, Event evt)
         {
-            IsSolved = false;
+            SolvedEvents = new List<Event>();
+            DeletedEvents = new List<Event>();
             EventStack newStack = new EventStack
             {
                 EventStackDay = destinationDay.Date
@@ -46,6 +49,7 @@ namespace Experiment.Utilities
             Clashes = newStack.FindClash(evt);
             if (Clashes.Count > 0)
             {
+                IsSolved = false;
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
@@ -58,10 +62,12 @@ namespace Experiment.Utilities
 
         public ClashHandler(EventStack destinationStack, EventStack actualStack)
         {
-            IsSolved = false;
+            SolvedEvents = new List<Event>();
+            DeletedEvents = new List<Event>();
             Clashes = destinationStack.FindClash(actualStack);
             if (Clashes.Count > 0)
             {
+                IsSolved = false;
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
@@ -74,10 +80,12 @@ namespace Experiment.Utilities
 
         public ClashHandler(EventStack destinationStack, Event evt)
         {
-            IsSolved = false;
+            SolvedEvents = new List<Event>();
+            DeletedEvents = new List<Event>();
             Clashes = destinationStack.FindClash(evt);
             if (Clashes.Count > 0)
             {
+                IsSolved = false;
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
