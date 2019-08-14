@@ -253,6 +253,7 @@ namespace Experiment.Utilities
                         {
                             e.parentStack.RemoveEvent(e.parentStack.Events.IndexOf(e));
                         }
+                        DBHandler.DeleteEvent(e);
                     }
                     if (destinationStack.Events.Count == 0)
                     {

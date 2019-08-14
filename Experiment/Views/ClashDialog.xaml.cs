@@ -126,7 +126,7 @@ namespace Experiment.Views
         private void DeleteEvtBtn_Click(object sender, RoutedEventArgs e)
         {
             Event clickedEvent = (Event)(((Button)sender).DataContext);
-            clickedEvent.parentStack.RemoveEvent(clickedEvent.parentStack.Events.IndexOf(clickedEvent));
+            //clickedEvent.parentStack.RemoveEvent(clickedEvent.parentStack.Events.IndexOf(clickedEvent));
             ClashElements.Remove(clickedEvent);
             if (_foundEvents != null)
             {
@@ -148,9 +148,9 @@ namespace Experiment.Views
             {
                 validCount = 0;
                 //DeletedEventIds.Add(clickedEvent.Id);
-                DeletedEvents.Add(clickedEvent);
-                DBHandler.DeleteEvent(clickedEvent); 
+                //DBHandler.DeleteEvent(clickedEvent); 
             }
+            DeletedEvents.Add(clickedEvent);
             if (ClashElements.Count == validCount)
             {
                 this.DialogResult = true;

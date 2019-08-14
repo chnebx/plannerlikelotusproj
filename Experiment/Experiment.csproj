@@ -157,6 +157,7 @@
     <Compile Include="SearchFilterControl.xaml.cs">
       <DependentUpon>SearchFilterControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\ClashHandler.cs" />
     <Compile Include="Utilities\DBHandler.cs" />
     <Compile Include="Utilities\EventsInfo.cs" />
     <Compile Include="Utilities\EventsUtilities.cs" />
