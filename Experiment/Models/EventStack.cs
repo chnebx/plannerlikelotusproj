@@ -210,6 +210,19 @@ namespace Experiment.Models
             }
         }
 
+        public static EventStack Clone(EventStack evtStack)
+        {
+            EventStack cloned = new EventStack
+            {
+                EventStackDay = evtStack.EventStackDay
+            };
+            foreach(Event evt in evtStack.Events)
+            {
+                cloned.AddEvent(evt);
+            }
+            return cloned;
+        }
+
         [Ignore]
         public Event LowerLimitEvent
         {

@@ -56,10 +56,7 @@ namespace Experiment.Utilities
                         EventStackDay = droppedOnDay.Date
                     };
                     ClashHandler clashModule = new ClashHandler(droppedOnDay, evt);
-                    if (!clashModule.IsSolved)
-                    {
-                        UpdateAndDeleteClashedEvents(clashModule, previousStack, droppedOnDay, eventsCollection, isCopying);
-                    }
+                    UpdateAndDeleteClashedEvents(clashModule, previousStack, droppedOnDay, eventsCollection, isCopying);
 
                     if (!isCopying)
                     {
@@ -89,10 +86,8 @@ namespace Experiment.Utilities
                         EventStackDay = droppedOnDay.Date
                     };
                     ClashHandler clashModule = new ClashHandler(droppedOnDay, evtStack);
-                    if (!clashModule.IsSolved)
-                    {
-                        UpdateAndDeleteClashedEvents(clashModule, evtStack, droppedOnDay, eventsCollection, isCopying);
-                    }
+                    UpdateAndDeleteClashedEvents(clashModule, evtStack, droppedOnDay, eventsCollection, isCopying);
+                    
                     //List<Event> clashingEvents = conflictTest.CheckClash(evtStack);
                     //Dictionary<Event, List<Event>> clashingEvents = conflictTest.FindClash(evtStack);
                     //if (clashingEvents.Count > 0)
@@ -157,10 +152,10 @@ namespace Experiment.Utilities
                     {
                         int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
                         ClashHandler clashModule = new ClashHandler(actualStack, evt);
-                        if (!clashModule.IsSolved)
-                        {
-                            UpdateAndDeleteClashedEvents(clashModule, evt, actualStack, eventsCollection, isCopying);
-                        }
+                        UpdateAndDeleteClashedEvents(clashModule, evt, actualStack, eventsCollection, isCopying);
+                       
+                        
+                        
                         //List<Event> clashingIndices = actualStack.CheckClash(evt);
 
                         //if (clashingIndices.Count > 0)
@@ -197,10 +192,8 @@ namespace Experiment.Utilities
                     if (evtStack != actualStack && evtStack.Events.Count + actualStack.Events.Count <= 3)
                     {
                         ClashHandler clashModule = new ClashHandler(actualStack, evtStack);
-                        if (!clashModule.IsSolved)
-                        {
-                            UpdateAndDeleteClashedEvents(clashModule, evtStack, actualStack, eventsCollection, isCopying);
-                        }
+                        UpdateAndDeleteClashedEvents(clashModule, evtStack, actualStack, eventsCollection, isCopying);
+                      
 
                         //List<Event> clashingIndices = actualStack.CheckClash(evtStack);
                         //if (clashingIndices.Count > 0)
@@ -255,33 +248,39 @@ namespace Experiment.Utilities
                 }
                 destinationDay = toDest.EventStackDay;
 
-                foreach (Event e in module.DeletedEvents) {
-                    if (e.parentStack.EventStackDay != destinationDay)
+                foreach (Event e in module.DeletedEvents)
+                {
+                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+                    if (parent.EventStackDay != destinationDay)
                     {
                         // if conflicting stack is not the destination one
-                        EventStack found = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
-                        if (found != null)
+
+                        if (parent != null)
                         {
-                            found.RemoveEvent(found.Events.IndexOf(found.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
-                            if (found.Events.Count == 0)
+                            parent.RemoveEvent(parent.Events.IndexOf(parent.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
+                            if (parent.Events.Count == 0)
                             {
-                                eventsList.Remove(found);
+                                eventsList.Remove(parent);
                             }
                         }
-                    } else
+                    }
+                    else
                     {
-                        e.parentStack.RemoveEvent(e.parentStack.Events.IndexOf(e));
+                        parent.RemoveEvent(parent.Events.IndexOf(e));
                     }
                     DBHandler.DeleteEvent(e);
                 }
+
                 foreach (Event e in module.SolvedEvents)
                 {
+                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
                     if (!copying)
                     {
                         toDest.AddEvent(e);
-                        e.parentStack.RemoveEvent(e.parentStack.Events.IndexOf(e));
+                        parent.RemoveEvent(parent.Events.IndexOf(e));
                         DBHandler.DeleteEvent(e);
-                    } else
+                    }
+                    else
                     {
                         toDest.AddEvent(e.Clone());
                         DBHandler.UpdateEventStack(toDest);
@@ -291,11 +290,9 @@ namespace Experiment.Utilities
                         eventsList.Add(toDest);
                         DBHandler.AddEventStack(toDest);
                     }
-                    
                 }
-                
-
-            } else if ( source is EventStack)
+             
+            } else if ( source is EventStack )
             {
                 EventStack src = (EventStack)source;
                 EventStack toDest = null;
@@ -314,32 +311,34 @@ namespace Experiment.Utilities
                 destinationDay = toDest.EventStackDay;
                 foreach (Event e in module.DeletedEvents)
                 {
-                    if (e.parentStack.EventStackDay != destinationDay)
+                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+                    if (parent.EventStackDay != destinationDay)
                     {
                         // if conflicting stack is not the destination one
-                        EventStack found = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
-                        if (found != null)
+
+                        if (parent != null)
                         {
-                            found.RemoveEvent(found.Events.IndexOf(found.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
-                            if (found.Events.Count == 0)
+                            parent.RemoveEvent(parent.Events.IndexOf(parent.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
+                            if (parent.Events.Count == 0)
                             {
-                                eventsList.Remove(found);
+                                eventsList.Remove(parent);
                             }
                         }
                     }
                     else
                     {
-                        e.parentStack.RemoveEvent(e.parentStack.Events.IndexOf(e));
+                        e.parentStack.RemoveEvent(parent.Events.IndexOf(e));
                     }
                     DBHandler.DeleteEvent(e);
                 }
 
                 foreach (Event e in module.SolvedEvents)
                 {
+                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
                     if (!copying)
                     {
                         toDest.AddEvent(e);
-                        e.parentStack.RemoveEvent(e.parentStack.Events.IndexOf(e));
+                        parent.RemoveEvent(parent.Events.IndexOf(e));
                         DBHandler.DeleteEvent(e);
                     }
                     else

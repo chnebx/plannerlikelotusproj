@@ -13,11 +13,14 @@ namespace Experiment.Utilities
 
         public List<Event> SolvedEvents { get; set; }
         public List<Event> DeletedEvents { get; set; }
+        public object OriginalSource;
+        public object OriginalDestination;
         public Dictionary<Event, List<Event>> Clashes { get; set; }
         public bool IsSolved { get; set; }
 
         public ClashHandler(Day destinationDay, EventStack actualStack)
         {
+            
             SolvedEvents = new List<Event>();
             DeletedEvents = new List<Event>();
             EventStack newStack = new EventStack
@@ -36,6 +39,7 @@ namespace Experiment.Utilities
                     IsSolved = true;
                 }
             }
+            InitBackupData(destinationDay, EventStack.Clone(actualStack));
         }
 
         public ClashHandler(Day destinationDay, Event evt)
@@ -58,6 +62,7 @@ namespace Experiment.Utilities
                     IsSolved = true;
                 }
             }
+            InitBackupData(destinationDay, evt.Clone());
         }
 
         public ClashHandler(EventStack destinationStack, EventStack actualStack)
@@ -76,6 +81,7 @@ namespace Experiment.Utilities
                     IsSolved = true;
                 }
             }
+            InitBackupData(EventStack.Clone(destinationStack), EventStack.Clone(actualStack));
         }
 
         public ClashHandler(EventStack destinationStack, Event evt)
@@ -94,8 +100,14 @@ namespace Experiment.Utilities
                     IsSolved = true;
                 }
             }
+            InitBackupData(EventStack.Clone(destinationStack), evt.Clone());
         }
 
+        private void InitBackupData(object destination, object source)
+        {
+            OriginalDestination = destination;
+            OriginalSource = source;
+        }
         
     }
 }
