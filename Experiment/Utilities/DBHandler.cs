@@ -678,6 +678,28 @@ namespace Experiment.Utilities
             //}
         }
 
+        public static void MoveEvent(Event evt, EventStack To)
+        {
+            DateTime newStart = new DateTime(
+                To.EventStackDay.Year,
+                To.EventStackDay.Month,
+                To.EventStackDay.Day,
+                evt.Start.Hour,
+                evt.Start.Minute, 
+                0);
+            DateTime newEnd = newStart.Add(evt.End - evt.Start);
+
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
+                    To.Id,
+                    newStart,
+                    newEnd,
+                    evt.Id
+                    );
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 

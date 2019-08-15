@@ -229,6 +229,72 @@ namespace Experiment.Utilities
             }
         }
 
+        private static void DeleteEvents(List<Event> evtsToDelete, object fromStack, ObservableCollection<EventStack> eventsList)
+        { 
+            EventStack mainStack;
+            if (fromStack is Event)
+            {
+                mainStack = (EventStack)eventsList.FirstOrDefault<EventStack>(x => x.Id == ((Event)fromStack).parentStack.Id);
+            } else
+            {
+                mainStack = (EventStack)fromStack;
+            }
+
+            foreach (Event e in evtsToDelete)
+            {
+                EventStack parent;
+                if (e.parentStack.Id != mainStack.Id)
+                {
+                    parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+                } else
+                {
+                    parent = mainStack;
+                }
+                //parent.RemoveEvent(parent.Events.IndexOf(parent.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
+                parent.RemoveEvent(parent.Events.IndexOf(e));
+                if (parent.Events.Count == 0)
+                {
+                    eventsList.Remove(parent);
+                }
+                DBHandler.DeleteEvent(e);
+            }
+        }
+
+        private static void MoveEvents(List<Event> evtsToMove, object ToStack, ObservableCollection<EventStack> eventsList)
+        {
+            EventStack destination;
+            EventStack source = null;
+            if (ToStack is EventStack)
+            {
+                destination = (EventStack)ToStack;
+            } else
+            {
+                destination = new EventStack
+                {
+                    EventStackDay = ((Day)ToStack).Date
+                };
+            }
+
+            foreach ( Event e in evtsToMove )
+            {
+                destination.AddEvent(e);
+                if (source is null)
+                {
+                    source = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+                }
+                source.RemoveEvent(source.Events.IndexOf(e));
+                DBHandler.MoveEvent(e, destination);
+            }
+            if (source.Events.Count == 0)
+            {
+                DBHandler.DeleteEventStack(source);
+            }
+        }
+
+
+
+
+
         private static void UpdateAndDeleteClashedEvents(ClashHandler module, object source, object destination, ObservableCollection<EventStack> eventsList, bool copying)
         {
             if ( source is Event )
@@ -248,29 +314,8 @@ namespace Experiment.Utilities
                 }
                 destinationDay = toDest.EventStackDay;
 
-                foreach (Event e in module.DeletedEvents)
-                {
-                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
-                    if (parent.EventStackDay != destinationDay)
-                    {
-                        // if conflicting stack is not the destination one
 
-                        if (parent != null)
-                        {
-                            parent.RemoveEvent(parent.Events.IndexOf(parent.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
-                            if (parent.Events.Count == 0)
-                            {
-                                eventsList.Remove(parent);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        parent.RemoveEvent(parent.Events.IndexOf(e));
-                    }
-                    DBHandler.DeleteEvent(e);
-                }
-
+                
                 foreach (Event e in module.SolvedEvents)
                 {
                     EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
