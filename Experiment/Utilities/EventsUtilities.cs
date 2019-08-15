@@ -291,116 +291,135 @@ namespace Experiment.Utilities
             }
         }
 
+        private static void CopyEvents(List<Event> evtsToMove, object ToStack, ObservableCollection<EventStack> eventsList)
+        {
+            EventStack destination;
+            if (ToStack is EventStack)
+            {
+                destination = (EventStack)ToStack;
+            }
+            else
+            {
+                destination = new EventStack
+                {
+                    EventStackDay = ((Day)ToStack).Date
+                };
+            }
 
+            foreach ( Event e in evtsToMove )
+            {
+                destination.AddEvent(e.Clone());
+                DBHandler.DuplicateEvent(e, destination);
+            }
+        }
 
 
 
         private static void UpdateAndDeleteClashedEvents(ClashHandler module, object source, object destination, ObservableCollection<EventStack> eventsList, bool copying)
         {
-            if ( source is Event )
-            {
-                Event src = (Event)source;
-                EventStack toDest = null;
-                DateTime destinationDay = DateTime.MinValue;
-                if ( destination is Day )
-                {
-                    toDest = new EventStack
-                    {
-                        EventStackDay = ((Day)destination).Date
-                    };
-                } else
-                {
-                    toDest = (EventStack)destination;
-                }
-                destinationDay = toDest.EventStackDay;
+
+            //if ( source is Event )
+            //{
+            //    Event src = (Event)source;
+            //    EventStack toDest = null;
+            //    DateTime destinationDay = DateTime.MinValue;
+            //    if ( destination is Day )
+            //    {
+            //        toDest = new EventStack
+            //        {
+            //            EventStackDay = ((Day)destination).Date
+            //        };
+            //    } else
+            //    {
+            //        toDest = (EventStack)destination;
+            //    }
+            //    destinationDay = toDest.EventStackDay;
 
 
                 
-                foreach (Event e in module.SolvedEvents)
-                {
-                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
-                    if (!copying)
-                    {
-                        toDest.AddEvent(e);
-                        parent.RemoveEvent(parent.Events.IndexOf(e));
-                        DBHandler.DeleteEvent(e);
-                    }
-                    else
-                    {
-                        toDest.AddEvent(e.Clone());
-                        DBHandler.UpdateEventStack(toDest);
-                    }
-                    if (destination is Day)
-                    {
-                        eventsList.Add(toDest);
-                        DBHandler.AddEventStack(toDest);
-                    }
-                }
+            //    foreach (Event e in module.SolvedEvents)
+            //    {
+            //        EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+            //        if (!copying)
+            //        {
+            //            toDest.AddEvent(e);
+            //            parent.RemoveEvent(parent.Events.IndexOf(e));
+            //            DBHandler.DeleteEvent(e);
+            //        }
+            //        else
+            //        {
+            //            toDest.AddEvent(e.Clone());
+            //            DBHandler.UpdateEventStack(toDest);
+            //        }
+            //        if (destination is Day)
+            //        {
+            //            eventsList.Add(toDest);
+            //            DBHandler.AddEventStack(toDest);
+            //        }
+            //    }
              
-            } else if ( source is EventStack )
-            {
-                EventStack src = (EventStack)source;
-                EventStack toDest = null;
-                DateTime destinationDay = DateTime.MinValue;
-                if (destination is Day)
-                {
-                    toDest = new EventStack
-                    {
-                        EventStackDay = ((Day)destination).Date
-                    };
-                }
-                else
-                {
-                    toDest = (EventStack)destination;
-                }
-                destinationDay = toDest.EventStackDay;
-                foreach (Event e in module.DeletedEvents)
-                {
-                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
-                    if (parent.EventStackDay != destinationDay)
-                    {
-                        // if conflicting stack is not the destination one
+            //} else if ( source is EventStack )
+            //{
+            //    EventStack src = (EventStack)source;
+            //    EventStack toDest = null;
+            //    DateTime destinationDay = DateTime.MinValue;
+            //    if (destination is Day)
+            //    {
+            //        toDest = new EventStack
+            //        {
+            //            EventStackDay = ((Day)destination).Date
+            //        };
+            //    }
+            //    else
+            //    {
+            //        toDest = (EventStack)destination;
+            //    }
+            //    destinationDay = toDest.EventStackDay;
+            //    foreach (Event e in module.DeletedEvents)
+            //    {
+            //        EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+            //        if (parent.EventStackDay != destinationDay)
+            //        {
+            //            // if conflicting stack is not the destination one
 
-                        if (parent != null)
-                        {
-                            parent.RemoveEvent(parent.Events.IndexOf(parent.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
-                            if (parent.Events.Count == 0)
-                            {
-                                eventsList.Remove(parent);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        e.parentStack.RemoveEvent(parent.Events.IndexOf(e));
-                    }
-                    DBHandler.DeleteEvent(e);
-                }
+            //            if (parent != null)
+            //            {
+            //                parent.RemoveEvent(parent.Events.IndexOf(parent.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
+            //                if (parent.Events.Count == 0)
+            //                {
+            //                    eventsList.Remove(parent);
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            e.parentStack.RemoveEvent(parent.Events.IndexOf(e));
+            //        }
+            //        DBHandler.DeleteEvent(e);
+            //    }
 
-                foreach (Event e in module.SolvedEvents)
-                {
-                    EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
-                    if (!copying)
-                    {
-                        toDest.AddEvent(e);
-                        parent.RemoveEvent(parent.Events.IndexOf(e));
-                        DBHandler.DeleteEvent(e);
-                    }
-                    else
-                    {
-                        toDest.AddEvent(e.Clone());
-                        DBHandler.UpdateEventStack(toDest);
-                    }
-                    if (destination is Day)
-                    {
-                        eventsList.Add(toDest);
-                        DBHandler.AddEventStack(toDest);
-                    }
+            //    foreach (Event e in module.SolvedEvents)
+            //    {
+            //        EventStack parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
+            //        if (!copying)
+            //        {
+            //            toDest.AddEvent(e);
+            //            parent.RemoveEvent(parent.Events.IndexOf(e));
+            //            DBHandler.DeleteEvent(e);
+            //        }
+            //        else
+            //        {
+            //            toDest.AddEvent(e.Clone());
+            //            DBHandler.UpdateEventStack(toDest);
+            //        }
+            //        if (destination is Day)
+            //        {
+            //            eventsList.Add(toDest);
+            //            DBHandler.AddEventStack(toDest);
+            //        }
 
-                }
-
-            }
-
+            //    }
+            //}
         }
         //private static EventStack HandleClashes(object destination, Dictionary<Event, List<Event>> clashingIndices, ObservableCollection<EventStack> eventsList, out bool solved, out List<Event> solvedEvents)
         //{

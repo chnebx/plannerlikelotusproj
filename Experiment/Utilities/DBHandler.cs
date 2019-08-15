@@ -691,12 +691,33 @@ namespace Experiment.Utilities
 
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
+                conn.Insert(To);
                 conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
                     To.Id,
                     newStart,
                     newEnd,
                     evt.Id
                     );
+            }
+        }
+
+        public static void DuplicateEvent(Event evt, EventStack To)
+        {
+            evt.Id = 0;
+            DateTime newStart = new DateTime(
+                To.EventStackDay.Year,
+                To.EventStackDay.Month,
+                To.EventStackDay.Day,
+                evt.Start.Hour,
+                evt.Start.Minute,
+                0);
+            DateTime newEnd = newStart.Add(evt.End - evt.Start);
+
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.Insert(To);
+                evt.EventStackId = To.Id; 
+                conn.InsertWithChildren(evt);
             }
         }
 
