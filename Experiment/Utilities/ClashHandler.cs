@@ -43,7 +43,6 @@ namespace Experiment.Utilities
                 foreach(Event evt in actualStack.Events)
                 {
                     SolvedEvents.Add(evt);
-                    DeletedEvents.Add(evt);
                 }
                 IsSolved = true;
             }
@@ -72,7 +71,6 @@ namespace Experiment.Utilities
             } else
             {
                 SolvedEvents.Add(evt);
-                DeletedEvents.Add(evt);
             }
             IsSolved = true;
             InitBackupData(destinationDay, evt.Clone());
@@ -98,7 +96,6 @@ namespace Experiment.Utilities
                 foreach(Event e in actualStack.Events)
                 {
                     SolvedEvents.Add(e);
-                    DeletedEvents.Add(e);
                 }
                 IsSolved = true;
             }
@@ -123,7 +120,6 @@ namespace Experiment.Utilities
             } else
             {
                 SolvedEvents.Add(evt);
-                DeletedEvents.Add(evt);
                 IsSolved = true;
             }
             InitBackupData(EventStack.Clone(destinationStack), evt.Clone());

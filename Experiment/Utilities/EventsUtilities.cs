@@ -168,22 +168,22 @@ namespace Experiment.Utilities
                         //    }
                         //}
 
-                        if (!isCopying)
-                        {
-                            actualStack.AddEvent(evt);
-                            previousStack.RemoveEvent(indexOfPreviousEvt);
-                            if (previousStack.Events.Count < 1)
-                            {
-                                eventsCollection.Remove(previousStack);
-                            }
-                            DBHandler.HandleDragEvent(previousStack, actualStack, evt, copy: false);
-                        }
-                        else
-                        {
-                            Event copiedEvent = evt.Clone();
-                            actualStack.AddEvent(copiedEvent);
-                            DBHandler.HandleDragEvent(previousStack, actualStack, copiedEvent, copy: true);
-                        }
+                        //if (!isCopying)
+                        //{
+                        //    actualStack.AddEvent(evt);
+                        //    previousStack.RemoveEvent(indexOfPreviousEvt);
+                        //    if (previousStack.Events.Count < 1)
+                        //    {
+                        //        eventsCollection.Remove(previousStack);
+                        //    }
+                        //    DBHandler.HandleDragEvent(previousStack, actualStack, evt, copy: false);
+                        //}
+                        //else
+                        //{
+                        //    Event copiedEvent = evt.Clone();
+                        //    actualStack.AddEvent(copiedEvent);
+                        //    DBHandler.HandleDragEvent(previousStack, actualStack, copiedEvent, copy: true);
+                        //}
                     }
                 }
                 else
@@ -243,7 +243,7 @@ namespace Experiment.Utilities
             foreach (Event e in evtsToDelete)
             {
                 EventStack parent;
-                if (e.parentStack.Id != mainStack.Id)
+                if (e.EventStackId != mainStack.Id)
                 {
                     parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.parentStack.Id);
                 } else
@@ -327,16 +327,14 @@ namespace Experiment.Utilities
             if (!copying)
             {
                 MoveEvents(module.SolvedEvents, destination, eventsList);
-                if (!module.IsSolved)
-                {
-                    DeleteEvents(module.DeletedEvents, source, eventsList);
-                }
-                
             }
             else
             {
                 CopyEvents(module.SolvedEvents, destination, eventsList);
             }
+            
+            DeleteEvents(module.DeletedEvents, source, eventsList);
+            
             return;
         }
 
