@@ -34,10 +34,18 @@ namespace Experiment.Utilities
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
-                    SolvedEvents = clashPrompt.SolvedEvents;
-                    DeletedEvents = clashPrompt.DeletedEvents;
                     IsSolved = true;
                 }
+                SolvedEvents = clashPrompt.SolvedEvents;
+                DeletedEvents = clashPrompt.DeletedEvents;
+            } else
+            {
+                foreach(Event evt in actualStack.Events)
+                {
+                    SolvedEvents.Add(evt);
+                    DeletedEvents.Add(evt);
+                }
+                IsSolved = true;
             }
             InitBackupData(destinationDay, EventStack.Clone(actualStack));
         }
@@ -57,11 +65,16 @@ namespace Experiment.Utilities
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
-                    SolvedEvents = clashPrompt.SolvedEvents;
-                    DeletedEvents = clashPrompt.DeletedEvents;
                     IsSolved = true;
                 }
+                SolvedEvents = clashPrompt.SolvedEvents;
+                DeletedEvents = clashPrompt.DeletedEvents;
+            } else
+            {
+                SolvedEvents.Add(evt);
+                DeletedEvents.Add(evt);
             }
+            IsSolved = true;
             InitBackupData(destinationDay, evt.Clone());
         }
 
@@ -76,10 +89,18 @@ namespace Experiment.Utilities
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
-                    SolvedEvents = clashPrompt.SolvedEvents;
-                    DeletedEvents = clashPrompt.DeletedEvents;
                     IsSolved = true;
                 }
+                SolvedEvents = clashPrompt.SolvedEvents;
+                DeletedEvents = clashPrompt.DeletedEvents;
+            } else
+            {
+                foreach(Event e in actualStack.Events)
+                {
+                    SolvedEvents.Add(e);
+                    DeletedEvents.Add(e);
+                }
+                IsSolved = true;
             }
             InitBackupData(EventStack.Clone(destinationStack), EventStack.Clone(actualStack));
         }
@@ -95,10 +116,15 @@ namespace Experiment.Utilities
                 ClashDialog clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
-                    SolvedEvents = clashPrompt.SolvedEvents;
-                    DeletedEvents = clashPrompt.DeletedEvents;
                     IsSolved = true;
                 }
+                SolvedEvents = clashPrompt.SolvedEvents;
+                DeletedEvents = clashPrompt.DeletedEvents;
+            } else
+            {
+                SolvedEvents.Add(evt);
+                DeletedEvents.Add(evt);
+                IsSolved = true;
             }
             InitBackupData(EventStack.Clone(destinationStack), evt.Clone());
         }

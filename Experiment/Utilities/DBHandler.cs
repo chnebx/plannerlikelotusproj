@@ -496,13 +496,17 @@ namespace Experiment.Utilities
 
         public static void AddEventStack(EventStack evt)
         {
-            SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
-            conn.RunInTransactionAsync(nonAsyncConn =>
+            //SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
+            //conn.RunInTransactionAsync(nonAsyncConn =>
+            //{
+            //    nonAsyncConn.InsertWithChildren(evt, recursive: true);
+            //}
+            //);
+            //conn.CloseAsync();
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                nonAsyncConn.InsertWithChildren(evt, recursive: true);
+                conn.InsertWithChildren(evt, recursive: true);
             }
-            );
-            conn.CloseAsync();
 
         }
 
@@ -691,7 +695,6 @@ namespace Experiment.Utilities
 
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                conn.Insert(To);
                 conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
                     To.Id,
                     newStart,
