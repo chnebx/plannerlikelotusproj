@@ -496,19 +496,9 @@ namespace Experiment.Utilities
 
         public static void AddEventStack(EventStack stack)
         {
-            //SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
-            //conn.RunInTransactionAsync(nonAsyncConn =>
-            //{
-            //    nonAsyncConn.InsertWithChildren(evt, recursive: true);
-            //}
-            //);
-            //conn.CloseAsync();
-            //var createEventStackQuery = "Insert Into EventStacks (EventStackDay, IsOverlapping) Values (?, ?)";
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                //conn.InsertWithChildren(evt, recursive: true);
                 conn.BeginTransaction();
-                //conn.Execute(createEventStackQuery, stack.EventStackDay, stack.IsOverlapping);
                 conn.Insert(stack);
                 int id = (int)SQLite3.LastInsertRowid(conn.Handle);
                 for (int i = 0; i < stack.Events.Count; i++)
