@@ -715,12 +715,11 @@ namespace Experiment.Utilities
                 evt.Start.Minute,
                 0);
             DateTime newEnd = newStart.Add(evt.End - evt.Start);
-
+            int stackId = To.Id;
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                conn.Insert(To);
-                evt.EventStackId = To.Id; 
-                conn.InsertWithChildren(evt);
+                evt.EventStackId = stackId;
+                conn.Insert(evt);
             }
         }
 
