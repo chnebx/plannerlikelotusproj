@@ -18,7 +18,7 @@ namespace Experiment.Utilities
         public Dictionary<Event, List<Event>> Clashes { get; set; }
         public bool IsSolved { get; set; }
 
-        public ClashHandler(Day destinationDay, EventStack actualStack)
+        public void StackToDayClashHandler(EventStack actualStack, Day destinationDay)
         {
             
             SolvedEvents = new List<Event>();
@@ -49,7 +49,7 @@ namespace Experiment.Utilities
             InitBackupData(destinationDay, EventStack.Clone(actualStack));
         }
 
-        public ClashHandler(Day destinationDay, Event evt)
+        public void EventToDayClashHandler(Event evt, Day destinationDay)
         {
             SolvedEvents = new List<Event>();
             DeletedEvents = new List<Event>();
@@ -76,7 +76,7 @@ namespace Experiment.Utilities
             InitBackupData(destinationDay, evt.Clone());
         }
 
-        public ClashHandler(EventStack destinationStack, EventStack actualStack)
+        public void StackToStackHandler(EventStack actualStack, EventStack destinationStack)
         {
             SolvedEvents = new List<Event>();
             DeletedEvents = new List<Event>();
@@ -102,7 +102,7 @@ namespace Experiment.Utilities
             InitBackupData(EventStack.Clone(destinationStack), EventStack.Clone(actualStack));
         }
 
-        public ClashHandler(EventStack destinationStack, Event evt)
+        public void EventToStackHandler(Event evt, EventStack destinationStack)
         {
             SolvedEvents = new List<Event>();
             DeletedEvents = new List<Event>();
@@ -123,6 +123,32 @@ namespace Experiment.Utilities
                 IsSolved = true;
             }
             InitBackupData(EventStack.Clone(destinationStack), evt.Clone());
+        }
+
+        public ClashHandler(object source, object destination)
+        {
+            if (source is Event)
+            {
+                Event src = (Event)source;
+                if (destination is Day)
+                {
+                    EventToDayClashHandler(src, (Day)destination);
+                } else if (destination is EventStack)
+                {
+                    EventToStackHandler(src, (EventStack)destination);
+                }
+            } else if (source is EventStack)
+            {
+                EventStack src = (EventStack)source;
+                if (destination is Day)
+                {
+                    StackToDayClashHandler(src, (Day)destination);
+                }
+                else if (destination is EventStack)
+                {
+                    StackToStackHandler(src, (EventStack)destination);
+                }
+            }
         }
 
         private void InitBackupData(object destination, object source)

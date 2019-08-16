@@ -44,47 +44,27 @@ namespace Experiment.Utilities
         public static void DropHandler(object context, object data, EventStack FromStack, ObservableCollection<EventStack> eventsCollection)
         {
             EventStack previousStack = FromStack;
+            object source = data;
+            object destination = context; 
             bool isCopying = Keyboard.IsKeyDown(Key.RightCtrl);
-            if (context is Day)
-            {
-                Day droppedOnDay = (Day)context;
-                if (data is Event)
-                {
-                    Event evt = (Event)data;
-                    ClashHandler clashModule = new ClashHandler(droppedOnDay, evt);
-                    FillEvents(clashModule, previousStack, droppedOnDay, eventsCollection, isCopying);
-                }
-                else if (data is EventStack)
-                {
-                    EventStack evtStack = (EventStack)data;
-                    ClashHandler clashModule = new ClashHandler(droppedOnDay, evtStack);
-                    FillEvents(clashModule, evtStack, droppedOnDay, eventsCollection, isCopying);
-                }
-            }
-            else if (context is EventStack)
+
+            if (context is EventStack)
             {
                 EventStack actualStack = (EventStack)context;
-                if (data is Event)
+                destination = actualStack;
+                if (data is Event && (actualStack == previousStack || actualStack.Events.Count >= 3))
                 {
-                    Event evt = (Event)data;
-                    if (actualStack != previousStack && actualStack.Events.Count < 3)
-                    {
-                        int indexOfPreviousEvt = previousStack.Events.IndexOf(evt);
-                        ClashHandler clashModule = new ClashHandler(actualStack, evt);
-                        FillEvents(clashModule, evt, actualStack, eventsCollection, isCopying);
-                    }
+                    return;  
                 }
-                else
+                if (data is EventStack && ((EventStack)data == actualStack || ((EventStack)data).Events.Count + actualStack.Events.Count >= 3))
                 {
-                    EventStack evtStack = (EventStack)data;
-                    if (evtStack != actualStack && evtStack.Events.Count + actualStack.Events.Count <= 3)
-                    {
-                        ClashHandler clashModule = new ClashHandler(actualStack, evtStack);
-                        FillEvents(clashModule, evtStack, actualStack, eventsCollection, isCopying);
-                    }
+                    return;
                 }
             }
+            ClashHandler clashModule = new ClashHandler(source, destination);
+            FillEvents(clashModule, source, destination, eventsCollection, isCopying);
         }
+
 
         private static void DeleteEvents(List<Event> evtsToDelete, object fromStack, ObservableCollection<EventStack> eventsList)
         { 
@@ -107,7 +87,8 @@ namespace Experiment.Utilities
                 {
                     parent = mainStack;
                 }
-                parent.RemoveEvent(parent.Events.IndexOf(e));
+                Console.WriteLine(parent.Events.IndexOf(e));
+                parent.RemoveEvent(parent.Events.IndexOf(parent.Events.FirstOrDefault<Event>(x => x.Id == e.Id)));
                 if (parent.Events.Count == 0)
                 {
                     eventsList.Remove(parent);
