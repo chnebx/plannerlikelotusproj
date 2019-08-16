@@ -107,15 +107,14 @@ namespace Experiment.Utilities
                 {
                     parent = mainStack;
                 }
-                //parent.RemoveEvent(parent.Events.IndexOf(parent.Events.Where(x => x.Id == e.Id).FirstOrDefault<Event>()));
                 parent.RemoveEvent(parent.Events.IndexOf(e));
                 if (parent.Events.Count == 0)
                 {
                     eventsList.Remove(parent);
                     DBHandler.DeleteEventStack(parent);
                 }
-                DBHandler.DeleteEvent(e);
             }
+            DBHandler.DeleteEvents(evtsToDelete);
         }
 
         private static void MoveEvents(List<Event> evtsToMove, object ToStack, ObservableCollection<EventStack> eventsList)
