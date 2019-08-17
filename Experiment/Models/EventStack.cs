@@ -493,7 +493,7 @@ namespace Experiment.Models
                 foundEvents.Add(e, new List<Event>());
                 if (evt != null)
                 {
-                    if (LowerLimitEvent != null)
+                    if (LowerLimitEvent != null && LowerLimitEvent.EventStackId != e.EventStackId)
                     {
                         DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
                         DateTime end = start.Add(e.End - e.Start);
@@ -503,7 +503,7 @@ namespace Experiment.Models
                             foundEvents[e].Add(LowerLimitEvent);
                         }
                     }
-                    if (UpperLimitEvent != null)
+                    if (UpperLimitEvent != null && UpperLimitEvent.EventStackId != e.EventStackId)
                     {
                         DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
                         DateTime end = start.Add(e.End - e.Start);
@@ -529,7 +529,7 @@ namespace Experiment.Models
                     for (int k = 0; k < stack.Events.Count; k++)
                     {
                         foundEvents.Add(stack.Events[k], new List<Event>());
-                        if (LowerLimitEvent != null)
+                        if (LowerLimitEvent != null && LowerLimitEvent.EventStackId != stack.Id)
                         {
                             DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, stack.Events[k].Start.Hour, stack.Events[k].Start.Minute, 0);
                             DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);
@@ -539,7 +539,7 @@ namespace Experiment.Models
                             }
 
                         }
-                        if (UpperLimitEvent != null)
+                        if (UpperLimitEvent != null && UpperLimitEvent.EventStackId != stack.Id)
                         {
                             DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, stack.Events[k].Start.Hour, stack.Events[k].Start.Minute, 0);
                             DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);

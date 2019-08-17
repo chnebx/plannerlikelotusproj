@@ -116,20 +116,20 @@ namespace Experiment.Utilities
                 {
                     EventStackDay = ((Day)ToStack).Date
                 };
-                DBHandler.AddEventStack(destination);
+                //DBHandler.AddEventStack(destination);
                 eventsList.Add(destination);
             }
 
             foreach ( Event e in evtsToMove )
             {
-                destination.AddEvent(e);
                 source.RemoveEvent(source.Events.IndexOf(e));
-                DBHandler.MoveEvent(e, destination);
+                destination.AddEvent(e);
             }
+            DBHandler.MoveEvents(evtsToMove, destination, source);
             if (source.Events.Count == 0)
             {
                 eventsList.Remove(source);
-                DBHandler.DeleteEventStack(source);
+                //DBHandler.DeleteEventStack(source);
             }
         }
 

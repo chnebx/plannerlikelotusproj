@@ -563,6 +563,87 @@ namespace Experiment.Utilities
             }
         }
 
+        public static void MoveEvent(Event evt, EventStack To)
+        {
+            DateTime newStart = new DateTime(
+                To.EventStackDay.Year,
+                To.EventStackDay.Month,
+                To.EventStackDay.Day,
+                evt.Start.Hour,
+                evt.Start.Minute,
+                0);
+            DateTime newEnd = newStart.Add(evt.End - evt.Start);
+
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
+                    To.Id,
+                    newStart,
+                    newEnd,
+                    evt.Id
+                    );
+            }
+        }
+
+        public static void MoveEvents(List<Event> evts, EventStack to, EventStack source)
+        {
+            int id = to.Id;
+            int sourceStackId = source.Id;
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.BeginTransaction();
+                if (id <= 0)
+                {
+                    conn.Insert(to);
+                    id = (int)SQLite3.LastInsertRowid(conn.Handle);
+                }
+                foreach (Event e in evts)
+                {
+                    DateTime newStart = new DateTime(
+                    to.EventStackDay.Year,
+                    to.EventStackDay.Month,
+                    to.EventStackDay.Day,
+                    e.Start.Hour,
+                    e.Start.Minute,
+                    0);
+                    DateTime newEnd = newStart.Add(e.End - e.Start);
+                    conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
+                    to.Id,
+                    newStart,
+                    newEnd,
+                    e.Id
+                    );
+                }
+                int originalStackCount = conn.ExecuteScalar<int>("SELECT * from Events WHERE EventStackId = ?", sourceStackId);
+                if (originalStackCount == 0)
+                {
+                    conn.Execute("DELETE FROM EventStacks WHERE Id = ?", sourceStackId);
+                }
+                conn.Commit();
+            }
+        }
+
+        public static void DuplicateEvent(Event evt, EventStack To)
+        {
+            evt.Id = 0;
+            DateTime newStart = new DateTime(
+                To.EventStackDay.Year,
+                To.EventStackDay.Month,
+                To.EventStackDay.Day,
+                evt.Start.Hour,
+                evt.Start.Minute,
+                0);
+            DateTime newEnd = newStart.Add(evt.End - evt.Start);
+            int stackId = To.Id;
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                evt.EventStackId = stackId;
+                conn.Insert(evt);
+            }
+        }
+
+
+
         public static void HandleDragEventStack(EventStack FromStack, EventStack ToStack, bool copy = false)
         {
             
@@ -697,47 +778,7 @@ namespace Experiment.Utilities
             //}
         }
 
-        public static void MoveEvent(Event evt, EventStack To)
-        {
-            DateTime newStart = new DateTime(
-                To.EventStackDay.Year,
-                To.EventStackDay.Month,
-                To.EventStackDay.Day,
-                evt.Start.Hour,
-                evt.Start.Minute, 
-                0);
-            DateTime newEnd = newStart.Add(evt.End - evt.Start);
-
-            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
-            {
-                conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
-                    To.Id,
-                    newStart,
-                    newEnd,
-                    evt.Id
-                    );
-            }
-        }
-
-        public static void DuplicateEvent(Event evt, EventStack To)
-        {
-            evt.Id = 0;
-            DateTime newStart = new DateTime(
-                To.EventStackDay.Year,
-                To.EventStackDay.Month,
-                To.EventStackDay.Day,
-                evt.Start.Hour,
-                evt.Start.Minute,
-                0);
-            DateTime newEnd = newStart.Add(evt.End - evt.Start);
-            int stackId = To.Id;
-            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
-            {
-                evt.EventStackId = stackId;
-                conn.Insert(evt);
-            }
-        }
-
+       
         public event PropertyChangedEventHandler PropertyChanged;
 
 
