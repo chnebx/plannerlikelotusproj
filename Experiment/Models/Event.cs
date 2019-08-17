@@ -702,6 +702,12 @@ namespace Experiment.Models
         public Event Clone()
         {
             return (Event)this.MemberwiseClone();
+            //return new Event
+            //{
+            //    Start = this.Start,
+            //    End = this.End,
+
+            //};
         }
 
         public string ShortNameMaker(string name)

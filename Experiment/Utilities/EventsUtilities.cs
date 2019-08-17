@@ -69,6 +69,10 @@ namespace Experiment.Utilities
         private static void DeleteEvents(List<Event> evtsToDelete, object fromStack, ObservableCollection<EventStack> eventsList)
         { 
             EventStack mainStack;
+            if (evtsToDelete.Count == 0)
+            {
+                return;
+            }
             if (fromStack is Event)
             {
                 mainStack = (EventStack)eventsList.FirstOrDefault<EventStack>(x => x.EventStackDay == ((Event)fromStack).parentStack.EventStackDay);
@@ -116,7 +120,6 @@ namespace Experiment.Utilities
                 {
                     EventStackDay = ((Day)ToStack).Date
                 };
-                //DBHandler.AddEventStack(destination);
                 eventsList.Add(destination);
             }
 
@@ -129,13 +132,17 @@ namespace Experiment.Utilities
             if (source.Events.Count == 0)
             {
                 eventsList.Remove(source);
-                //DBHandler.DeleteEventStack(source);
             }
         }
 
         private static void CopyEvents(List<Event> evtsToMove, object ToStack, ObservableCollection<EventStack> eventsList)
         {
             EventStack destination;
+            List<Event> clones = new List<Event>();
+            if (evtsToMove.Count == 0)
+            {
+                return;
+            }
             if (ToStack is EventStack)
             {
                 destination = (EventStack)ToStack;
@@ -146,15 +153,26 @@ namespace Experiment.Utilities
                 {
                     EventStackDay = ((Day)ToStack).Date
                 };
-                DBHandler.AddEventStack(destination);
                 eventsList.Add(destination);
             }
 
             foreach ( Event e in evtsToMove )
             {
-                destination.AddEvent(e.Clone());
-                DBHandler.DuplicateEvent(e.Clone(), destination);
+                Event copyEvt = e.DeepCopy();
+                DateTime newStart = new DateTime(
+                        destination.EventStackDay.Year,
+                        destination.EventStackDay.Month,
+                        destination.EventStackDay.Day,
+                        e.Start.Hour,
+                        e.Start.Minute,
+                        0);
+                DateTime newEnd = newStart.Add(e.End - e.Start);
+                copyEvt.Start = newStart;
+                copyEvt.End = newEnd;
+                destination.AddEvent(copyEvt);
+                clones.Add(copyEvt);
             }
+            DBHandler.DuplicateEvents(clones, destination);
         }
 
 

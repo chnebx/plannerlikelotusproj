@@ -614,12 +614,12 @@ namespace Experiment.Utilities
                     e.Id
                     );
                 }
-                int originalStackCount = conn.ExecuteScalar<int>("SELECT * from Events WHERE EventStackId = ?", sourceStackId);
+                conn.Commit();
+                int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", sourceStackId);
                 if (originalStackCount == 0)
                 {
                     conn.Execute("DELETE FROM EventStacks WHERE Id = ?", sourceStackId);
                 }
-                conn.Commit();
             }
         }
 
@@ -642,7 +642,34 @@ namespace Experiment.Utilities
             }
         }
 
-
+        public static void DuplicateEvents(List<Event> evts, EventStack To)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.BeginTransaction();
+                if (To.Id <= 0)
+                {
+                    conn.Insert(To);
+                    To.Id = (int)SQLite3.LastInsertRowid(conn.Handle);
+                }
+                foreach (Event e in evts)
+                {
+                    e.Id = 0;
+                    DateTime newStart = new DateTime(
+                        To.EventStackDay.Year,
+                        To.EventStackDay.Month,
+                        To.EventStackDay.Day,
+                        e.Start.Hour,
+                        e.Start.Minute,
+                        0);
+                    DateTime newEnd = newStart.Add(e.End - e.Start);
+                    int stackId = To.Id;
+                    e.EventStackId = stackId;
+                    conn.Insert(e);
+                }
+                conn.Commit();
+            }
+        }
 
         public static void HandleDragEventStack(EventStack FromStack, EventStack ToStack, bool copy = false)
         {
