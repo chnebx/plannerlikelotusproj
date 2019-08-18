@@ -73,7 +73,7 @@ namespace Experiment.Utilities
                 SolvedEvents.Add(evt);
             }
             IsSolved = true;
-            InitBackupData(destinationDay, evt.Clone());
+            InitBackupData(destinationDay, evt.DeepCopy());
         }
 
         public void StackToStackHandler(EventStack actualStack, EventStack destinationStack)
@@ -122,7 +122,7 @@ namespace Experiment.Utilities
                 SolvedEvents.Add(evt);
                 IsSolved = true;
             }
-            InitBackupData(EventStack.Clone(destinationStack), evt.Clone());
+            InitBackupData(EventStack.Clone(destinationStack), evt.DeepCopy());
         }
 
         public ClashHandler(object source, object destination)

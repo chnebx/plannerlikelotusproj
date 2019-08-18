@@ -178,6 +178,10 @@ namespace Experiment.Views
             ActualDayScheduler.UpperLimit = actualEventStack.UpperLimitHour;
             ActualDayScheduler.Refresh();
             ActualDayScheduler.SelectDefault();
+            foreach(Event e in actualEventStack.Events)
+            {
+                Console.WriteLine("Id : " + e.Id + ", Name : " + e.Name + ", EventStackId : " + e.EventStackId);
+            }
             
         }
 

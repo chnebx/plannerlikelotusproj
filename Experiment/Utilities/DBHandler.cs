@@ -499,13 +499,7 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                conn.Insert(stack);
-                int id = (int)SQLite3.LastInsertRowid(conn.Handle);
-                for (int i = 0; i < stack.Events.Count; i++)
-                {
-                    stack.Events[i].EventStackId = id;
-                }
-                conn.InsertAll(stack.Events);
+                conn.InsertWithChildren(stack, recursive:true);
                 conn.Commit();
             }
 
@@ -650,7 +644,7 @@ namespace Experiment.Utilities
                 if (To.Id <= 0)
                 {
                     conn.Insert(To);
-                    To.Id = (int)SQLite3.LastInsertRowid(conn.Handle);
+                    //To.Id = (int)SQLite3.LastInsertRowid(conn.Handle);
                 }
                 foreach (Event e in evts)
                 {
@@ -666,6 +660,73 @@ namespace Experiment.Utilities
                     int stackId = To.Id;
                     e.EventStackId = stackId;
                     conn.Insert(e);
+                }
+                conn.Commit();
+            }
+        }
+
+        public static void HandleDrag(List<Event> evtsToDelete, List<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
+        {
+            int destinationId = destination.Id;
+            int sourceId = source.Id;
+            if (evtsToMove.Count < 1)
+            {
+                return;
+            }
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.BeginTransaction();
+                if (destinationId <= 0)
+                {
+                    conn.Insert(destination);
+                }
+                foreach (Event e in evtsToMove)
+                {
+                    DateTime newStart = new DateTime(
+                    destination.EventStackDay.Year,
+                    destination.EventStackDay.Month,
+                    destination.EventStackDay.Day,
+                    e.Start.Hour,
+                    e.Start.Minute,
+                    0);
+                    DateTime newEnd = newStart.Add(e.End - e.Start);
+                    e.Start = newStart;
+                    e.End = newEnd;
+                    e.EventStackId = destination.Id;
+                    //if (!copy)
+                    //{
+                    //    conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
+                    //    destination.Id,
+                    //    newStart,
+                    //    newEnd,
+                    //    e.Id
+                    //    );
+                    //}
+                }
+                if (!copy)
+                {
+                    conn.UpdateAll(evtsToMove, true);
+                } else
+                {
+                    conn.InsertAll(evtsToMove, true);
+                }
+                foreach (Event e in evtsToDelete)
+                {
+                    var deleteEventQuery = "DELETE FROM Events WHERE Start = ?";
+                    conn.Execute(deleteEventQuery, e.Start);
+                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId IN (SELECT EventStackId FROM EventStacks WHERE EventStackDay = ? )", e.parentStack.EventStackDay);
+                    if (originalStackCount == 0)
+                    {
+                        conn.Execute("DELETE FROM EventStacks WHERE EventStackDay = ?", e.parentStack.EventStackDay);
+                    }
+                }
+                if (!copy)
+                {
+                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", sourceId);
+                    if (originalStackCount == 0)
+                    {
+                        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", sourceId);
+                    }
                 }
                 conn.Commit();
             }

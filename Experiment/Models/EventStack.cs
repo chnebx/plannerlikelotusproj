@@ -218,7 +218,7 @@ namespace Experiment.Models
             };
             foreach(Event evt in evtStack.Events)
             {
-                cloned.AddEvent(evt);
+                cloned.AddEvent(evt.DeepCopy());
             }
             return cloned;
         }
@@ -740,6 +740,18 @@ namespace Experiment.Models
                 return;
             }
             _isOverlapping = false;
+        }
+
+        public int GetIndex(Event evt)
+        {
+            for (int i = 0; i < Events.Count; i++)
+            {
+                if (Events[i] == evt)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public void sortEvents()

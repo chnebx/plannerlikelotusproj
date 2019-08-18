@@ -104,6 +104,10 @@ namespace Experiment.Views
             {
                 foreach (KeyValuePair<Event, List<Event>> entries in _foundEvents)
                 {
+                    if (entries.Value.Count == 0)
+                    {
+                        SolvedEvents.Add(entries.Key);
+                    }
                     foreach(Event evt in entries.Value)
                     {
                         if (!ClashElements.Contains(evt))

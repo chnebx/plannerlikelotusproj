@@ -56,7 +56,7 @@ namespace Experiment.Utilities
                 {
                     return;  
                 }
-                if (data is EventStack && ((EventStack)data == actualStack || ((EventStack)data).Events.Count + actualStack.Events.Count >= 3))
+                if (data is EventStack && ((EventStack)data == actualStack || ((EventStack)data).Events.Count + actualStack.Events.Count > 3))
                 {
                     return;
                 }
@@ -84,112 +84,116 @@ namespace Experiment.Utilities
             foreach (Event e in evtsToDelete)
             {
                 EventStack parent;
-                if (e.EventStackId != mainStack.Id)
+                if (e.parentStack.EventStackDay != mainStack.EventStackDay)
                 {
-                    parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.EventStackId);
+                    parent = eventsList.FirstOrDefault<EventStack>(x => x.EventStackDay == e.parentStack.EventStackDay);
                 } else
                 {
                     parent = mainStack;
                 }
-                Console.WriteLine(parent.Events.IndexOf(e));
-                parent.RemoveEvent(parent.Events.IndexOf(parent.Events.FirstOrDefault<Event>(x => x.Id == e.Id)));
+                //parent.RemoveEvent(parent.Events.IndexOf(parent.Events.FirstOrDefault<Event>(x => x.Id == e.Id)));
+                parent.RemoveEvent(parent.GetIndex(e));
                 if (parent.Events.Count == 0)
                 {
                     eventsList.Remove(parent);
-                    DBHandler.DeleteEventStack(parent);
+                    //DBHandler.DeleteEventStack(parent);
                 }
             }
-            DBHandler.DeleteEvents(evtsToDelete);
+            //DBHandler.DeleteEvents(evtsToDelete);
         }
 
-        private static void MoveEvents(List<Event> evtsToMove, object ToStack, ObservableCollection<EventStack> eventsList)
+        private static void MoveEvents(List<Event> evtsToMove, EventStack ToStack, ObservableCollection<EventStack> eventsList)
         {
             if (evtsToMove.Count == 0)
             {
                 return;
             }
-            EventStack destination;
             DateTime parent = evtsToMove.FirstOrDefault<Event>().parentStack.EventStackDay;
             EventStack source = eventsList.FirstOrDefault<EventStack>(x => x.EventStackDay == parent);
-            if (ToStack is EventStack)
+            if (ToStack.Events.Count == 0)
             {
-                destination = (EventStack)ToStack;
-            } else
-            {
-                destination = new EventStack
-                {
-                    EventStackDay = ((Day)ToStack).Date
-                };
-                eventsList.Add(destination);
+                eventsList.Add(ToStack);
             }
-
             foreach ( Event e in evtsToMove )
             {
                 source.RemoveEvent(source.Events.IndexOf(e));
-                destination.AddEvent(e);
+                ToStack.AddEvent(e);
             }
-            DBHandler.MoveEvents(evtsToMove, destination, source);
+            //DBHandler.MoveEvents(evtsToMove, destination, source);
             if (source.Events.Count == 0)
             {
                 eventsList.Remove(source);
             }
         }
 
-        private static void CopyEvents(List<Event> evtsToMove, object ToStack, ObservableCollection<EventStack> eventsList)
+        private static void CopyEvents(List<Event> evtsToMove, EventStack ToStack, ObservableCollection<EventStack> eventsList)
         {
-            EventStack destination;
-            List<Event> clones = new List<Event>();
             if (evtsToMove.Count == 0)
             {
                 return;
             }
-            if (ToStack is EventStack)
+            if (ToStack.Events.Count == 0)
             {
-                destination = (EventStack)ToStack;
+                eventsList.Add(ToStack);
             }
-            else
-            {
-                destination = new EventStack
-                {
-                    EventStackDay = ((Day)ToStack).Date
-                };
-                eventsList.Add(destination);
-            }
-
             foreach ( Event e in evtsToMove )
             {
                 Event copyEvt = e.DeepCopy();
+                copyEvt.Id = e.Id;
+                copyEvt.EventStackId = e.EventStackId;
                 DateTime newStart = new DateTime(
-                        destination.EventStackDay.Year,
-                        destination.EventStackDay.Month,
-                        destination.EventStackDay.Day,
+                        ToStack.EventStackDay.Year,
+                        ToStack.EventStackDay.Month,
+                        ToStack.EventStackDay.Day,
                         e.Start.Hour,
                         e.Start.Minute,
                         0);
                 DateTime newEnd = newStart.Add(e.End - e.Start);
                 copyEvt.Start = newStart;
                 copyEvt.End = newEnd;
-                destination.AddEvent(copyEvt);
-                clones.Add(copyEvt);
+                ToStack.AddEvent(copyEvt);
+                //clones.Add(copyEvt);
             }
-            DBHandler.DuplicateEvents(clones, destination);
+            return;
+            //DBHandler.DuplicateEvents(clones, destination);
         }
 
 
 
         private static void FillEvents(ClashHandler module, object source, object destination, ObservableCollection<EventStack> eventsList, bool copying)
         {
+            EventStack dest;
+            EventStack src;
+            if (destination is Day)
+            {
+                dest = new EventStack
+                {
+                    EventStackDay = ((Day)destination).Date
+                };
+            } else
+            {
+                dest = (EventStack)destination;
+            }
+            if (source is EventStack)
+            {
+                src = (EventStack)source;
+            } else
+            {
+                int parentId = ((Event)source).EventStackId;
+                src = DBHandler.getEventStack(parentId);
+            }
+
+            DBHandler.HandleDrag(module.DeletedEvents, module.SolvedEvents, dest, src, copying);
+
             if (!copying)
             {
-                MoveEvents(module.SolvedEvents, destination, eventsList);
+                MoveEvents(module.SolvedEvents, dest, eventsList);
             }
             else
             {
-                CopyEvents(module.SolvedEvents, destination, eventsList);
+                CopyEvents(module.SolvedEvents, dest, eventsList);
             }
-            
-            DeleteEvents(module.DeletedEvents, source, eventsList);
-            
+            DeleteEvents(module.DeletedEvents, src, eventsList);
             return;
         }
 

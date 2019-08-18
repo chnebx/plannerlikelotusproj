@@ -155,6 +155,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public bool Over2Days
         {
             get
@@ -311,7 +312,7 @@ namespace Experiment.Models
             }
         }
 
-
+        [Ignore]
         public int LengthHour
         {
             get
@@ -325,7 +326,7 @@ namespace Experiment.Models
             }
         }
 
-
+        [Ignore]
         public int LengthMinutes
         {
             get
@@ -339,6 +340,7 @@ namespace Experiment.Models
             }
         }
 
+        [Ignore]
         public double Duration
         {
             get
