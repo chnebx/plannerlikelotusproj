@@ -181,6 +181,7 @@ namespace Experiment.Views
             foreach(Event e in actualEventStack.Events)
             {
                 Console.WriteLine("Id : " + e.Id + ", Name : " + e.Name + ", EventStackId : " + e.EventStackId);
+                Console.WriteLine("Formule : " + e.CurrentFormule.Name);
             }
             
         }

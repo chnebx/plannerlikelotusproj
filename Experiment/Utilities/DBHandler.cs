@@ -665,7 +665,7 @@ namespace Experiment.Utilities
             }
         }
 
-        public static void HandleDrag(List<Event> evtsToDelete, List<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
+        public static void HandleDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
         {
             int destinationId = destination.Id;
             int sourceId = source.Id;
@@ -712,12 +712,12 @@ namespace Experiment.Utilities
                 }
                 foreach (Event e in evtsToDelete)
                 {
-                    var deleteEventQuery = "DELETE FROM Events WHERE Start = ?";
-                    conn.Execute(deleteEventQuery, e.Start);
-                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId IN (SELECT EventStackId FROM EventStacks WHERE EventStackDay = ? )", e.parentStack.EventStackDay);
+                    var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
+                    conn.Execute(deleteEventQuery, e.Id);
+                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
                     if (originalStackCount == 0)
                     {
-                        conn.Execute("DELETE FROM EventStacks WHERE EventStackDay = ?", e.parentStack.EventStackDay);
+                        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", e.EventStackId);
                     }
                 }
                 if (!copy)

@@ -102,7 +102,7 @@ namespace Experiment.Utilities
             //DBHandler.DeleteEvents(evtsToDelete);
         }
 
-        private static void MoveEvents(List<Event> evtsToMove, EventStack ToStack, ObservableCollection<EventStack> eventsList)
+        private static void MoveEvents(ObservableCollection<Event> evtsToMove, EventStack ToStack, ObservableCollection<EventStack> eventsList)
         {
             if (evtsToMove.Count == 0)
             {
@@ -126,7 +126,7 @@ namespace Experiment.Utilities
             }
         }
 
-        private static void CopyEvents(List<Event> evtsToMove, EventStack ToStack, ObservableCollection<EventStack> eventsList)
+        private static void CopyEvents(ObservableCollection<Event> evtsToMove, EventStack ToStack, ObservableCollection<EventStack> eventsList)
         {
             if (evtsToMove.Count == 0)
             {
@@ -138,20 +138,20 @@ namespace Experiment.Utilities
             }
             foreach ( Event e in evtsToMove )
             {
-                Event copyEvt = e.DeepCopy();
-                copyEvt.Id = e.Id;
-                copyEvt.EventStackId = e.EventStackId;
-                DateTime newStart = new DateTime(
-                        ToStack.EventStackDay.Year,
-                        ToStack.EventStackDay.Month,
-                        ToStack.EventStackDay.Day,
-                        e.Start.Hour,
-                        e.Start.Minute,
-                        0);
-                DateTime newEnd = newStart.Add(e.End - e.Start);
-                copyEvt.Start = newStart;
-                copyEvt.End = newEnd;
-                ToStack.AddEvent(copyEvt);
+                //Event copyEvt = e.DeepCopy();
+                //copyEvt.Id = e.Id;
+                //copyEvt.EventStackId = e.EventStackId;
+                //DateTime newStart = new DateTime(
+                //        ToStack.EventStackDay.Year,
+                //        ToStack.EventStackDay.Month,
+                //        ToStack.EventStackDay.Day,
+                //        e.Start.Hour,
+                //        e.Start.Minute,
+                //        0);
+                //DateTime newEnd = newStart.Add(e.End - e.Start);
+                //copyEvt.Start = newStart;
+                //copyEvt.End = newEnd;
+                ToStack.AddEvent(e);
                 //clones.Add(copyEvt);
             }
             return;
@@ -164,6 +164,7 @@ namespace Experiment.Utilities
         {
             EventStack dest;
             EventStack src;
+            ObservableCollection<Event> duplicates = new ObservableCollection<Event>();
             if (destination is Day)
             {
                 dest = new EventStack
@@ -182,16 +183,27 @@ namespace Experiment.Utilities
                 int parentId = ((Event)source).EventStackId;
                 src = DBHandler.getEventStack(parentId);
             }
+            ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);
+            ObservableCollection<Event> Deleted = new ObservableCollection<Event>(module.DeletedEvents);
+            if (copying)
+            {
+                foreach(Event e in Solved)
+                {
+                    Event evt = e.DeepCopy();
+                    duplicates.Add(evt);
+                }
+                Solved = duplicates;
+            } 
 
-            DBHandler.HandleDrag(module.DeletedEvents, module.SolvedEvents, dest, src, copying);
+            DBHandler.HandleDrag(Deleted, Solved, dest, src, copying);
 
             if (!copying)
             {
-                MoveEvents(module.SolvedEvents, dest, eventsList);
+                MoveEvents(Solved, dest, eventsList);
             }
             else
             {
-                CopyEvents(module.SolvedEvents, dest, eventsList);
+                CopyEvents(Solved, dest, eventsList);
             }
             DeleteEvents(module.DeletedEvents, src, eventsList);
             return;

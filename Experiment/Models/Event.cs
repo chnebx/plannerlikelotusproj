@@ -54,6 +54,8 @@ namespace Experiment.Models
         private string _SelectedColor;
         private static Random randomColor = new Random();
         private EventStack _parentStack;
+        private int _id;
+        private int _eventStackId;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -89,14 +91,41 @@ namespace Experiment.Models
             //updateDuration();
         }
 
+        //[PrimaryKey, AutoIncrement]
+        //public int Id { get; set; }
+
         [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        public int Id {
+            get
+            {
+                return _id; 
+            }
+            set
+            {
+                _id = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Id"));
+            }
+        }
+
+        [ForeignKey(typeof(EventStack))]
+        public int EventStackId {
+            get
+            {
+                return _eventStackId;
+            }
+            set
+            {
+                _eventStackId = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventStackId"));
+            }
+        }
+
 
         [ForeignKey(typeof(Band))]
         public int BandId { get; set; }
 
-        [ForeignKey(typeof(EventStack))]
-        public int EventStackId { get; set; }
+        //[ForeignKey(typeof(EventStack))]
+        //public int EventStackId { get; set; }
 
         [ManyToOne(CascadeOperations = CascadeOperation.CascadeRead)]
         public EventStack parentStack
@@ -218,6 +247,7 @@ namespace Experiment.Models
             set
             {
                 _band = value;
+                BandId = _band.Id;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Band"));
             }
         }
@@ -232,6 +262,7 @@ namespace Experiment.Models
             set
             {
                 _employer = value;
+                employerID = _employer.Id;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ActualEmployer"));
             }
         }
@@ -246,6 +277,7 @@ namespace Experiment.Models
             set
             {
                 _location = value;
+                LocationID = _location.Id;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LocationName"));
             }
         }
@@ -260,6 +292,7 @@ namespace Experiment.Models
             set
             {
                 _formule = value;
+                formuleID = _formule.Id;
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("CurrentFormule"));
             }
         }
@@ -273,6 +306,7 @@ namespace Experiment.Models
             set
             {
                 _eventStart = value;
+                updateDuration();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Start"));
             }
         }
@@ -286,6 +320,7 @@ namespace Experiment.Models
             set
             {
                 _eventEnd = value;
+                updateDuration();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("End"));
             }
         }
@@ -663,13 +698,13 @@ namespace Experiment.Models
         public Event DeepCopy()
         {
             Event copiedEvent = new Event();
-            copiedEvent.Band = _band;
+            copiedEvent.Band = Band;
             copiedEvent.Start = Start;
             copiedEvent.End = End;
             copiedEvent.Name = Name;
-            copiedEvent.LocationName = _location;
-            copiedEvent.CurrentFormule = _formule;
-            copiedEvent.ActualEmployer = _employer;
+            copiedEvent.LocationName = LocationName;
+            copiedEvent.CurrentFormule = CurrentFormule;
+            copiedEvent.ActualEmployer = ActualEmployer;
             copiedEvent.Comment = Comment;
             copiedEvent.LengthHour = LengthHour;
             copiedEvent.LengthMinutes = LengthMinutes;
