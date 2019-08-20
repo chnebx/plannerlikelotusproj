@@ -746,7 +746,7 @@ namespace Experiment.Models
         {
             for (int i = 0; i < Events.Count; i++)
             {
-                if (Events[i] == evt)
+                if (Events[i].Id == evt.Id)
                 {
                     return i;
                 }
