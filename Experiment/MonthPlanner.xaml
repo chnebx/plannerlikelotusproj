@@ -182,6 +182,7 @@
                                         <Popup
                                             AllowsTransparency="True"
                                             VerticalOffset="20"
+                                            Placement="Right"
                                             IsOpen="{Binding IsMouseOver, Mode=OneWay, RelativeSource = {RelativeSource
                                             Mode=FindAncestor, AncestorType={x:Type Grid}, AncestorLevel=1}}"
                                             >
@@ -198,7 +199,7 @@
                                                         <RowDefinition Height="*"></RowDefinition>
                                                     </Grid.RowDefinitions>
                                                     <Border CornerRadius="10,10,0,0" Grid.Row="0" Background="#EE7070BE">
-                                                        <TextBlock Text="{Binding Current.DayTitle}"
+                                                        <TextBlock Text="{Binding EventStackDay, StringFormat={}{0:D}}"
                                                            Foreground="White"
                                                            FontSize="13"
                                                            FontWeight="Bold"

@@ -110,7 +110,6 @@ namespace Experiment.Utilities
                 source.RemoveEvent(source.Events.IndexOf(e));
                 ToStack.AddEvent(e);
             }
-            //DBHandler.MoveEvents(evtsToMove, destination, source);
             if (source.Events.Count == 0)
             {
                 eventsList.Remove(source);
@@ -129,11 +128,8 @@ namespace Experiment.Utilities
             }
             foreach ( Event e in evtsToMove )
             {
-                //e.updateDuration();
                 ToStack.AddEvent(e);
             }
-            return;
-            //DBHandler.DuplicateEvents(clones, destination);
         }
 
 
