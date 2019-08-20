@@ -703,7 +703,7 @@ namespace Experiment.Models
         public void updateDates(int year, int month, int day)
         {
             this.Start = new DateTime(year, month, day, Start.Hour, Start.Minute, Start.Second);
-            this.End = Start.AddMinutes(_lengthHour * 60 + _lengthMinutes);
+            this.End = Start.Add(this.End - this.Start);
         }
 
         private string ConvertBrushToHex(SolidColorBrush brush)

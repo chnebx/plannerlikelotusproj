@@ -138,22 +138,8 @@ namespace Experiment.Utilities
             }
             foreach ( Event e in evtsToMove )
             {
-                //Event copyEvt = e.DeepCopy();
-                //copyEvt.Id = e.Id;
-                //copyEvt.EventStackId = e.EventStackId;
-                //DateTime newStart = new DateTime(
-                //        ToStack.EventStackDay.Year,
-                //        ToStack.EventStackDay.Month,
-                //        ToStack.EventStackDay.Day,
-                //        e.Start.Hour,
-                //        e.Start.Minute,
-                //        0);
-                //DateTime newEnd = newStart.Add(e.End - e.Start);
-                //e.Start = newStart;
-                //e.End = newEnd;
-                e.updateDuration();
+                //e.updateDuration();
                 ToStack.AddEvent(e);
-                //clones.Add(copyEvt);
             }
             return;
             //DBHandler.DuplicateEvents(clones, destination);
