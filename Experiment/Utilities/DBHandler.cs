@@ -705,10 +705,10 @@ namespace Experiment.Utilities
                 }
                 if (!copy)
                 {
-                    conn.UpdateAll(evtsToMove, true);
+                    conn.UpdateAll(evtsToMove);
                 } else
                 {
-                    conn.InsertAll(evtsToMove, true);
+                    conn.InsertAll(evtsToMove);
                 }
                 foreach (Event e in evtsToDelete)
                 {

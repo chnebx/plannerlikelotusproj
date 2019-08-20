@@ -262,7 +262,10 @@ namespace Experiment.Models
             set
             {
                 _employer = value;
-                employerID = _employer.Id;
+                if (_employer != null)
+                {
+                    employerID = _employer.Id;
+                }
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ActualEmployer"));
             }
         }
@@ -277,7 +280,11 @@ namespace Experiment.Models
             set
             {
                 _location = value;
-                LocationID = _location.Id;
+                if (_location != null)
+                {
+                    LocationID = _location.Id;
+                }
+                
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("LocationName"));
             }
         }
@@ -292,7 +299,11 @@ namespace Experiment.Models
             set
             {
                 _formule = value;
-                formuleID = _formule.Id;
+                if (_formule != null)
+                {
+                    formuleID = _formule.Id;
+                }
+                
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("CurrentFormule"));
             }
         }
