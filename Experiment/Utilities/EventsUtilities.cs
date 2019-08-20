@@ -66,40 +66,31 @@ namespace Experiment.Utilities
         }
 
 
-        private static void DeleteEvents(List<Event> evtsToDelete, object fromStack, ObservableCollection<EventStack> eventsList)
+        private static void DeleteEvents(List<Event> evtsToDelete, EventStack fromStack, ObservableCollection<EventStack> eventsList)
         { 
             EventStack mainStack;
             if (evtsToDelete.Count == 0)
             {
                 return;
             }
-            if (fromStack is Event)
-            {
-                mainStack = (EventStack)eventsList.FirstOrDefault<EventStack>(x => x.EventStackDay == ((Event)fromStack).parentStack.EventStackDay);
-            } else
-            {
-                mainStack = (EventStack)fromStack;
-            }
+            mainStack = (EventStack)eventsList.FirstOrDefault<EventStack>(x => x.Id == fromStack.Id);
 
             foreach (Event e in evtsToDelete)
             {
                 EventStack parent;
-                if (e.parentStack.EventStackDay != mainStack.EventStackDay)
-                {
-                    parent = eventsList.FirstOrDefault<EventStack>(x => x.EventStackDay == e.parentStack.EventStackDay);
-                } else
+                if (mainStack != null && e.EventStackId == mainStack.Id)
                 {
                     parent = mainStack;
+                } else
+                {
+                    parent = eventsList.FirstOrDefault<EventStack>(x => x.Id == e.EventStackId);
                 }
-                //parent.RemoveEvent(parent.Events.IndexOf(parent.Events.FirstOrDefault<Event>(x => x.Id == e.Id)));
                 parent.RemoveEvent(parent.GetIndex(e));
                 if (parent.Events.Count == 0)
                 {
                     eventsList.Remove(parent);
-                    //DBHandler.DeleteEventStack(parent);
                 }
             }
-            //DBHandler.DeleteEvents(evtsToDelete);
         }
 
         private static void MoveEvents(ObservableCollection<Event> evtsToMove, EventStack ToStack, ObservableCollection<EventStack> eventsList)
