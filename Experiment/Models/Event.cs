@@ -184,19 +184,6 @@ namespace Experiment.Models
             }
         }
 
-        [Ignore]
-        public bool Over2Days
-        {
-            get
-            {
-                return _over2Days;
-            }
-            set
-            {
-                _over2Days = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Over2Days"));
-            }
-        }
 
         [ForeignKey(typeof(Employer))]
         public int EmployerID
@@ -317,7 +304,6 @@ namespace Experiment.Models
             set
             {
                 _eventStart = value;
-                updateDuration();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Start"));
             }
         }
@@ -331,8 +317,21 @@ namespace Experiment.Models
             set
             {
                 _eventEnd = value;
-                updateDuration();
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("End"));
+            }
+        }
+
+        [Ignore]
+        public bool Over2Days
+        {
+            get
+            {
+                return _over2Days;
+            }
+            set
+            {
+                _over2Days = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Over2Days"));
             }
         }
 
@@ -378,6 +377,7 @@ namespace Experiment.Models
             get
             {
                 return _lengthMinutes;
+
             }
             set
             {
@@ -391,6 +391,11 @@ namespace Experiment.Models
         {
             get
             {
+                if (_duration == 0)
+                {
+                    _duration = (End - Start).TotalMinutes;
+                }
+
                 return _duration;
             }
             set
