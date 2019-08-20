@@ -149,8 +149,9 @@ namespace Experiment.Utilities
                 //        e.Start.Minute,
                 //        0);
                 //DateTime newEnd = newStart.Add(e.End - e.Start);
-                //copyEvt.Start = newStart;
-                //copyEvt.End = newEnd;
+                //e.Start = newStart;
+                //e.End = newEnd;
+                e.updateDuration();
                 ToStack.AddEvent(e);
                 //clones.Add(copyEvt);
             }
