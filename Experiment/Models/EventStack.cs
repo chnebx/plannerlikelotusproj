@@ -493,7 +493,8 @@ namespace Experiment.Models
                 foundEvents.Add(e, new List<Event>());
                 if (evt != null)
                 {
-                    if (LowerLimitEvent != null && LowerLimitEvent.EventStackId != e.EventStackId)
+                    //if (LowerLimitEvent != null && LowerLimitEvent.EventStackId != e.EventStackId)
+                    if (LowerLimitEvent != null)
                     {
                         DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
                         DateTime end = start.Add(e.End - e.Start);
@@ -503,7 +504,7 @@ namespace Experiment.Models
                             foundEvents[e].Add(LowerLimitEvent);
                         }
                     }
-                    if (UpperLimitEvent != null && UpperLimitEvent.EventStackId != e.EventStackId)
+                    if (UpperLimitEvent != null)
                     {
                         DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, e.Start.Hour, e.Start.Minute, 0);
                         DateTime end = start.Add(e.End - e.Start);

@@ -200,7 +200,7 @@ namespace Experiment.Utilities
         {
             ObservableCollection<EventStack> events = DBHandler.getEventsFrom(evtStack.EventStackDay.Date.AddYears(-1).Year);
             EventStack previousEvtStack = events.FirstOrDefault<EventStack>(x => x.EventStackDay.Date.AddDays(1) == evtStack.EventStackDay.Date);
-            if (previousEvtStack != null && previousEvtStack.IsOverlapping)
+            if (previousEvtStack != null && previousEvtStack.IsOver2Days())
             {
                 evtStack.LowerLimitHour = previousEvtStack.Events.Last().End;
                 evtStack.LowerLimitEvent = previousEvtStack.Events.Last();
