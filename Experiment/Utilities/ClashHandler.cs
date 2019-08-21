@@ -33,7 +33,7 @@ namespace Experiment.Utilities
             if (Clashes.Count > 0)
             {
                 IsSolved = false;
-                ClashDialog clashPrompt = new ClashDialog(Clashes, true);
+                clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
                     IsSolved = true;
@@ -78,7 +78,7 @@ namespace Experiment.Utilities
             if (Clashes.Count > 0)
             {
                 IsSolved = false;
-                ClashDialog clashPrompt = new ClashDialog(Clashes, true);
+                clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
                     IsSolved = true;
@@ -100,7 +100,7 @@ namespace Experiment.Utilities
             if (Clashes.Count > 0)
             {
                 IsSolved = false;
-                ClashDialog clashPrompt = new ClashDialog(Clashes, true);
+                clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
                     IsSolved = true;
