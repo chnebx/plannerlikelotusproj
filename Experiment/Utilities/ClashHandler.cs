@@ -115,6 +115,9 @@ namespace Experiment.Utilities
 
         public ClashHandler(object source, object destination)
         {
+            SolvedEvents = new List<Event>();
+            DeletedEvents = new List<Event>();
+            DeletedExternalEvents = new List<Event>();
             InitBackupData(destination, source);
             if (source is Event)
             {

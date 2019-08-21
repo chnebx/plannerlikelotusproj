@@ -37,6 +37,7 @@ namespace Experiment
         private bool _isDraggingEventStack = false;
         private EventStack fromEventStack = null;
         private Event draggedEvent = null;
+        public DateTime ActualDate;
 
         public MonthPlanner()
         {
@@ -101,8 +102,25 @@ namespace Experiment
             }
         }
 
+        public void RefreshEvents()
+        {
+            if (eventsCollection != null || eventsCollection.Count > 0)
+            {
+                FilterModule.Instance.clearFilterResults(eventsCollection);
+            }
+            eventsCollection.Clear();
+            eventsCollection = DBHandler.getEvents(ActualDate.Year, ActualDate.Month);
+            for (int i = 0; i < eventsCollection.Count; i++)
+            {
+                eventsCollection[i].updateEventsGrid();
+            }
+            FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
+            eventsShow.ItemsSource = eventsCollection;
+        }
+
         public void BuildMonthPlanner(DateTime date)
         {
+            ActualDate = date;
             ActualMonth = date.Month;
             ActualYear = date.Year;
             if (eventsCollection != null || eventsCollection.Count > 0)
@@ -245,6 +263,7 @@ namespace Experiment
                 _isDraggingEventStack = false;
                 draggedEvent = null;
                 fromEventStack = null;
+                RefreshEvents();
             }
             
         }

@@ -693,19 +693,6 @@ namespace Experiment.Utilities
                     e.Start = newStart;
                     e.End = newEnd;
                     e.EventStackId = destination.Id;
-                    //if (e.End.Day != e.Start.Day)
-                    //{
-                    //    destination.IsOverlapping = true;
-                    //}
-                    //if (!copy)
-                    //{
-                    //    conn.Execute("UPDATE Events SET EventStackId = ?, Start = ?, End = ? Where Id = ?",
-                    //    destination.Id,
-                    //    newStart,
-                    //    newEnd,
-                    //    e.Id
-                    //    );
-                    //}
                 }
                 if (!copy)
                 {

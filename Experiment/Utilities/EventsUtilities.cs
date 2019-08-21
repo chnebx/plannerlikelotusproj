@@ -160,7 +160,7 @@ namespace Experiment.Utilities
                 src = DBHandler.getEventStack(parentId);
             }
             ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);
-            ObservableCollection<Event> Deleted = new ObservableCollection<Event>(module.DeletedEvents);
+            ObservableCollection<Event> Deleted = new ObservableCollection<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
             if (copying)
             {
                 foreach(Event e in Solved)
@@ -173,15 +173,15 @@ namespace Experiment.Utilities
 
             DBHandler.HandleDrag(Deleted, Solved, dest, src, copying);
 
-            if (!copying)
-            {
-                MoveEvents(Solved, dest, eventsList);
-            }
-            else
-            {
-                CopyEvents(Solved, dest, eventsList);
-            }
-            DeleteEvents(module.DeletedEvents, src, eventsList);
+            //if (!copying)
+            //{
+            //    MoveEvents(Solved, dest, eventsList);
+            //}
+            //else
+            //{
+            //    CopyEvents(Solved, dest, eventsList);
+            //}
+            //DeleteEvents(module.DeletedEvents, src, eventsList);
             return;
         }
 
