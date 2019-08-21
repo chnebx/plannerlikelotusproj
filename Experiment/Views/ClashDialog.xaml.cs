@@ -26,10 +26,13 @@ namespace Experiment.Views
         private ObservableCollection<Event> _clashElements;
         private EventStack actualStack;
         private List<Event> _foundIndices;
-        private Dictionary<Event, List<Event>> _foundEvents;
+        private Dictionary<string, Dictionary<Event, List<Event>>> _foundEvents;
         //public List<int> DeletedEventIds = new List<int>();
         public List<Event> DeletedEvents = new List<Event>();
         public List<Event> SolvedEvents = new List<Event>();
+        public List<Event> ModifiedEvents { get; set; }
+        public List<Event> DeletedExternalEvents = new List<Event>();
+        public List<Event> ModifiedExternalEvents { get; set; }
         bool OutsideStacks = false;
         public ClashDialog(EventStack evtStack, List<Event> foundIndices, bool outsideStack)
         {
@@ -43,17 +46,17 @@ namespace Experiment.Views
             buildClashElements();
         }
 
-        public ClashDialog(EventStack evtStack, Dictionary<Event, List<Event>> foundEventsDict, bool outsideStack)
-        {
-            InitializeComponent();
-            DataContext = this;
-            actualStack = evtStack;
-            _foundEvents = foundEventsDict;
-            ClashElements = new ObservableCollection<Event>();
-            HeaderTxt.Text = "Conflits présents :";
-            OutsideStacks = outsideStack;
-            buildClashElements();
-        }
+        //public ClashDialog(EventStack evtStack, Dictionary<Event, List<Event>> foundEventsDict, bool outsideStack)
+        //{
+        //    InitializeComponent();
+        //    DataContext = this;
+        //    actualStack = evtStack;
+        //    _foundEvents = foundEventsDict;
+        //    ClashElements = new ObservableCollection<Event>();
+        //    HeaderTxt.Text = "Conflits présents :";
+        //    OutsideStacks = outsideStack;
+        //    buildClashElements();
+        //}
 
         public ClashDialog(List<Event> evts, bool outsideStack)
         {
@@ -64,7 +67,17 @@ namespace Experiment.Views
             OutsideStacks = true;
         }
 
-        public ClashDialog(Dictionary<Event, List<Event>> evts, bool outsideStack)
+        //public ClashDialog(Dictionary<Event, List<Event>> evts, bool outsideStack)
+        //{
+        //    InitializeComponent();
+        //    DataContext = this;
+        //    _foundEvents = evts;
+        //    buildClashElements();
+        //    HeaderTxt.Text = "Conflits présents :";
+        //    OutsideStacks = true;
+        //}
+
+        public ClashDialog(Dictionary<string, Dictionary<Event, List<Event>>> evts, bool outsideStack)
         {
             InitializeComponent();
             DataContext = this;
@@ -102,22 +115,32 @@ namespace Experiment.Views
                 }
             } else if (_foundEvents != null)
             {
-                foreach (KeyValuePair<Event, List<Event>> entries in _foundEvents)
+                foreach (Event evt in _foundEvents["Internal"].Keys)
                 {
-                    if (entries.Value.Count == 0)
+                    //SolvedEvents.Add(evt);
+                    bool isAlreadySolved = true;
+                    foreach (Event e in _foundEvents["Internal"][evt])
                     {
-                        SolvedEvents.Add(entries.Key);
-                    }
-                    foreach(Event evt in entries.Value)
-                    {
-                        if (!ClashElements.Contains(evt))
+                        if (!ClashElements.Contains(e))
                         {
-                            ClashElements.Add(evt);
+                            ClashElements.Add(e);
+                            isAlreadySolved = false;
                         }
                     }
+                    foreach (Event e in _foundEvents["External"][evt])
+                    {
+                        if (!ClashElements.Contains(e))
+                        {
+                            ClashElements.Add(e);
+                            isAlreadySolved = false;
+                        }
+                    }
+                    if (isAlreadySolved)
+                    {
+                        SolvedEvents.Add(evt);
+                    }
                 }
-            }
-            
+            }  
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -134,14 +157,25 @@ namespace Experiment.Views
             ClashElements.Remove(clickedEvent);
             if (_foundEvents != null)
             {
-                foreach(KeyValuePair<Event, List<Event>> entries in _foundEvents)
+                foreach(string entries in _foundEvents.Keys)
                 {
-                    if (entries.Value.Contains(clickedEvent))
+                    Dictionary<Event, List<Event>> result = _foundEvents[entries];
+                    foreach (KeyValuePair<Event, List<Event>> entry in result)
                     {
-                        entries.Value.Remove(clickedEvent);
-                        if (entries.Value.Count == 0)
+                        if (entry.Value.Contains(clickedEvent))
                         {
-                            SolvedEvents.Add(entries.Key);
+                            entry.Value.Remove(clickedEvent);
+                            if (entry.Value.Count == 0)
+                            {
+                                if (entries == "Internal")
+                                {
+                                    DeletedEvents.Add(clickedEvent);
+                                } else
+                                {
+                                    DeletedExternalEvents.Add(clickedEvent);
+                                }
+                                SolvedEvents.Add(entry.Key);
+                            }
                         }
                     }
                 }
@@ -154,7 +188,6 @@ namespace Experiment.Views
                 //DeletedEventIds.Add(clickedEvent.Id);
                 //DBHandler.DeleteEvent(clickedEvent); 
             }
-            DeletedEvents.Add(clickedEvent);
             if (ClashElements.Count == validCount)
             {
                 this.DialogResult = true;

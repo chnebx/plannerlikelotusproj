@@ -13,16 +13,18 @@ namespace Experiment.Utilities
 
         public List<Event> SolvedEvents { get; set; }
         public List<Event> DeletedEvents { get; set; }
+        public List<Event> ModifiedEvents { get; set; }
+        public List<Event> DeletedExternalEvents { get; set; }
+        public List<Event> ModifiedExternalEvents { get; set; }
+        public ClashDialog clashPrompt;
         public object OriginalSource;
         public object OriginalDestination;
-        public Dictionary<Event, List<Event>> Clashes { get; set; }
+        //public Dictionary<Event, List<Event>> Clashes { get; set; }
+        public Dictionary<string, Dictionary<Event, List<Event>>> Clashes { get; set; }
         public bool IsSolved { get; set; }
 
         public void StackToDayClashHandler(EventStack actualStack, Day destinationDay)
         {
-            
-            SolvedEvents = new List<Event>();
-            DeletedEvents = new List<Event>();
             EventStack newStack = new EventStack
             {
                 EventStackDay = destinationDay.Date
@@ -36,8 +38,6 @@ namespace Experiment.Utilities
                 {
                     IsSolved = true;
                 }
-                SolvedEvents = clashPrompt.SolvedEvents;
-                DeletedEvents = clashPrompt.DeletedEvents;
             } else
             {
                 foreach(Event evt in actualStack.Events)
@@ -46,13 +46,11 @@ namespace Experiment.Utilities
                 }
                 IsSolved = true;
             }
-            InitBackupData(destinationDay, EventStack.Clone(actualStack));
+            //InitBackupData(destinationDay, EventStack.Clone(actualStack));
         }
 
         public void EventToDayClashHandler(Event evt, Day destinationDay)
         {
-            SolvedEvents = new List<Event>();
-            DeletedEvents = new List<Event>();
             EventStack newStack = new EventStack
             {
                 EventStackDay = destinationDay.Date
@@ -61,25 +59,21 @@ namespace Experiment.Utilities
             if (Clashes.Count > 0)
             {
                 IsSolved = false;
-                ClashDialog clashPrompt = new ClashDialog(Clashes, true);
+                clashPrompt = new ClashDialog(Clashes, true);
                 if (clashPrompt.ShowDialog() == true)
                 {
                     IsSolved = true;
                 }
-                SolvedEvents = clashPrompt.SolvedEvents;
-                DeletedEvents = clashPrompt.DeletedEvents;
             } else
             {
                 SolvedEvents.Add(evt);
             }
             IsSolved = true;
-            InitBackupData(destinationDay, evt.DeepCopy());
+            //InitBackupData(destinationDay, evt.DeepCopy());
         }
 
         public void StackToStackHandler(EventStack actualStack, EventStack destinationStack)
         {
-            SolvedEvents = new List<Event>();
-            DeletedEvents = new List<Event>();
             Clashes = destinationStack.FindClash(actualStack);
             if (Clashes.Count > 0)
             {
@@ -89,8 +83,6 @@ namespace Experiment.Utilities
                 {
                     IsSolved = true;
                 }
-                SolvedEvents = clashPrompt.SolvedEvents;
-                DeletedEvents = clashPrompt.DeletedEvents;
             } else
             {
                 foreach(Event e in actualStack.Events)
@@ -99,13 +91,11 @@ namespace Experiment.Utilities
                 }
                 IsSolved = true;
             }
-            InitBackupData(EventStack.Clone(destinationStack), EventStack.Clone(actualStack));
+            //InitBackupData(EventStack.Clone(destinationStack), EventStack.Clone(actualStack));
         }
 
         public void EventToStackHandler(Event evt, EventStack destinationStack)
         {
-            SolvedEvents = new List<Event>();
-            DeletedEvents = new List<Event>();
             Clashes = destinationStack.FindClash(evt);
             if (Clashes.Count > 0)
             {
@@ -115,18 +105,17 @@ namespace Experiment.Utilities
                 {
                     IsSolved = true;
                 }
-                SolvedEvents = clashPrompt.SolvedEvents;
-                DeletedEvents = clashPrompt.DeletedEvents;
             } else
             {
                 SolvedEvents.Add(evt);
                 IsSolved = true;
             }
-            InitBackupData(EventStack.Clone(destinationStack), evt.DeepCopy());
+            //InitBackupData(EventStack.Clone(destinationStack), evt.DeepCopy());
         }
 
         public ClashHandler(object source, object destination)
         {
+            InitBackupData(destination, source);
             if (source is Event)
             {
                 Event src = (Event)source;
@@ -149,6 +138,13 @@ namespace Experiment.Utilities
                     StackToStackHandler(src, (EventStack)destination);
                 }
             }
+            if (clashPrompt != null)
+            {
+                SolvedEvents = clashPrompt.SolvedEvents;
+                DeletedEvents = clashPrompt.DeletedEvents;
+                DeletedExternalEvents = clashPrompt.DeletedExternalEvents;
+            }
+            
         }
 
         private void InitBackupData(object destination, object source)

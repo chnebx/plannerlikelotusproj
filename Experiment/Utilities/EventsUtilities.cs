@@ -62,7 +62,7 @@ namespace Experiment.Utilities
                 }
             }
             ClashHandler clashModule = new ClashHandler(source, destination);
-            FillEvents(clashModule, source, destination, eventsCollection, isCopying);
+            FillEvents(clashModule, eventsCollection, isCopying);
         }
 
 
@@ -134,8 +134,10 @@ namespace Experiment.Utilities
 
 
 
-        private static void FillEvents(ClashHandler module, object source, object destination, ObservableCollection<EventStack> eventsList, bool copying)
+        private static void FillEvents(ClashHandler module, ObservableCollection<EventStack> eventsList, bool copying)
         {
+            object source = module.OriginalSource;
+            object destination = module.OriginalDestination;
             EventStack dest;
             EventStack src;
             ObservableCollection<Event> duplicates = new ObservableCollection<Event>();

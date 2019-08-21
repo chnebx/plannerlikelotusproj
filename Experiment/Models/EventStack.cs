@@ -482,15 +482,18 @@ namespace Experiment.Models
             return false;
         }
 
-        public Dictionary<Event, List<Event>> FindClash(object evt)
+        public Dictionary<string, Dictionary<Event, List<Event>>> FindClash(object evt)
         {
             Dictionary<Event, List<Event>> foundEvents = new Dictionary<Event, List<Event>>();
+            Dictionary<Event, List<Event>> foundExternalEvents = new Dictionary<Event, List<Event>>();
+            Dictionary<string, Dictionary<Event, List<Event>>> Content = new Dictionary<string, Dictionary<Event, List<Event>>>();
             //Gathering lowerLimit and UpperLimit
             EventsUtilities.UpdateLimits(this);
             if (evt is Event)
             {
                 Event e = (Event)evt;
                 foundEvents.Add(e, new List<Event>());
+                foundExternalEvents.Add(e, new List<Event>());
                 if (evt != null)
                 {
                     //if (LowerLimitEvent != null && LowerLimitEvent.EventStackId != e.EventStackId)
@@ -501,7 +504,7 @@ namespace Experiment.Models
                         if (LowerLimitEvent.Clashes(start, end))
                         {
                             //foundIndices.Add(LowerLimitEvent);
-                            foundEvents[e].Add(LowerLimitEvent);
+                            foundExternalEvents[e].Add(LowerLimitEvent);
                         }
                     }
                     if (UpperLimitEvent != null)
@@ -510,7 +513,7 @@ namespace Experiment.Models
                         DateTime end = start.Add(e.End - e.Start);
                         if (UpperLimitEvent.Clashes(start, end))
                         {
-                            foundEvents[e].Add(UpperLimitEvent);
+                            foundExternalEvents[e].Add(UpperLimitEvent);
                         }
                     }
                     for (int i = 0; i < Events.Count; i++)
@@ -530,13 +533,14 @@ namespace Experiment.Models
                     for (int k = 0; k < stack.Events.Count; k++)
                     {
                         foundEvents.Add(stack.Events[k], new List<Event>());
+                        foundExternalEvents.Add(stack.Events[k], new List<Event>());
                         if (LowerLimitEvent != null && LowerLimitEvent.EventStackId != stack.Id)
                         {
                             DateTime start = new DateTime(this.EventStackDay.Year, this.EventStackDay.Month, this.EventStackDay.Day, stack.Events[k].Start.Hour, stack.Events[k].Start.Minute, 0);
                             DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);
                             if (LowerLimitEvent.Clashes(start, end))
                             {
-                                foundEvents[stack.Events[k]].Add(LowerLimitEvent);
+                                foundExternalEvents[stack.Events[k]].Add(LowerLimitEvent);
                             }
 
                         }
@@ -546,7 +550,7 @@ namespace Experiment.Models
                             DateTime end = start.Add(stack.Events[k].End - stack.Events[k].Start);
                             if (UpperLimitEvent.Clashes(start, end))
                             {
-                                foundEvents[stack.Events[k]].Add(UpperLimitEvent);
+                                foundExternalEvents[stack.Events[k]].Add(UpperLimitEvent);
                             }
                         }
                     }
@@ -576,20 +580,26 @@ namespace Experiment.Models
                     }
                 }
             }
+            Content["Internal"] = foundEvents;
+            Content["External"] = foundExternalEvents;
             bool containsClashes = false;
-            foreach(KeyValuePair<Event, List<Event>> evts in foundEvents)
+            foreach (Dictionary<Event, List<Event>> evts in Content.Values)
             {
-                if (evts.Value.Count > 0)
+                foreach (KeyValuePair<Event, List<Event>> e in evts)
                 {
-                    containsClashes = true;
+                    if (e.Value.Count > 0)
+                    {
+                        containsClashes = true;
+                    }
                 }
             }
+            
             if (containsClashes)
             {
-                return foundEvents;
+                return Content;
             } else
             {
-                return new Dictionary<Event, List<Event>>();
+                return new Dictionary<string, Dictionary<Event, List<Event>>>();
             }
             
         }
