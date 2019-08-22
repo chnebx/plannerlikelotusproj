@@ -144,6 +144,26 @@ namespace Experiment
         public static readonly DependencyProperty currentYearProperty =
             DependencyProperty.Register("currentYear", typeof(int), typeof(Planner), new PropertyMetadata(DateTime.Now.Year));
 
+        public void RefreshEvents()
+        {
+
+            if (eventsCollection != null || eventsCollection.Count > 0)
+            {
+                FilterModule.Instance.clearFilterResults(eventsCollection);
+            }
+            eventsCollection = DBHandler.getEvents(currentYear);
+            for (int i = 0; i < eventsCollection.Count; i++)
+            {
+                eventsCollection[i].updateEventsGrid();
+            }
+            var evts = (CollectionViewSource)this.FindResource("EventsViewSource");
+            FilterModule.Instance.UpdateListWithFilterResults(eventsCollection);
+            contentShow.ItemsSource = eventsCollection;
+            if (evts.View != null)
+            {
+                evts.View.Refresh();
+            }
+        }
 
         public void BuildPlanner(DateTime targetTimer1)
         {
@@ -412,7 +432,7 @@ namespace Experiment
             {
                 EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
             }
-
+            RefreshEvents();
             if (_isDraggingItem)
             {
                 _isDraggingItem = false;
