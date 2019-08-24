@@ -41,7 +41,7 @@ namespace Experiment.Utilities
         //    }
         //} 
 
-        public static void DropHandler(object context, object data, EventStack FromStack, ObservableCollection<EventStack> eventsCollection)
+        public static DropManager DropHandler(object context, object data, EventStack FromStack, ObservableCollection<EventStack> eventsCollection)
         {
             EventStack previousStack = FromStack;
             object source = data;
@@ -54,15 +54,19 @@ namespace Experiment.Utilities
                 destination = actualStack;
                 if (data is Event && (actualStack == previousStack || actualStack.Events.Count >= 3))
                 {
-                    return;  
+                    return null;  
                 }
                 if (data is EventStack && ((EventStack)data == actualStack || ((EventStack)data).Events.Count + actualStack.Events.Count > 3))
                 {
-                    return;
+                    return null;
                 }
             }
-            ClashHandler clashModule = new ClashHandler(source, destination);
-            FillEvents(clashModule, eventsCollection, isCopying);
+            ClashHandler clashModule = new ClashHandler(source, destination, isCopying);
+            DropManager Drop = new DropManager(clashModule);
+            return Drop;
+            //FillEvents(clashModule, isCopying);
+
+            //StateManager<ClashHandler>.Undo.Push(act);
         }
 
 
@@ -132,58 +136,7 @@ namespace Experiment.Utilities
             }
         }
 
-
-
-        private static void FillEvents(ClashHandler module, ObservableCollection<EventStack> eventsList, bool copying)
-        {
-            object source = module.OriginalSource;
-            object destination = module.OriginalDestination;
-            EventStack dest;
-            EventStack src;
-            ObservableCollection<Event> duplicates = new ObservableCollection<Event>();
-            if (destination is Day)
-            {
-                dest = new EventStack
-                {
-                    EventStackDay = ((Day)destination).Date
-                };
-            } else
-            {
-                dest = (EventStack)destination;
-            }
-            if (source is EventStack)
-            {
-                src = (EventStack)source;
-            } else
-            {
-                int parentId = ((Event)source).EventStackId;
-                src = DBHandler.getEventStack(parentId);
-            }
-            ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);
-            ObservableCollection<Event> Deleted = new ObservableCollection<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
-            if (copying)
-            {
-                foreach(Event e in Solved)
-                {
-                    Event evt = e.DeepCopy();
-                    duplicates.Add(evt);
-                }
-                Solved = duplicates;
-            } 
-
-            DBHandler.HandleDrag(Deleted, Solved, dest, src, copying);
-
-            //if (!copying)
-            //{
-            //    MoveEvents(Solved, dest, eventsList);
-            //}
-            //else
-            //{
-            //    CopyEvents(Solved, dest, eventsList);
-            //}
-            //DeleteEvents(module.DeletedEvents, src, eventsList);
-            return;
-        }
+        
 
         public static void UpdateLimits(EventStack evtStack)
         {

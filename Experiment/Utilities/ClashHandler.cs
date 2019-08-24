@@ -17,8 +17,10 @@ namespace Experiment.Utilities
         public List<Event> DeletedExternalEvents { get; set; }
         public List<Event> ModifiedExternalEvents { get; set; }
         public ClashDialog clashPrompt;
+        public bool copy;
         public object OriginalSource;
         public object OriginalDestination;
+        public int DestinationFinalId;
         //public Dictionary<Event, List<Event>> Clashes { get; set; }
         public Dictionary<string, Dictionary<Event, List<Event>>> Clashes { get; set; }
         public bool IsSolved { get; set; }
@@ -113,11 +115,12 @@ namespace Experiment.Utilities
             //InitBackupData(EventStack.Clone(destinationStack), evt.DeepCopy());
         }
 
-        public ClashHandler(object source, object destination)
+        public ClashHandler(object source, object destination, bool isCopying)
         {
             SolvedEvents = new List<Event>();
             DeletedEvents = new List<Event>();
             DeletedExternalEvents = new List<Event>();
+            copy = isCopying;
             InitBackupData(destination, source);
             if (source is Event)
             {

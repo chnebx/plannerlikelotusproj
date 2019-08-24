@@ -21,15 +21,20 @@ namespace Experiment
     /// </summary>
     public partial class Calendar : UserControl
     {
+        public StateManager CalendarState;
         public Calendar()
         {
             InitializeComponent();
             DBHandler.DbInit();
+            CalendarState = new StateManager();
             Planner actualPlanner = new Planner();
             MonthPlanner actualMonthPlanner = new MonthPlanner();
             SearchFilterControl actualSearchFilter = new SearchFilterControl();
+            actualMonthPlanner.CalendarState = CalendarState;
+            actualPlanner.CalendarState = CalendarState;
             actualMonthPlanner.BuildMonthPlanner(DateTime.Now);
             actualPlanner.BuildPlanner(DateTime.Now);
+
             DataContext = this;
           
             monthModeTab.Content = actualMonthPlanner;

@@ -143,6 +143,8 @@
     <Compile Include="CustomControls\HourSelector.xaml.cs">
       <DependentUpon>HourSelector.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\Command.cs" />
+    <Compile Include="Interfaces\IUndoManager.cs" />
     <Compile Include="Models\Band.cs" />
     <Compile Include="Models\Employer.cs" />
     <Compile Include="Models\EventStack.cs" />
@@ -159,12 +161,14 @@
     </Compile>
     <Compile Include="Utilities\ClashHandler.cs" />
     <Compile Include="Utilities\DBHandler.cs" />
+    <Compile Include="Utilities\DropManager.cs" />
     <Compile Include="Utilities\EventsInfo.cs" />
     <Compile Include="Utilities\EventsUtilities.cs" />
     <Compile Include="Utilities\FilterModule.cs" />
     <Compile Include="Utilities\GlobalSettings.cs" />
     <Compile Include="Utilities\GridViewSort.cs" />
     <Compile Include="Utilities\GroupFilter.cs" />
+    <Compile Include="Utilities\StateManager.cs" />
     <Compile Include="Views\addEventDialog.xaml.cs">
       <DependentUpon>addEventDialog.xaml</DependentUpon>
     </Compile>

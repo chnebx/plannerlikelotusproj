@@ -94,6 +94,8 @@ namespace Experiment
             evtsCvs = (CollectionViewSource)this.FindResource("EventsViewSource");
         }
 
+        public StateManager CalendarState { get; set; }
+
         public static Planner Instance
         {
             get
@@ -424,13 +426,17 @@ namespace Experiment
             {
                 context = ((Grid)sender).DataContext;
             }
-
+            DropManager drop;
             if (e.Data.GetDataPresent("EventFormat"))
             {
-                EventsUtilities.DropHandler(context, e.Data.GetData("EventFormat"), fromEventStack, eventsCollection);
+                drop = EventsUtilities.DropHandler(context, e.Data.GetData("EventFormat"), fromEventStack, eventsCollection);
             } else
             {
-                EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
+                drop = EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
+            }
+            if (drop != null)
+            {
+                CalendarState.Do(drop);
             }
             RefreshEvents();
             if (_isDraggingItem)

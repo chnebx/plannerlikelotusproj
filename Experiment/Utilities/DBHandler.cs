@@ -665,12 +665,14 @@ namespace Experiment.Utilities
             }
         }
 
-        public static void HandleDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
+        public static void HandleDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, ObservableCollection<Event>evtsToRestore, EventStack destination, EventStack source, out int createdId, bool copy = false)
         {
             int destinationId = destination.Id;
             int sourceId = source.Id;
-            if (evtsToMove.Count < 1)
+            createdId = -1;
+            if (evtsToMove.Count < 1 && evtsToDelete.Count < 1 )
             {
+                
                 return;
             }
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
@@ -679,6 +681,26 @@ namespace Experiment.Utilities
                 if (destinationId <= 0)
                 {
                     conn.Insert(destination);
+                    createdId = destination.Id;
+                }
+                if (evtsToRestore != null && evtsToRestore.Count > 0)
+                {
+                    foreach (Event e in evtsToRestore)
+                    {
+                        int parentStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
+                        if (parentStackCount == 0)
+                        {
+                            EventStack parent = new EventStack
+                            {
+                                EventStackDay = e.Start.Date
+                            };
+                            parent.AddEvent(e);
+                            conn.InsertWithChildren(parent);
+                        } else
+                        {
+                            conn.Insert(e);
+                        }
+                    }
                 }
                 foreach (Event e in evtsToMove)
                 {
@@ -696,10 +718,10 @@ namespace Experiment.Utilities
                 }
                 if (!copy)
                 {
-                    conn.UpdateAll(evtsToMove);
+                    conn.UpdateAll(evtsToMove, true);
                 } else
                 {
-                    conn.InsertAll(evtsToMove);
+                    conn.InsertAll(evtsToMove, true);
                 }
                 foreach (Event e in evtsToDelete)
                 {

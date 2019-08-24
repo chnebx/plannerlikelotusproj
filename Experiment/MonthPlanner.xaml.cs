@@ -39,6 +39,7 @@ namespace Experiment
         private Event draggedEvent = null;
         public DateTime ActualDate;
 
+
         public MonthPlanner()
         {
             InitializeComponent();
@@ -59,6 +60,8 @@ namespace Experiment
 
             //BuildMonthPlanner(DateTime.Now);
         }
+
+        public StateManager CalendarState { get; set; }
 
         private void FindAndLitHeader(int column)
         {
@@ -250,14 +253,19 @@ namespace Experiment
         private void MonthDay_Drop(object sender, DragEventArgs e)
         {
             var context = ((Border)sender).DataContext;
+            DropManager drop;
             if (_isDraggingEvent || _isDraggingEventStack)
             {
                 if (e.Data.GetDataPresent("EventFormat"))
                 {
-                    EventsUtilities.DropHandler(context, e.Data.GetData("EventFormat"), fromEventStack, eventsCollection);
+                    drop = EventsUtilities.DropHandler(context, e.Data.GetData("EventFormat"), fromEventStack, eventsCollection);
                 } else
                 {
-                    EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
+                    drop = EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
+                }
+                if (drop != null)
+                {
+                    CalendarState.Do(drop);
                 }
                 _isDraggingEvent = false;
                 _isDraggingEventStack = false;
