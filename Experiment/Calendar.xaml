@@ -13,9 +13,14 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TabControl Grid.Row="0">
+        <Border Grid.RowSpan="2" Background="#FF8A8AB8">
+        </Border>
+        <Button x:Name="BtnUndo" Click="BtnUndo_Click" HorizontalAlignment="Right" Content="Cancel" Width="50" Height="40" Margin="0,0,5,0"></Button>
+        <TextBlock Grid.Row="0" Text="Calendrier" Margin="5,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" FontSize="45" Foreground="#FFF7F7F7"></TextBlock>
+        <TabControl Grid.Row="1">
             <TabItem x:Name="monthModeTab" Width="80" Header="Mois">
                 <!--<local:MonthPlanner x:Name="actualMonthPlanner"></local:MonthPlanner>-->
             </TabItem>

@@ -44,5 +44,10 @@ namespace Experiment
             //yearModeTab.Content = actualPlanner;
            
         }
+
+        private void BtnUndo_Click(object sender, RoutedEventArgs e)
+        {
+            CalendarState.Undo();
+        }
     }
 }
