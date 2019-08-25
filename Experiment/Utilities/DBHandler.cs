@@ -479,20 +479,35 @@ namespace Experiment.Utilities
                 }
                 return new ObservableCollection<EventStack>();
             }
-
         }
 
         public static EventStack getEventStack(int id)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                var item = conn.GetWithChildren<EventStack>(id);
+                var item = conn.FindWithChildren<EventStack>(id);
+                //var item = conn.GetWithChildren<EventStack>(id);
+                if(item == null)
+                {
+                    return null;
+                }
                 item.sortEvents();
                 return item;
             }
-
         }
 
+        public static EventStack getEventStack(DateTime date)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var result = conn.Query<EventStack>("Select * FROM EventStacks WHERE EventStackDay = ?", date);
+                if (result != null)
+                {
+                    return (EventStack)result.FirstOrDefault<EventStack>();
+                }
+                return null;
+            }
+        }
 
         public static void AddEventStack(EventStack stack)
         {
@@ -665,23 +680,20 @@ namespace Experiment.Utilities
             }
         }
 
-        public static void HandleDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, ObservableCollection<Event>evtsToRestore, EventStack destination, EventStack source, out int createdId, bool copy = false)
+        public static void HandleUndoDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, ObservableCollection<Event> evtsToRestore, EventStack source, EventStack destination, bool copy = false)
         {
             int destinationId = destination.Id;
             int sourceId = source.Id;
-            createdId = -1;
-            if (evtsToMove.Count < 1 && evtsToDelete.Count < 1 )
+            if (evtsToMove.Count < 1 && evtsToDelete.Count < 1)
             {
-                
                 return;
             }
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                if (destinationId <= 0)
+                if (sourceId <= 0)
                 {
-                    conn.Insert(destination);
-                    createdId = destination.Id;
+                    conn.Insert(source);
                 }
                 if (evtsToRestore != null && evtsToRestore.Count > 0)
                 {
@@ -696,12 +708,98 @@ namespace Experiment.Utilities
                             };
                             parent.AddEvent(e);
                             conn.InsertWithChildren(parent);
-                        } else
+                        }
+                        else
                         {
                             conn.Insert(e);
                         }
                     }
                 }
+                if (evtsToMove.Count > 0)
+                {
+                    foreach (Event e in evtsToMove)
+                    {
+                        DateTime newStart = new DateTime(
+                        destination.EventStackDay.Year,
+                        destination.EventStackDay.Month,
+                        destination.EventStackDay.Day,
+                        e.Start.Hour,
+                        e.Start.Minute,
+                        0);
+                        DateTime newEnd = newStart.Add(e.End - e.Start);
+                        e.Start = newStart;
+                        e.End = newEnd;
+                        e.EventStackId = source.Id;
+                    }
+                    if (!copy)
+                    {
+                        conn.UpdateAll(evtsToMove, true);
+                    }
+                    else
+                    {
+                        conn.InsertAll(evtsToMove, true);
+                    }
+                }
+                
+                foreach (Event e in evtsToDelete)
+                {
+                    var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
+                    conn.Execute(deleteEventQuery, e.Id);
+                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
+                    if (originalStackCount == 0)
+                    {
+                        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", e.EventStackId);
+                    }
+                }
+                if (!copy)
+                {
+                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", destinationId);
+                    if (originalStackCount == 0)
+                    {
+                        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", destinationId);
+                    }
+                }
+                conn.Commit();
+            }
+        }
+
+        public static void HandleDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
+        {
+            int destinationId = destination.Id;
+            int sourceId = source.Id;
+            //createdId = -1;
+            if (evtsToMove.Count < 1 && evtsToDelete.Count < 1 )
+            {
+                
+                return;
+            }
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                conn.BeginTransaction();
+                if (destinationId <= 0)
+                {
+                    conn.Insert(destination);
+                    //createdId = destination.Id;
+                }
+                //if (evtsToRestore != null && evtsToRestore.Count > 0)
+                //{
+                //    foreach (Event e in evtsToRestore)
+                //    {
+                //        int parentStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
+                //        if (parentStackCount == 0)
+                //        {
+                //            EventStack parent = new EventStack
+                //            {
+                //                EventStackDay = e.Start.Date
+                //            };
+                //            parent.AddEvent(e);
+                //            conn.InsertWithChildren(parent);
+                //        } else
+                //        {
+                //            conn.Insert(e);
+                //        }
+                //    }
+                //}
                 foreach (Event e in evtsToMove)
                 {
                     DateTime newStart = new DateTime(
@@ -815,6 +913,8 @@ namespace Experiment.Utilities
             );
             conn.CloseAsync();
         }
+
+        
 
         public static void HandleDragEvent(EventStack previous, EventStack newOne, Event evt, bool copy = false)
         {

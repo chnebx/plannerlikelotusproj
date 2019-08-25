@@ -22,13 +22,15 @@ namespace Experiment
     public partial class Calendar : UserControl
     {
         public StateManager CalendarState;
+        public Planner actualPlanner;
+        public MonthPlanner actualMonthPlanner;
         public Calendar()
         {
             InitializeComponent();
             DBHandler.DbInit();
             CalendarState = new StateManager();
-            Planner actualPlanner = new Planner();
-            MonthPlanner actualMonthPlanner = new MonthPlanner();
+            actualPlanner = new Planner();
+            actualMonthPlanner = new MonthPlanner();
             SearchFilterControl actualSearchFilter = new SearchFilterControl();
             actualMonthPlanner.CalendarState = CalendarState;
             actualPlanner.CalendarState = CalendarState;
@@ -48,6 +50,13 @@ namespace Experiment
         private void BtnUndo_Click(object sender, RoutedEventArgs e)
         {
             CalendarState.Undo();
+            if (CalendarModule.SelectedContent is Planner)
+            {
+                actualPlanner.RefreshEvents();
+            } else if (CalendarModule.SelectedContent is MonthPlanner)
+            {
+                actualMonthPlanner.RefreshEvents();
+            }
         }
     }
 }

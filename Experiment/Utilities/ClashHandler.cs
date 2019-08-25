@@ -12,6 +12,7 @@ namespace Experiment.Utilities
     {
 
         public List<Event> SolvedEvents { get; set; }
+        public List<Event> CopiedEvents { get; set; }
         public List<Event> DeletedEvents { get; set; }
         public List<Event> ModifiedEvents { get; set; }
         public List<Event> DeletedExternalEvents { get; set; }
@@ -20,6 +21,8 @@ namespace Experiment.Utilities
         public bool copy;
         public object OriginalSource;
         public object OriginalDestination;
+        public object Source;
+        public object Destination;
         public int DestinationFinalId;
         //public Dictionary<Event, List<Event>> Clashes { get; set; }
         public Dictionary<string, Dictionary<Event, List<Event>>> Clashes { get; set; }
@@ -119,28 +122,35 @@ namespace Experiment.Utilities
         {
             SolvedEvents = new List<Event>();
             DeletedEvents = new List<Event>();
+            CopiedEvents = new List<Event>();
             DeletedExternalEvents = new List<Event>();
             copy = isCopying;
             InitBackupData(destination, source);
             if (source is Event)
             {
                 Event src = (Event)source;
+                OriginalSource = src.Clone();
                 if (destination is Day)
                 {
+                    OriginalDestination = new Day { Date = ((Day)destination).Date };
                     EventToDayClashHandler(src, (Day)destination);
                 } else if (destination is EventStack)
                 {
+                    OriginalDestination = EventStack.Clone((EventStack)destination);
                     EventToStackHandler(src, (EventStack)destination);
                 }
             } else if (source is EventStack)
             {
                 EventStack src = (EventStack)source;
+                OriginalSource = EventStack.Clone(src);
                 if (destination is Day)
                 {
+                    OriginalDestination = new Day { Date = ((Day)destination).Date };
                     StackToDayClashHandler(src, (Day)destination);
                 }
                 else if (destination is EventStack)
                 {
+                    OriginalDestination = EventStack.Clone((EventStack)destination);
                     StackToStackHandler(src, (EventStack)destination);
                 }
             }
@@ -155,8 +165,8 @@ namespace Experiment.Utilities
 
         private void InitBackupData(object destination, object source)
         {
-            OriginalDestination = destination;
-            OriginalSource = source;
+            Destination = destination;
+            Source = source;
         }
         
     }

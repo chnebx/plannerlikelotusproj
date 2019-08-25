@@ -41,31 +41,32 @@ namespace Experiment.Utilities
             }
         }
 
-        private static void FillEvents(ClashHandler module)
+
+        private void FillEvents(ClashHandler module)
         {
-            object source = module.OriginalSource;
-            object destination = module.OriginalDestination;
+            //object source = module.OriginalSource;
+            //object destination = module.OriginalDestination;
             EventStack dest;
             EventStack src;
             ObservableCollection<Event> duplicates = new ObservableCollection<Event>();
-            if (destination is Day)
+            if (module.Destination is Day)
             {
                 dest = new EventStack
                 {
-                    EventStackDay = ((Day)destination).Date
+                    EventStackDay = ((Day)module.Destination).Date
                 };
             }
             else
             {
-                dest = (EventStack)destination;
+                dest = (EventStack)module.Destination;
             }
-            if (source is EventStack)
+            if (module.Source is EventStack)
             {
-                src = (EventStack)source;
+                src = (EventStack)module.Source;
             }
             else
             {
-                int parentId = ((Event)source).EventStackId;
+                int parentId = ((Event)module.Source).EventStackId;
                 src = DBHandler.getEventStack(parentId);
             }
             ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);
@@ -79,13 +80,13 @@ namespace Experiment.Utilities
                 }
                 Solved = duplicates;
             }
-            int lastCreatedID;
-            DBHandler.HandleDrag(Deleted, Solved, null, dest, src, out lastCreatedID, module.copy);
-            if (lastCreatedID > 0)
-            {
-                module.DestinationFinalId = dest.Id;
-            }
-
+            DBHandler.HandleDrag(Deleted, Solved, dest, src, module.copy);
+            module.DestinationFinalId = dest.Id;
+            module.CopiedEvents = Solved.ToList<Event>();
+            //if (module.copy)
+            //{
+            //    Moved = Solved;
+            //}
             //if (!copying)
             //{
             //    MoveEvents(Solved, dest, eventsList);
@@ -99,7 +100,7 @@ namespace Experiment.Utilities
         }
 
 
-        public void UndoFillEvents(ClashHandler module)
+        private void UndoFillEvents(ClashHandler module)
         {
             object source = module.OriginalSource;
             object destination = module.OriginalDestination;
@@ -107,14 +108,11 @@ namespace Experiment.Utilities
             EventStack src;
             ObservableCollection<Event> evtsToDelete = new ObservableCollection<Event>();
             ObservableCollection<Event> evtsToMove = new ObservableCollection<Event>();
-            ObservableCollection<Event> evtsToRestore = new ObservableCollection<Event>();
+            ObservableCollection<Event> evtsToRestore;
 
             if (destination is Day)
             {
-                dest = new EventStack
-                {
-                    EventStackDay = ((Day)destination).Date
-                };
+                dest = DBHandler.getEventStack(((Day)destination).Date);
             }
             else
             {
@@ -122,20 +120,32 @@ namespace Experiment.Utilities
             }
             if (source is EventStack)
             {
-                src = (EventStack)source;
+                //src = (EventStack)source;
+                //src = (EventStack)module.Source;
+                src = DBHandler.getEventStack(((EventStack)module.Source).Id);
+                if (src == null)
+                {
+                    src = new EventStack
+                    {
+                        EventStackDay = ((EventStack)module.Source).EventStackDay
+                    };
+                }
             }
             else
             {
-                int parentId = ((Event)source).EventStackId;
-                src = DBHandler.getEventStack(parentId);
-            }
-            foreach (Event e in module.SolvedEvents)
-            {
-                e.EventStackId = module.DestinationFinalId;
+                Event srcEvent = (Event)source;
+                src = DBHandler.getEventStack(srcEvent.EventStackId);
+                if (src == null)
+                {
+                    src = new EventStack
+                    {
+                        EventStackDay = srcEvent.parentStack.EventStackDay
+                    };
+                }
             }
             if (module.copy)
             {
-                evtsToDelete = new ObservableCollection<Event>(module.SolvedEvents);
+                evtsToDelete = new ObservableCollection<Event>(module.CopiedEvents);
             }
             else
             {
@@ -143,8 +153,8 @@ namespace Experiment.Utilities
             }
 
             evtsToRestore = new ObservableCollection<Event>(module.DeletedExternalEvents.Concat(module.DeletedEvents));
-            int lastCreatedID;
-            DBHandler.HandleDrag(evtsToDelete, evtsToMove, evtsToRestore, src, dest, out lastCreatedID, false);
+            DBHandler.HandleUndoDrag(evtsToDelete, evtsToMove, evtsToRestore, src, dest, module.copy);
+
         }
 
         

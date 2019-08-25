@@ -54,6 +54,8 @@ namespace Experiment.Models
             _filteredEvents = new List<Event>();
         }
 
+        //[PrimaryKey, AutoIncrement]
+        //public int Id { get; set; }
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
@@ -107,24 +109,6 @@ namespace Experiment.Models
             }
         }
 
-        [Ignore]
-        public int SpanLength
-        {
-            get
-            {
-                if (_spanLength == 0)
-                {
-                    _spanLength = CalculateSpanLength();
-                }
-                return _spanLength;
-            }
-            set
-            {
-                _spanLength = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("SpanLength"));
-            }
-        }
-
         public DateTime LowerLimitHour
         {
             get
@@ -157,6 +141,24 @@ namespace Experiment.Models
             get
             {
                 return Events.Count >= 3;
+            }
+        }
+
+        [Ignore]
+        public int SpanLength
+        {
+            get
+            {
+                if (_spanLength == 0)
+                {
+                    _spanLength = CalculateSpanLength();
+                }
+                return _spanLength;
+            }
+            set
+            {
+                _spanLength = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("SpanLength"));
             }
         }
 
