@@ -524,5 +524,11 @@ namespace Experiment
         {
             fromEventStack = ((EventStack)((Grid)sender).DataContext);
         }
+
+        private void BtnYearUndo_Click(object sender, RoutedEventArgs e)
+        {
+            CalendarState.Undo();
+            RefreshEvents();
+        }
     }
 }

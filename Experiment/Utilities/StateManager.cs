@@ -37,6 +37,7 @@ namespace Experiment.Utilities
                 ICommand cmd = _Undo.Pop();
                 cmd.Undo();
                 _Redo.Push(cmd);
+                Console.WriteLine("undone");
             }
         }
 

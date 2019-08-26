@@ -263,7 +263,7 @@ namespace Experiment
                 {
                     drop = EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
                 }
-                if (drop != null)
+                if (drop != null && drop.ClashModule.SolvedEvents.Count > 0)
                 {
                     CalendarState.Do(drop);
                 }
@@ -354,6 +354,12 @@ namespace Experiment
         private void FullEvt_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             fromEventStack = ((EventStack)((Border)sender).DataContext);
+        }
+
+        private void BtnMonthUndo_Click(object sender, RoutedEventArgs e)
+        {
+            CalendarState.Undo();
+            RefreshEvents();
         }
     }
 }

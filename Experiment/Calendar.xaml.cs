@@ -47,16 +47,26 @@ namespace Experiment
            
         }
 
-        private void BtnUndo_Click(object sender, RoutedEventArgs e)
+        private void MonthModeTab_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            CalendarState.Undo();
-            if (CalendarModule.SelectedContent is Planner)
-            {
-                actualPlanner.RefreshEvents();
-            } else if (CalendarModule.SelectedContent is MonthPlanner)
-            {
-                actualMonthPlanner.RefreshEvents();
-            }
+            actualMonthPlanner.RefreshEvents();
         }
+
+        private void YearModeTab_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            actualPlanner.RefreshEvents();
+        }
+
+        //private void BtnUndo_Click(object sender, RoutedEventArgs e)
+        //{
+        //CalendarState.Undo();
+        //if (CalendarModule.SelectedContent is Planner)
+        //{
+        //    actualPlanner.RefreshEvents();
+        //} else if (CalendarModule.SelectedContent is MonthPlanner)
+        //{
+        //    actualMonthPlanner.RefreshEvents();
+        //}
+        //}
     }
 }
