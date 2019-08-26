@@ -63,11 +63,13 @@ namespace Experiment.Utilities
             if (module.Source is EventStack)
             {
                 src = (EventStack)module.Source;
+                Console.WriteLine("source is EventStack ? " +  src.EventStackDay);
             }
             else
             {
                 int parentId = ((Event)module.Source).EventStackId;
                 src = DBHandler.getEventStack(parentId);
+                Console.WriteLine("source is Event ? " + src.EventStackDay);
             }
             ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);
             ObservableCollection<Event> Deleted = new ObservableCollection<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
@@ -80,6 +82,7 @@ namespace Experiment.Utilities
                 }
                 Solved = duplicates;
             }
+            //Console.WriteLine("----- Redo --- Source : " + src.EventStackDay + "--- destination : " + dest.EventStackDay);
             DBHandler.HandleDrag(Deleted, Solved, dest, src, module.copy);
             module.DestinationFinalId = dest.Id;
             module.CopiedEvents = Solved.ToList<Event>();
@@ -104,6 +107,7 @@ namespace Experiment.Utilities
         {
             object source = module.OriginalSource;
             object destination = module.OriginalDestination;
+            
             EventStack dest;
             EventStack src;
             ObservableCollection<Event> evtsToDelete = new ObservableCollection<Event>();
@@ -122,7 +126,8 @@ namespace Experiment.Utilities
             {
                 //src = (EventStack)source;
                 //src = (EventStack)module.Source;
-                src = DBHandler.getEventStack(((EventStack)module.Source).Id);
+                //src = DBHandler.getEventStack(((EventStack)module.Source).Id);
+                src = DBHandler.getEventStack(((EventStack)module.Source).EventStackDay);
                 if (src == null)
                 {
                     src = new EventStack
@@ -134,7 +139,7 @@ namespace Experiment.Utilities
             else
             {
                 Event srcEvent = (Event)source;
-                src = DBHandler.getEventStack(srcEvent.EventStackId);
+                src = DBHandler.getEventStack(srcEvent.Start.Date);
                 if (src == null)
                 {
                     src = new EventStack
@@ -143,6 +148,7 @@ namespace Experiment.Utilities
                     };
                 }
             }
+            //Console.WriteLine("----- Undo --- Source : " + src.EventStackDay + "--- destination : " + dest.EventStackDay);
             if (module.copy)
             {
                 evtsToDelete = new ObservableCollection<Event>(module.CopiedEvents);

@@ -720,9 +720,9 @@ namespace Experiment.Utilities
                     foreach (Event e in evtsToMove)
                     {
                         DateTime newStart = new DateTime(
-                        destination.EventStackDay.Year,
-                        destination.EventStackDay.Month,
-                        destination.EventStackDay.Day,
+                        source.EventStackDay.Year,
+                        source.EventStackDay.Month,
+                        source.EventStackDay.Day,
                         e.Start.Hour,
                         e.Start.Minute,
                         0);
@@ -740,16 +740,22 @@ namespace Experiment.Utilities
                         conn.InsertAll(evtsToMove, true);
                     }
                 }
-                
+
                 foreach (Event e in evtsToDelete)
                 {
-                    var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
-                    conn.Execute(deleteEventQuery, e.Id);
-                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
-                    if (originalStackCount == 0)
+
+                    EventStack stack = conn.Query<EventStack>("Select * From EventStacks WHERE EventStackDay = ?", e.Start.Date).FirstOrDefault();
+                    if (stack != null)
                     {
-                        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", e.EventStackId);
+                        var deleteEventQuery = "DELETE FROM Events WHERE EventStackId = ?";
+                        conn.Execute(deleteEventQuery, stack.Id);
+                        int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", stack.Id);
+                        if (originalStackCount == 0)
+                        {
+                            conn.Execute("DELETE FROM EventStacks WHERE Id = ?", stack.Id);
+                        }
                     }
+                    
                 }
                 if (!copy)
                 {
@@ -770,7 +776,6 @@ namespace Experiment.Utilities
             //createdId = -1;
             if (evtsToMove.Count < 1 && evtsToDelete.Count < 1 )
             {
-                
                 return;
             }
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
