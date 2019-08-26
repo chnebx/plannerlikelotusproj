@@ -434,7 +434,7 @@ namespace Experiment
             {
                 drop = EventsUtilities.DropHandler(context, e.Data.GetData("EventStackFormat"), fromEventStack, eventsCollection);
             }
-            if (drop != null)
+            if (drop != null && drop.ClashModule.SolvedEvents.Count > 0)
             {
                 CalendarState.Do(drop);
             }
@@ -528,6 +528,12 @@ namespace Experiment
         private void BtnYearUndo_Click(object sender, RoutedEventArgs e)
         {
             CalendarState.Undo();
+            RefreshEvents();
+        }
+
+        private void BtnYearRedo_Click(object sender, RoutedEventArgs e)
+        {
+            CalendarState.Redo();
             RefreshEvents();
         }
     }

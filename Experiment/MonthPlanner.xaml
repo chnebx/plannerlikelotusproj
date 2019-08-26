@@ -34,7 +34,10 @@
                 <Button HorizontalAlignment="Right" Click="ForwardBtn_Click" FontSize="32" Style="{StaticResource PrevForwardBtn}" x:Name="ForwardBtn" Content="&gt;" Width="40" Height="40"></Button>
             </Grid>
         </Border>
-        <Button x:Name="BtnMonthUndo" Click="BtnMonthUndo_Click" HorizontalAlignment="Right" Content="Cancel" Width="40" Height="30" Margin="0,0,10,0"></Button>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button x:Name="BtnMonthUndo" Click="BtnMonthUndo_Click" Content="Cancel" Width="40" Height="30" Margin="0,0,10,0"></Button>
+            <Button x:Name="BtnMonthRedo" Click="BtnMonthRedo_Click" Content="Redo" Width="40" Height="30" Margin="0,0,10,0"></Button>
+        </StackPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="7*"></ColumnDefinition>

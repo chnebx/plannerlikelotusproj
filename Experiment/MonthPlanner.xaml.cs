@@ -361,5 +361,11 @@ namespace Experiment
             CalendarState.Undo();
             RefreshEvents();
         }
+
+        private void BtnMonthRedo_Click(object sender, RoutedEventArgs e)
+        {
+            CalendarState.Redo();
+            RefreshEvents();
+        }
     }
 }
