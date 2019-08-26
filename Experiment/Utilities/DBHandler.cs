@@ -747,8 +747,8 @@ namespace Experiment.Utilities
                     EventStack stack = conn.Query<EventStack>("Select * From EventStacks WHERE EventStackDay = ?", e.Start.Date).FirstOrDefault();
                     if (stack != null)
                     {
-                        var deleteEventQuery = "DELETE FROM Events WHERE EventStackId = ?";
-                        conn.Execute(deleteEventQuery, stack.Id);
+                        var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
+                        conn.Execute(deleteEventQuery, e.Id);
                         int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", stack.Id);
                         if (originalStackCount == 0)
                         {

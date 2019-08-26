@@ -63,13 +63,13 @@ namespace Experiment.Utilities
             if (module.Source is EventStack)
             {
                 src = (EventStack)module.Source;
-                Console.WriteLine("source is EventStack ? " +  src.EventStackDay);
+                //Console.WriteLine("source is EventStack ? " +  src.EventStackDay);
             }
             else
             {
                 int parentId = ((Event)module.Source).EventStackId;
                 src = DBHandler.getEventStack(parentId);
-                Console.WriteLine("source is Event ? " + src.EventStackDay);
+                //Console.WriteLine("source is Event ? " + src.EventStackDay);
             }
             ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);
             ObservableCollection<Event> Deleted = new ObservableCollection<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
