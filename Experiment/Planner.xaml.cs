@@ -306,21 +306,34 @@ namespace Experiment
                 }
                 Point pointToWindow = Mouse.GetPosition(this);
                 Point pointToScreen = PointToScreen(pointToWindow);
+                EventStack originalStack = EventStack.Clone(evtStack);
                 EventsUtilities.UpdateLimits(evtStack);
+
                 addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
                 if (addDialog.ShowDialog() == true)
                 {
-                    DBHandler.UpdateEventStack(evtStack);
+                    EventStackManager evtStackManager;
+                    //DBHandler.UpdateEventStack(evtStack);
+                    if (evtStack.Events.Count <= 0)
+                    {
+                        eventsCollection.Remove(evtStack);
+                        evtStackManager = new EventStackManager(evtStack, deleted:true);
+                        //DBHandler.DeleteEventStack(evtStack);
+                        //if (evtStack == eventsInfo.UpcomingEvent)
+                        //{
+                        //    FindNextEventFromNow();
+                        //}
+                        
+                    } else
+                    {
+                        evtStackManager = new EventStackManager(originalStack, evtStack);
+                    }
+                    if (evtStackManager != null)
+                    {
+                        CalendarState.Do(evtStackManager);
+                    }
                 }
-                if (evtStack.Events.Count <= 0)
-                {
-                    eventsCollection.Remove(evtStack);
-                    DBHandler.DeleteEventStack(evtStack);
-                    //if (evtStack == eventsInfo.UpcomingEvent)
-                    //{
-                    //    FindNextEventFromNow();
-                    //}
-                }
+                
             }
             
         }
@@ -349,7 +362,12 @@ namespace Experiment
                 if (freshEvent.Events.Count > 0)
                 {
                     eventsCollection.Add(freshEvent);
-                    DBHandler.AddEventStack(freshEvent);
+                    //DBHandler.AddEventStack(freshEvent);
+                    EventStackManager stackManager = new EventStackManager(freshEvent, freshEvent, newStack:true);
+                    if (stackManager != null)
+                    {
+                        CalendarState.Do(stackManager);
+                    }
                 } 
             }
             selectedCell = null;

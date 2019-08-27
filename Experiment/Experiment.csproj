@@ -163,6 +163,7 @@
     <Compile Include="Utilities\DBHandler.cs" />
     <Compile Include="Utilities\DropManager.cs" />
     <Compile Include="Utilities\EventsInfo.cs" />
+    <Compile Include="Utilities\EventStackManager.cs" />
     <Compile Include="Utilities\EventsUtilities.cs" />
     <Compile Include="Utilities\FilterModule.cs" />
     <Compile Include="Utilities\GlobalSettings.cs" />
