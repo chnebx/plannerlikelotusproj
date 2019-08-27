@@ -35,8 +35,34 @@
             </Grid>
         </Border>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button x:Name="BtnMonthUndo" Click="BtnMonthUndo_Click" Content="Cancel" Width="40" Height="30" Margin="0,0,10,0"></Button>
-            <Button x:Name="BtnMonthRedo" Click="BtnMonthRedo_Click" Content="Redo" Width="40" Height="30" Margin="0,0,10,0"></Button>
+            <Button x:Name="BtnMonthUndo" Click="BtnMonthUndo_Click" Content="Cancel" Width="40" Height="30" Margin="0,0,10,0">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=CalendarState.UndoIsEmpty}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CalendarState.UndoIsEmpty}" Value="False">
+                                <Setter Property="IsEnabled" Value="True"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button x:Name="BtnMonthRedo" Click="BtnMonthRedo_Click" Content="Redo" Width="40" Height="30" Margin="0,0,10,0">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=CalendarState.RedoIsEmpty}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CalendarState.RedoIsEmpty}" Value="False">
+                                <Setter Property="IsEnabled" Value="True"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
