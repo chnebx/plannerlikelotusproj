@@ -68,7 +68,7 @@ namespace Experiment.Utilities
             else
             {
                 DateTime parentId = ((Event)module.Source).EventStackId;
-                src = DBHandler.getEventStack(parentId);
+                src = DBHandler.getEventStackById(parentId);
                 //Console.WriteLine("source is Event ? " + src.EventStackDay);
             }
             ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);

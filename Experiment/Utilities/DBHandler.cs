@@ -496,6 +496,21 @@ namespace Experiment.Utilities
             }
         }
 
+        public static EventStack getEventStackById(DateTime id)
+        {
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                var item = conn.FindWithChildren<EventStack>(id);
+                //var item = conn.GetWithChildren<EventStack>(id);
+                if (item == null)
+                {
+                    return null;
+                }
+                item.sortEvents();
+                return item;
+            }
+        }
+
         public static EventStack getEventStack(DateTime date)
         {
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
@@ -534,8 +549,8 @@ namespace Experiment.Utilities
 
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
-                //conn.InsertOrReplaceWithChildren(evt, recursive: true);
-                conn.UpdateWithChildren(evt);
+                conn.InsertOrReplaceWithChildren(evt, recursive: true);
+                //conn.UpdateWithChildren(evt);
             }
         }
 
