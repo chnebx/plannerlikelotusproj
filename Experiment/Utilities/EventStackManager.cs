@@ -37,7 +37,7 @@ namespace Experiment.Utilities
                 DBHandler.AddEventStack(Modified);
             } else 
             {
-                DBHandler.UpdateEventStack(Modified);
+                DBHandler.InsertOrReplaceEventStack(Modified);
             } 
         }
 

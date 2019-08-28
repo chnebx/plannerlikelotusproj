@@ -56,8 +56,8 @@ namespace Experiment.Models
 
         //[PrimaryKey, AutoIncrement]
         //public int Id { get; set; }
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [PrimaryKey]
+        public DateTime Id { get; set; }
 
         [NotNull]
         public DateTime EventStackDay {
@@ -69,6 +69,7 @@ namespace Experiment.Models
             {
                 _EventStackDay = value;
                 _dayNumber = _EventStackDay.Day.ToString();
+                Id = _EventStackDay;
                 _lowerLimitHour = new DateTime(EventStackDay.Year, EventStackDay.Month, EventStackDay.Day, 0, 0, 0);
                 _upperLimitHour = _lowerLimitHour.AddDays(1).AddHours(12);
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("EventStackDay"));
@@ -221,6 +222,19 @@ namespace Experiment.Models
             foreach(Event evt in evtStack.Events)
             {
                 cloned.AddEvent(evt.DeepCopy());
+            }
+            return cloned;
+        }
+
+        public static EventStack FullClone(EventStack evtStack)
+        {
+            EventStack cloned = new EventStack
+            {
+                EventStackDay = evtStack.EventStackDay
+            };
+            foreach (Event evt in evtStack.Events)
+            {
+                cloned.AddEvent(evt.Clone());
             }
             return cloned;
         }

@@ -203,7 +203,7 @@ namespace Experiment
             {
                 if (evtStack.Events.Count > 0)
                 {
-                    DBHandler.UpdateEventStack(evtStack);
+                    DBHandler.InsertOrReplaceEventStack(evtStack);
                 }
             }
             if (evtStack.Events.Count <= 0)
@@ -237,7 +237,7 @@ namespace Experiment
             _previousHoveredColumn = ((Day)(((Border)sender).DataContext)).MonthColumn;
         }
 
-        private EventStack FindItem(int id)
+        private EventStack FindItem(DateTime id)
         {
             for (int i = 0; i < eventsCollection.Count; i++)
             {

@@ -407,7 +407,7 @@ namespace Experiment.Utilities
                 conn.BeginTransaction();
                 for (int i = 0; i < evtStacks.Count; i++)
                 {
-                    int id = -1;
+                    DateTime id;
                     DateTime comparedTo = evtStacks[i].EventStackDay;
                     var existingStack = conn.GetAllWithChildren<EventStack>().Where(x => x.EventStackDay == comparedTo).Select(x => x).FirstOrDefault<EventStack>();
                     if (existingStack != null)
@@ -520,12 +520,22 @@ namespace Experiment.Utilities
 
         }
 
-        public static void UpdateEventStack(EventStack evt)
+        public static void InsertOrReplaceEventStack(EventStack evt)
         {
 
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.InsertOrReplaceWithChildren(evt, recursive: true);
+            }
+        }
+
+        public static void UpdateEventStack(EventStack evt)
+        {
+
+            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
+            {
+                //conn.InsertOrReplaceWithChildren(evt, recursive: true);
+                conn.UpdateWithChildren(evt);
             }
         }
 
@@ -596,15 +606,15 @@ namespace Experiment.Utilities
 
         public static void MoveEvents(List<Event> evts, EventStack to, EventStack source)
         {
-            int id = to.Id;
-            int sourceStackId = source.Id;
+            DateTime id = to.Id;
+            DateTime sourceStackId = source.Id;
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                if (id <= 0)
+                if (id == null)
                 {
                     conn.Insert(to);
-                    id = (int)SQLite3.LastInsertRowid(conn.Handle);
+                    //id = (int)SQLite3.LastInsertRowid(conn.Handle);
                 }
                 foreach (Event e in evts)
                 {
@@ -643,7 +653,7 @@ namespace Experiment.Utilities
                 evt.Start.Minute,
                 0);
             DateTime newEnd = newStart.Add(evt.End - evt.Start);
-            int stackId = To.Id;
+            DateTime stackId = To.Id;
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 evt.EventStackId = stackId;
@@ -656,7 +666,7 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                if (To.Id <= 0)
+                if (To.Id == null)
                 {
                     conn.Insert(To);
                     //To.Id = (int)SQLite3.LastInsertRowid(conn.Handle);
@@ -672,7 +682,7 @@ namespace Experiment.Utilities
                         e.Start.Minute,
                         0);
                     DateTime newEnd = newStart.Add(e.End - e.Start);
-                    int stackId = To.Id;
+                    DateTime stackId = To.Id;
                     e.EventStackId = stackId;
                     conn.Insert(e);
                 }
@@ -682,8 +692,8 @@ namespace Experiment.Utilities
 
         public static void HandleUndoDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, ObservableCollection<Event> evtsToRestore, EventStack source, EventStack destination, bool copy = false)
         {
-            int destinationId = destination.Id;
-            int sourceId = source.Id;
+            DateTime destinationId = destination.Id;
+            DateTime sourceId = source.Id;
             if (evtsToMove.Count < 1 && evtsToDelete.Count < 1)
             {
                 return;
@@ -691,10 +701,11 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                if (sourceId <= 0)
-                {
-                    conn.Insert(source);
-                }
+                //if (sourceId == null)
+                //{
+                //    conn.Insert(source);
+                //}
+                conn.InsertOrReplace(source);
                 if (evtsToRestore != null && evtsToRestore.Count > 0)
                 {
                     foreach (Event e in evtsToRestore)
@@ -771,8 +782,8 @@ namespace Experiment.Utilities
 
         public static void HandleDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
         {
-            int destinationId = destination.Id;
-            int sourceId = source.Id;
+            DateTime destinationId = destination.Id;
+            DateTime sourceId = source.Id;
             //createdId = -1;
             if (evtsToMove.Count < 1 && evtsToDelete.Count < 1 )
             {
@@ -781,30 +792,11 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                if (destinationId <= 0)
-                {
-                    conn.Insert(destination);
-                    //createdId = destination.Id;
-                }
-                //if (evtsToRestore != null && evtsToRestore.Count > 0)
+                //if (destinationId == DateTime.MinValue)
                 //{
-                //    foreach (Event e in evtsToRestore)
-                //    {
-                //        int parentStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
-                //        if (parentStackCount == 0)
-                //        {
-                //            EventStack parent = new EventStack
-                //            {
-                //                EventStackDay = e.Start.Date
-                //            };
-                //            parent.AddEvent(e);
-                //            conn.InsertWithChildren(parent);
-                //        } else
-                //        {
-                //            conn.Insert(e);
-                //        }
-                //    }
+                //    conn.Insert(destination);
                 //}
+                conn.InsertOrReplace(destination);
                 foreach (Event e in evtsToMove)
                 {
                     DateTime newStart = new DateTime(
@@ -888,11 +880,11 @@ namespace Experiment.Utilities
                     }
                     else
                     {
-                        int ToStackId = ToStack.Id;
-                        if (ToStackId < 1)
+                        DateTime ToStackId = ToStack.Id;
+                        if (ToStackId == null)
                         {
                             nonAsyncConn.Insert(ToStack);
-                            ToStackId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+                            //ToStackId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
                         }
                         
                         for (int i = 0; i < ToStack.Events.Count; i++)
@@ -931,11 +923,11 @@ namespace Experiment.Utilities
             SQLite.SQLiteAsyncConnection conn = new SQLite.SQLiteAsyncConnection(LoadConnectionString());
             conn.RunInTransactionAsync(nonAsyncConn =>
             {
-                int newOneId = newOne.Id;
-                if (newOneId < 1)
+                DateTime newOneId = newOne.Id;
+                if (newOneId == null)
                 {
                     nonAsyncConn.Insert(newOne);
-                    newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
+                    //newOneId = nonAsyncConn.ExecuteScalar<int>("Select last_insert_rowid() as id From EventStacks");
                 }
                 if (!copy)
                 {

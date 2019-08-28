@@ -55,7 +55,7 @@ namespace Experiment.Models
         private static Random randomColor = new Random();
         private EventStack _parentStack;
         private int _id;
-        private int _eventStackId;
+        private DateTime _eventStackId;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -108,7 +108,7 @@ namespace Experiment.Models
         }
 
         [ForeignKey(typeof(EventStack))]
-        public int EventStackId {
+        public DateTime EventStackId {
             get
             {
                 return _eventStackId;

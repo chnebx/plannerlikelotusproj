@@ -306,9 +306,8 @@ namespace Experiment
                 }
                 Point pointToWindow = Mouse.GetPosition(this);
                 Point pointToScreen = PointToScreen(pointToWindow);
-                EventStack originalStack = EventStack.Clone(evtStack);
+                EventStack originalStack = EventStack.FullClone(evtStack);
                 EventsUtilities.UpdateLimits(evtStack);
-
                 addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
                 if (addDialog.ShowDialog() == true)
                 {
