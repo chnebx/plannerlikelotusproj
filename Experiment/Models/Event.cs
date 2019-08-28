@@ -54,7 +54,7 @@ namespace Experiment.Models
         private string _SelectedColor;
         private static Random randomColor = new Random();
         private EventStack _parentStack;
-        private int _id;
+        private string _id;
         private DateTime _eventStackId;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -75,6 +75,7 @@ namespace Experiment.Models
             //_rowSpan = 6;
             //_row = 0;
             //_shortName = ShortNameMaker(_name);
+            _id = Guid.NewGuid().ToString();
             colorRect = new SolidColorBrush(Color.FromRgb(
                         (byte)randomColor.Next(0, 255),
                         (byte)randomColor.Next(0, 255),
@@ -94,8 +95,8 @@ namespace Experiment.Models
         //[PrimaryKey, AutoIncrement]
         //public int Id { get; set; }
 
-        [PrimaryKey, AutoIncrement]
-        public int Id {
+        [PrimaryKey]
+        public string Id {
             get
             {
                 return _id; 

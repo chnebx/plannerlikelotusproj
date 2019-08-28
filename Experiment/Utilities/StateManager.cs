@@ -32,6 +32,10 @@ namespace Experiment.Utilities
 
         public void Do(ICommand cmd)
         {
+            if (!RedoIsEmpty)
+            {
+                Reset();
+            }
             cmd.Execute();
             _Undo.Push(cmd);
             _Redo.Clear();

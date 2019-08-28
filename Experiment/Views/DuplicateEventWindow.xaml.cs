@@ -72,7 +72,7 @@ namespace Experiment.Views
                             
                             EventStack newEvtStack = new EventStack();
                             Event clonedEvt = actualEvt.Clone();
-                            clonedEvt.Id = 0;
+                            clonedEvt.Id = "";
                             clonedEvt.Start = new DateTime(timeCheck.Year, timeCheck.Month, timeCheck.Day, clonedEvt.Start.Hour, clonedEvt.Start.Minute, 0);
                             clonedEvt.End = new DateTime(timeCheck.Year, timeCheck.Month, timeCheck.Day, clonedEvt.End.Hour, clonedEvt.End.Minute, 0);
                             newEvtStack.EventStackDay = timeCheck;

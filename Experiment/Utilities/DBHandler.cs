@@ -667,7 +667,7 @@ namespace Experiment.Utilities
 
         public static void DuplicateEvent(Event evt, EventStack To)
         {
-            evt.Id = 0;
+            evt.Id = "";
             DateTime newStart = new DateTime(
                 To.EventStackDay.Year,
                 To.EventStackDay.Month,
@@ -696,7 +696,7 @@ namespace Experiment.Utilities
                 }
                 foreach (Event e in evts)
                 {
-                    e.Id = 0;
+                    e.Id = "";
                     DateTime newStart = new DateTime(
                         To.EventStackDay.Year,
                         To.EventStackDay.Month,
@@ -858,7 +858,7 @@ namespace Experiment.Utilities
                     // if element has no id
                     foreach(Event e in evtsToMove)
                     {
-                        if (e.Id == 0)
+                        if (string.IsNullOrEmpty(e.Id))
                         {
                             conn.Insert(e);
                         } else
@@ -927,7 +927,7 @@ namespace Experiment.Utilities
                             {
                                 Event temp = ToStack.Events[i];
                                 temp.EventStackId = ToStack.Id;
-                                temp.Id = 0;
+                                temp.Id = "";
                                 nonAsyncConn.Insert(temp);
                             }
                         }
