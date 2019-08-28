@@ -23,7 +23,7 @@ namespace Experiment.Utilities
         public object OriginalDestination;
         public object Source;
         public object Destination;
-        public int DestinationFinalId;
+        public DateTime DestinationFinalId;
         //public Dictionary<Event, List<Event>> Clashes { get; set; }
         public Dictionary<string, Dictionary<Event, List<Event>>> Clashes { get; set; }
         public bool IsSolved { get; set; }

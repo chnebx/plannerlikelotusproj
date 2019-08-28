@@ -316,7 +316,7 @@ namespace Experiment
                     if (evtStack.Events.Count <= 0)
                     {
                         eventsCollection.Remove(evtStack);
-                        evtStackManager = new EventStackManager(evtStack, deleted:true);
+                        evtStackManager = new EventStackManager(originalStack, deleted:true);
                         //DBHandler.DeleteEventStack(evtStack);
                         //if (evtStack == eventsInfo.UpcomingEvent)
                         //{

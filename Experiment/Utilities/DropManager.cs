@@ -84,7 +84,7 @@ namespace Experiment.Utilities
             }
             //Console.WriteLine("----- Redo --- Source : " + src.EventStackDay + "--- destination : " + dest.EventStackDay);
             DBHandler.HandleDrag(Deleted, Solved, dest, src, module.copy);
-            //module.DestinationFinalId = dest.Id;
+            module.DestinationFinalId = dest.Id;
             module.CopiedEvents = Solved.ToList<Event>();
             //if (module.copy)
             //{

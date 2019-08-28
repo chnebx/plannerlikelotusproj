@@ -183,7 +183,12 @@ namespace Experiment
                 if (freshEvent.Events.Count > 0)
                 {
                     eventsCollection.Add(freshEvent);
-                    DBHandler.AddEventStack(freshEvent);
+                    EventStackManager stackManager = new EventStackManager(freshEvent, freshEvent, newStack: true);
+                    if (stackManager != null)
+                    {
+                        CalendarState.Do(stackManager);
+                    }
+                    //DBHandler.AddEventStack(freshEvent);
                 }
             }
         }
@@ -198,24 +203,31 @@ namespace Experiment
             Point pointToWindow = Mouse.GetPosition(this);
             Point pointToScreen = PointToScreen(pointToWindow);
             EventsUtilities.UpdateLimits(evtStack);
+            EventStack originalStack = EventStack.FullClone(evtStack);
             addEventDialog addDialog = new addEventDialog(evtStack, pointToScreen, false);
             if (addDialog.ShowDialog() == true)
             {
+                EventStackManager evtStackManager = null;
+                if (evtStack.Events.Count <= 0)
+                {
+                    eventsCollection.Remove(evtStack);
+                    evtStackManager = new EventStackManager(originalStack, deleted: true);
+                    //DBHandler.DeleteEventStack(evtStack);
+                    //if (evtStack == eventsInfo.UpcomingEvent)
+                    //{
+                    //    FindNextEventFromNow();
+                    //}
+                }
+
                 if (evtStack.Events.Count > 0)
                 {
-                    DBHandler.InsertOrReplaceEventStack(evtStack);
+                    evtStackManager = new EventStackManager(originalStack, evtStack);
+                    //DBHandler.InsertOrReplaceEventStack(evtStack);
                 }
-            }
-            if (evtStack.Events.Count <= 0)
-            {
-                eventsCollection.Remove(evtStack);
-                DBHandler.DeleteEventStack(evtStack);
-
-
-                //if (evtStack == eventsInfo.UpcomingEvent)
-                //{
-                //    FindNextEventFromNow();
-                //}
+                if (evtStackManager != null)
+                {
+                    CalendarState.Do(evtStackManager);
+                }
             }
         }
 

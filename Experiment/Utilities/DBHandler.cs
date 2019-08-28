@@ -529,7 +529,13 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                conn.InsertWithChildren(stack, recursive:true);
+                //conn.Insert(stack);
+                //foreach(Event e in stack.Events)
+                //{
+                //    e.EventStackId = stack.Id;
+                //}
+                conn.InsertOrReplaceWithChildren(stack);
+                //conn.InsertWithChildren(stack, recursive:true);
                 conn.Commit();
             }
 
@@ -720,7 +726,10 @@ namespace Experiment.Utilities
                 //{
                 //    conn.Insert(source);
                 //}
-                conn.InsertOrReplace(source);
+                if (conn.Find<EventStack>(source.Id) == null)
+                {
+                    conn.Insert(source);
+                }
                 if (evtsToRestore != null && evtsToRestore.Count > 0)
                 {
                     foreach (Event e in evtsToRestore)
@@ -773,6 +782,8 @@ namespace Experiment.Utilities
                     EventStack stack = conn.Query<EventStack>("Select * From EventStacks WHERE EventStackDay = ?", e.Start.Date).FirstOrDefault();
                     if (stack != null)
                     {
+                        //var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
+                        //conn.Execute(deleteEventQuery, e.Id);
                         var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
                         conn.Execute(deleteEventQuery, e.Id);
                         int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", stack.Id);
@@ -811,7 +822,11 @@ namespace Experiment.Utilities
                 //{
                 //    conn.Insert(destination);
                 //}
-                conn.InsertOrReplace(destination);
+                if (conn.Find<EventStack>(destination.Id) == null)
+                {
+                    conn.Insert(destination);
+                }
+                //conn.InsertOrReplace(destination);
                 foreach (Event e in evtsToMove)
                 {
                     DateTime newStart = new DateTime(
@@ -835,8 +850,10 @@ namespace Experiment.Utilities
                 }
                 foreach (Event e in evtsToDelete)
                 {
-                    var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
-                    conn.Execute(deleteEventQuery, e.Id);
+                    //var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
+                    //conn.Execute(deleteEventQuery, e.Id);
+                    var deleteEventQuery = "DELETE FROM Events WHERE Start = ?";
+                    conn.Execute(deleteEventQuery, e.Start);
                     int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
                     if (originalStackCount == 0)
                     {
