@@ -534,7 +534,7 @@ namespace Experiment.Utilities
                 //{
                 //    e.EventStackId = stack.Id;
                 //}
-                conn.InsertOrReplaceWithChildren(stack);
+                conn.InsertOrReplaceWithChildren(stack, recursive:true);
                 //conn.InsertWithChildren(stack, recursive:true);
                 conn.Commit();
             }
@@ -557,6 +557,8 @@ namespace Experiment.Utilities
             {
                 conn.InsertOrReplaceWithChildren(evt, recursive: true);
                 //conn.UpdateWithChildren(evt);
+                var deleteEventQuery = "DELETE FROM Events WHERE EventStackID is NULL";
+                conn.Execute(deleteEventQuery);
             }
         }
 
@@ -806,7 +808,7 @@ namespace Experiment.Utilities
             }
         }
 
-        public static void HandleDrag(ObservableCollection<Event> evtsToDelete, ObservableCollection<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
+        public static void HandleDrag(List<Event> evtsToDelete, List<Event> evtsToMove, EventStack destination, EventStack source, bool copy = false)
         {
             DateTime destinationId = destination.Id;
             DateTime sourceId = source.Id;
@@ -818,15 +820,22 @@ namespace Experiment.Utilities
             using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(LoadConnectionString()))
             {
                 conn.BeginTransaction();
-                //if (destinationId == DateTime.MinValue)
-                //{
-                //    conn.Insert(destination);
-                //}
                 if (conn.Find<EventStack>(destination.Id) == null)
                 {
                     conn.Insert(destination);
                 }
-                //conn.InsertOrReplace(destination);
+                foreach (Event e in evtsToDelete)
+                {
+                    //var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
+                    //conn.Execute(deleteEventQuery, e.Id);
+                    var deleteEventQuery = "DELETE FROM Events WHERE Start = ?";
+                    conn.Execute(deleteEventQuery, e.Start);
+                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
+                    if (originalStackCount == 0 && e.EventStackId != destinationId)
+                    {
+                        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", e.EventStackId);
+                    }
+                }
                 foreach (Event e in evtsToMove)
                 {
                     DateTime newStart = new DateTime(
@@ -846,20 +855,33 @@ namespace Experiment.Utilities
                     conn.UpdateAll(evtsToMove, true);
                 } else
                 {
-                    conn.InsertAll(evtsToMove, true);
-                }
-                foreach (Event e in evtsToDelete)
-                {
-                    //var deleteEventQuery = "DELETE FROM Events WHERE Id = ?";
-                    //conn.Execute(deleteEventQuery, e.Id);
-                    var deleteEventQuery = "DELETE FROM Events WHERE Start = ?";
-                    conn.Execute(deleteEventQuery, e.Start);
-                    int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", e.EventStackId);
-                    if (originalStackCount == 0)
+                    // if element has no id
+                    foreach(Event e in evtsToMove)
                     {
-                        conn.Execute("DELETE FROM EventStacks WHERE Id = ?", e.EventStackId);
+                        if (e.Id == 0)
+                        {
+                            conn.Insert(e);
+                        } else
+                        {
+                            conn.Execute("INSERT INTO Events(Id, EventStackId, BandId, Comment, SelectedColor, Name, EmployerID, LocationID, FormuleID, Start, End) " +
+                                "VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                                e.Id,
+                                e.EventStackId,
+                                e.BandId,
+                                e.Comment,
+                                e.SelectedColor,
+                                e.Name,
+                                e.EmployerID,
+                                e.LocationID,
+                                e.FormuleID,
+                                e.Start,
+                                e.End
+                                );
+                        }
                     }
+                    //conn.InsertAll(evtsToMove, true);
                 }
+                
                 if (!copy)
                 {
                     int originalStackCount = conn.ExecuteScalar<int>("SELECT Count(*) from Events WHERE EventStackId = ?", sourceId);

@@ -75,7 +75,7 @@ namespace Experiment.Utilities
                 {
                     UndoIsEmpty = true;
                 }
-                Console.WriteLine("undone");
+                //Console.WriteLine("undone");
             }
         }
 
@@ -91,7 +91,7 @@ namespace Experiment.Utilities
                 {
                     RedoIsEmpty = true;
                 }
-                Console.WriteLine("Redone");
+                //Console.WriteLine("Redone");
             }
         }
     }

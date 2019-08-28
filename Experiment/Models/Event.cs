@@ -103,7 +103,6 @@ namespace Experiment.Models
             set
             {
                 _id = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Id"));
             }
         }
 

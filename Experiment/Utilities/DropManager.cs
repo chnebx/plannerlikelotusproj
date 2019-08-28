@@ -41,6 +41,7 @@ namespace Experiment.Utilities
             }
         }
 
+        public List<Event> duplicates;
 
         private void FillEvents(ClashHandler module)
         {
@@ -48,7 +49,6 @@ namespace Experiment.Utilities
             //object destination = module.OriginalDestination;
             EventStack dest;
             EventStack src;
-            ObservableCollection<Event> duplicates = new ObservableCollection<Event>();
             if (module.Destination is Day)
             {
                 dest = new EventStack
@@ -63,29 +63,49 @@ namespace Experiment.Utilities
             if (module.Source is EventStack)
             {
                 src = (EventStack)module.Source;
-                //Console.WriteLine("source is EventStack ? " +  src.EventStackDay);
             }
             else
             {
                 DateTime parentId = ((Event)module.Source).EventStackId;
                 src = DBHandler.getEventStackById(parentId);
-                //Console.WriteLine("source is Event ? " + src.EventStackDay);
             }
-            ObservableCollection<Event> Solved = new ObservableCollection<Event>(module.SolvedEvents);
-            ObservableCollection<Event> Deleted = new ObservableCollection<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
+            List<Event> Solved = new List<Event>(module.SolvedEvents);
+            List<Event> Deleted = new List<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
             if (module.copy)
             {
-                foreach (Event e in Solved)
+                if (duplicates == null)
                 {
-                    Event evt = e.DeepCopy();
-                    duplicates.Add(evt);
+                    //Making a list of events without ids to insert them with new ones
+                    duplicates = new List<Event>();
+                    foreach (Event e in Solved)
+                    {
+                        Event evt = e.DeepCopy();
+                        duplicates.Add(evt);
+                    }
+                    Solved = duplicates;
                 }
-                Solved = duplicates;
+                else
+                {
+                    // if a duplicates list is present, retrieve back the old events
+                    Solved = new List<Event>();
+                    foreach (Event e in duplicates)
+                    {
+                        Solved.Add(e);
+                    }
+                }
             }
-            //Console.WriteLine("----- Redo --- Source : " + src.EventStackDay + "--- destination : " + dest.EventStackDay);
             DBHandler.HandleDrag(Deleted, Solved, dest, src, module.copy);
             module.DestinationFinalId = dest.Id;
-            module.CopiedEvents = Solved.ToList<Event>();
+            if (module.CopiedEvents.Count == 0)
+            {
+                module.CopiedEvents = Solved.ToList<Event>();
+            }
+               
+            
+            
+
+
+
             //if (module.copy)
             //{
             //    Moved = Solved;
