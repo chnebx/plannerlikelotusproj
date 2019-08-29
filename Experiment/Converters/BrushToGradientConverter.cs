@@ -19,15 +19,15 @@ namespace Experiment.Converters
             var brush = new LinearGradientBrush();
             //var color = ((SolidColorBrush)value).ToString();
             var color = ((SolidColorBrush)value).Color;
-            var secondColor = ChangeColorBrightness(color, 0.3f);
-            var thirdColor = ChangeColorBrightness(color, 0.4f);
+            var secondColor = ChangeColorBrightness(color, 0.20f);
+            var thirdColor = ChangeColorBrightness(color, 0.25f);
             
            
             brush.StartPoint = new Point(0.5, 0);
             brush.EndPoint = new Point(0.5, 1);
 
             brush.GradientStops.Add(new GradientStop(color, 0));
-            brush.GradientStops.Add(new GradientStop(thirdColor, 0.65));
+            brush.GradientStops.Add(new GradientStop(thirdColor, 0.45));
             brush.GradientStops.Add(new GradientStop(secondColor, 1));
             return brush;
         }

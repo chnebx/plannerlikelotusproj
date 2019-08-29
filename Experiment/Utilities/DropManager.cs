@@ -70,42 +70,45 @@ namespace Experiment.Utilities
                 src = DBHandler.getEventStackById(parentId);
             }
             List<Event> Solved = new List<Event>(module.SolvedEvents);
+            //Console.WriteLine(module.SolvedEvents[0].Id);
             List<Event> Deleted = new List<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
             if (module.copy)
             {
-                if (duplicates == null)
+                //if (duplicates == null)
+                if (module.CopiedEvents.Count == 0)
                 {
                     //Making a list of events without ids to insert them with new ones
-                    duplicates = new List<Event>();
-                    foreach (Event e in Solved)
+                    //duplicates = new List<Event>();
+                    //foreach (Event e in Solved)
+                    //{
+                    //    Event evt = e.DeepCopy();
+                    //    duplicates.Add(evt);
+                    //}
+                    //Solved = duplicates;
+                    foreach(Event e in Solved)
                     {
                         Event evt = e.DeepCopy();
-                        duplicates.Add(evt);
-                    }
-                    Solved = duplicates;
-                }
-                else
-                {
-                    // if a duplicates list is present, retrieve back the old events
-                    Solved = new List<Event>();
-                    foreach (Event e in duplicates)
-                    {
-                        Solved.Add(e);
+                        module.CopiedEvents.Add(evt);
                     }
                 }
+                Solved = module.CopiedEvents;
+                //else
+                //{
+                //    // if a duplicates list is present, retrieve back the old events
+                //    Solved = new List<Event>();
+                //    foreach (Event e in duplicates)
+                //    {
+                //        Solved.Add(e);
+                //    }
+                //}
             }
+            //Console.WriteLine(Solved[0].Id);
             DBHandler.HandleDrag(Deleted, Solved, dest, src, module.copy);
             module.DestinationFinalId = dest.Id;
             if (module.CopiedEvents.Count == 0)
             {
                 module.CopiedEvents = Solved.ToList<Event>();
             }
-               
-            
-            
-
-
-
             //if (module.copy)
             //{
             //    Moved = Solved;
