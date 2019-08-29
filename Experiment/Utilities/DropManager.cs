@@ -41,8 +41,7 @@ namespace Experiment.Utilities
             }
         }
 
-        public List<Event> duplicates;
-
+        //public List<Event> duplicates;
         private void FillEvents(ClashHandler module)
         {
             //object source = module.OriginalSource;
@@ -70,7 +69,6 @@ namespace Experiment.Utilities
                 src = DBHandler.getEventStackById(parentId);
             }
             List<Event> Solved = new List<Event>(module.SolvedEvents);
-            //Console.WriteLine(module.SolvedEvents[0].Id);
             List<Event> Deleted = new List<Event>(module.DeletedEvents.Concat(module.DeletedExternalEvents));
             if (module.copy)
             {
@@ -102,7 +100,6 @@ namespace Experiment.Utilities
                 //    }
                 //}
             }
-            //Console.WriteLine(Solved[0].Id);
             DBHandler.HandleDrag(Deleted, Solved, dest, src, module.copy);
             module.DestinationFinalId = dest.Id;
             if (module.CopiedEvents.Count == 0)
