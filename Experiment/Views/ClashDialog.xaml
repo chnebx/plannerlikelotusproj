@@ -9,6 +9,38 @@
         Title="Conflits" Height="400" Width="400">
     <Window.Resources>
         <conv:BrushToGradientConverter x:Key="BrushToGradientConverter"></conv:BrushToGradientConverter>
+        <Style x:Key="DeleteBtn" TargetType="{x:Type Button}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" >
+                        <Setter.Value>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFAC2F2F" Offset="0.008"/>
+                                <GradientStop Color="#FF9C0000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Background" >
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFFF7777" Offset="0.008"/>
+                        <GradientStop Color="#FFFF8888" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="5" Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Content="{TemplateBinding Content}"></ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -20,30 +52,43 @@
         <ItemsControl VerticalAlignment="Top" Grid.Row="1" ItemsSource="{Binding ClashElements}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="0,0,0,10" Height="62" CornerRadius="10" Background="#FFE5F8FD">
-                        <Grid Width="340">
+                    <Border Margin="0,0,0,10" CornerRadius="10">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF62A5DE" Offset="0"/>
+                                <GradientStop Color="#FF599BD3" Offset="0.984"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid Width="320">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="48"></RowDefinition>
+                                <RowDefinition Height="28"></RowDefinition>
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="45"></ColumnDefinition>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <!--<StackPanel Orientation="Horizontal" Margin="0,0,0,5" Height="62" Width="280">-->
-                            <!--<Border Grid.ColumnSpan="3" Background="#FFE4F2F9"></Border>-->
-                            <Border Grid.Column="0" VerticalAlignment="Center" Margin="10,0,20,0" Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}" 
-                                        Width="42" Height="42" CornerRadius="4">
+                            <Grid.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                            </Grid.Resources>
+                            <Border Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="5,0,5,0"  Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}" 
+                                        Width="32" Height="32" CornerRadius="4">
                             </Border>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock FontWeight="Bold" FontSize="24" Foreground="#FFB2B2B2" Text="{Binding Path=Name}"></TextBlock>
-                                <Button x:Name="DeleteEvtBtn" Click="DeleteEvtBtn_Click" VerticalAlignment="Bottom" Content="Supprimer" FontSize="10" HorizontalAlignment="Left" Width="60" Height="20" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2" HorizontalAlignment="Center"  VerticalAlignment="Center">
+                            <!--Foreground="#FFB2B2B2"-->
+                            <TextBlock Grid.Column="1" Grid.Row="0" FontWeight="Bold" Margin="0,3,0,0" FontSize="22"  Text="{Binding Path=Name}"></TextBlock>
+                            <StackPanel Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center">
                                 <StackPanel.Resources>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="FontWeight" Value="DemiBold"></Setter>
                                         <Setter Property="FontSize" Value="15"></Setter>
+                                        <Setter Property="Foreground" Value="White" />
                                     </Style>
                                 </StackPanel.Resources>
-                                <TextBlock Foreground="#FFACACAC">
+                                <!--Foreground="#FFACACAC"-->
+                                <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="Début : {0:00}:{1:00}">
                                             <Binding Path="Start.Hour"></Binding>
@@ -51,7 +96,7 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-                                <TextBlock Foreground="#FFACACAC">
+                                <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="Fin :      {0:00}:{1:00}">
                                             <Binding Path="End.Hour"></Binding>
@@ -59,6 +104,18 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,5" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Orientation="Horizontal">
+                                <Button 
+                                    Margin="8,0,0,0"
+                                    x:Name="DeleteEvtBtn" 
+                                    Style="{StaticResource DeleteBtn}"
+                                    Click="DeleteEvtBtn_Click" 
+                                    Content="Supprimer"
+                                    FontSize="10"
+                                    Height="20"
+                                    Width="60" 
+                                    />
                             </StackPanel>
                         </Grid>
                     </Border>
