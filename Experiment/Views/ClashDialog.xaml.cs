@@ -29,7 +29,7 @@ namespace Experiment.Views
         private Dictionary<string, Dictionary<Event, List<Event>>> _foundEvents;
         //public List<int> DeletedEventIds = new List<int>();
         public List<Event> DeletedEvents = new List<Event>();
-        public List<Event> SolvedEvents = new List<Event>();
+        public List<Event> SolvedEvents { get; set; }
         public List<Event> ModifiedEvents { get; set; }
         public List<Event> DeletedExternalEvents = new List<Event>();
         public List<Event> ModifiedExternalEvents { get; set; }
@@ -41,47 +41,28 @@ namespace Experiment.Views
             actualStack = evtStack;
             _foundIndices = foundIndices;
             ClashElements = new ObservableCollection<Event>();
+            SolvedEvents = new List<Event>();
             HeaderTxt.Text = "Conflits présents :";
             OutsideStacks = outsideStack;
             buildClashElements();
         }
-
-        //public ClashDialog(EventStack evtStack, Dictionary<Event, List<Event>> foundEventsDict, bool outsideStack)
-        //{
-        //    InitializeComponent();
-        //    DataContext = this;
-        //    actualStack = evtStack;
-        //    _foundEvents = foundEventsDict;
-        //    ClashElements = new ObservableCollection<Event>();
-        //    HeaderTxt.Text = "Conflits présents :";
-        //    OutsideStacks = outsideStack;
-        //    buildClashElements();
-        //}
 
         public ClashDialog(List<Event> evts, bool outsideStack)
         {
             InitializeComponent();
             DataContext = this;
             ClashElements = evts != null ? new ObservableCollection<Event>(evts) : new ObservableCollection<Event>();
+            SolvedEvents = new List<Event>();
             HeaderTxt.Text = "Conflits présents :";
             OutsideStacks = true;
         }
-
-        //public ClashDialog(Dictionary<Event, List<Event>> evts, bool outsideStack)
-        //{
-        //    InitializeComponent();
-        //    DataContext = this;
-        //    _foundEvents = evts;
-        //    buildClashElements();
-        //    HeaderTxt.Text = "Conflits présents :";
-        //    OutsideStacks = true;
-        //}
 
         public ClashDialog(Dictionary<string, Dictionary<Event, List<Event>>> evts, bool outsideStack)
         {
             InitializeComponent();
             DataContext = this;
             _foundEvents = evts;
+            SolvedEvents = new List<Event>();
             buildClashElements();
             HeaderTxt.Text = "Conflits présents :";
             OutsideStacks = true;
@@ -140,6 +121,7 @@ namespace Experiment.Views
                         SolvedEvents.Add(evt);
                     }
                 }
+                SolvedEventsList.ItemsSource = SolvedEvents;
             }  
         }
 
@@ -179,14 +161,12 @@ namespace Experiment.Views
                         }
                     }
                 }
+                SolvedEventsList.ItemsSource = SolvedEvents;
             }
-            
             int validCount = 1;
             if (OutsideStacks)
             {
                 validCount = 0;
-                //DeletedEventIds.Add(clickedEvent.Id);
-                //DBHandler.DeleteEvent(clickedEvent); 
             }
             if (ClashElements.Count == validCount)
             {
@@ -194,7 +174,5 @@ namespace Experiment.Views
                 this.Close();
             }
         }
-
-        
     }
 }

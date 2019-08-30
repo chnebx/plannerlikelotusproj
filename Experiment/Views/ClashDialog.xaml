@@ -47,6 +47,7 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <TextBlock x:Name="HeaderTxt" Grid.Row="0" FontWeight="Bold" Foreground="#FFA2A2A2" FontSize="22" HorizontalAlignment="Center"></TextBlock>
         <ItemsControl VerticalAlignment="Top" Grid.Row="1" ItemsSource="{Binding ClashElements}">
@@ -127,8 +128,26 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
+        <StackPanel HorizontalAlignment="Center" Height="30" Margin="5" Grid.Row="2" Orientation="Horizontal">
+            <TextBlock Text="Résolus : " FontSize="14" Foreground="Gray" VerticalAlignment="Center" Margin="5,0,5,0" />
+            <ItemsControl x:Name="SolvedEventsList" ItemsSource="{Binding SolvedEvents}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <Border VerticalAlignment="Center" Margin="5,0,0,0" Width="10" Height="10" Background="{Binding ColorFill, Converter={StaticResource BrushToGradientConverter}}"/>
+                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="{Binding ShortName}"></TextBlock>
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
         <StackPanel Height="50" HorizontalAlignment="Center" Grid.Row="3" Orientation="Horizontal">
-            <Button IsDefault="True" Click="CloseBtn_Click" Content="Retour" Width="140" ></Button>
+            <Button IsDefault="True" Margin="5" Click="CloseBtn_Click" Content="Retour" Width="140" ></Button>
         </StackPanel>
     </Grid>
 </Window>
