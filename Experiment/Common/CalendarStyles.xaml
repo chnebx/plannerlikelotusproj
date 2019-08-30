@@ -387,21 +387,42 @@
 
     <Style x:Key="FlatBlueBtnStandard" TargetType="{x:Type Button}">
         <!--Background="{TemplateBinding Background}"-->
+        <Setter Property="Foreground" Value="White"></Setter>
+        <Setter Property="BorderThickness" Value="0"></Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF5062D3" Offset="0.095"/>
+                                        <GradientStop Color="#FF3E52D4" Offset="1"/>
+                                        <GradientStop Color="#FF3749C1" Offset="0"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF8C9AF1" Offset="0.021"/>
+                                        <GradientStop Color="#FF7082F0" Offset="1"/>
+                                        <GradientStop Color="#FF6C77BD" Offset="0.003"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                     <Border CornerRadius="5"
-                            Height="50" 
+                            Height="{TemplateBinding Height}"
                             Width="{TemplateBinding Width}" 
                             BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <Border.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#FF4557CB" Offset="0"/>
-                                <GradientStop Color="#FF5C71F5" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" />
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <ContentPresenter Margin="10,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -410,20 +431,89 @@
 
     <Style x:Key="FlatRedBtnStandard" TargetType="{x:Type Button}">
         <!--Background="{TemplateBinding Background}"-->
+        <Setter Property="Foreground" Value="White"></Setter>
+        <Setter Property="BorderThickness" Value="0"></Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF9C1919" Offset="0.054"/>
+                                        <GradientStop Color="#FFC51111" Offset="1"/>
+                                        <GradientStop Color="#FF951010" Offset="0.021"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFCB4545" Offset="0.054"/>
+                                        <GradientStop Color="#FFE22727" Offset="1"/>
+                                        <GradientStop Color="#FFA84C4C" Offset="0.004"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                     <Border CornerRadius="5"
-                            Height="50" 
+                            Height="{TemplateBinding Height}" 
                             Width="{TemplateBinding Width}" 
                             BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <Border.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#FFCB4545" Offset="0"/>
-                                <GradientStop Color="#FFE22727" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            >
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="FlatGrayBtnStandard" TargetType="{x:Type Button}">
+        <!--Background="{TemplateBinding Background}"-->
+        <Setter Property="Foreground" Value="#FF464646"></Setter>
+        <Setter Property="BorderThickness" Value="0.3"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFEEEEEE" Offset="0.561"/>
+                                        <GradientStop Color="#FFF1F1F1" Offset="1"/>
+                                        <GradientStop Color="#FFF1ECEC" Offset="0"/>
+                                        <GradientStop Color="#FEEEEEEE" Offset="0.201"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFD8D8D8" Offset="0.552"/>
+                                        <GradientStop Color="Gainsboro" Offset="1"/>
+                                        <GradientStop Color="#FFE2E2E2" Offset="0"/>
+                                        <GradientStop Color="#FEEAEAEA" Offset="0.201"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                    <Border CornerRadius="5"
+                            Height="{TemplateBinding Height}" 
+                            Width="{TemplateBinding Width}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            >
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" />
                     </Border>
                 </ControlTemplate>

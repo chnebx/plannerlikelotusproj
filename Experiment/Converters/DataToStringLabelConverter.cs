@@ -17,7 +17,7 @@ namespace Experiment.Converters
                 return parameter.ToString();
             } else
             {
-                return "";
+                return "+";
             }
         }
 

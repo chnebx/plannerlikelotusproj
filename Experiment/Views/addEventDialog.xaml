@@ -44,7 +44,7 @@
             x:Key="colorPropertiesOdp" 
         />
     </Window.Resources>
-    <Border Background="White" CornerRadius="10">
+    <Border Background="White"  CornerRadius="10" BorderBrush="Gray" BorderThickness="0.8">
         <Border.Resources>
             <Style TargetType="{x:Type RadioButton}">
                 <Setter Property="Foreground" Value="#FF666666" />
@@ -57,7 +57,7 @@
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="70"></RowDefinition>
             </Grid.RowDefinitions>
 
             <Border
@@ -314,14 +314,15 @@
                             </TextBlock>
                             <Button x:Name="DefineEmployerBtn" 
                                     Click="DefineEmployerBtn_Click" 
-                                    Style="{StaticResource AddGreenBtn}" 
+                                    Style="{StaticResource FlatBlueBtnStandard}" 
                                     FontSize="14" 
-                                    Width="auto" 
-                                    Height="22" 
+                                    Width="Auto"
+                                    MinWidth="22"
+                                    Height="22"
                                     Visibility="{Binding ElementName=EmployerLabel, Path=Text, Converter={StaticResource StringNullOrEmptyToVisibleConverter}}"
                                     Margin="0,0,5,0"
                                     Content="{Binding ActualEmployer, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
-                                <Button.Background>
+                                <!--<Button.Background>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF9DB3E2" Offset="0.095"/>
                                         <GradientStop Color="#FF204DB0" Offset="0.405"/>
@@ -329,16 +330,17 @@
                                         <GradientStop Color="#FF8CA6DE" Offset="0.01"/>
                                         <GradientStop Color="#FF1D3893" Offset="1"/>
                                     </LinearGradientBrush>
-                                </Button.Background>
-                                
+                                </Button.Background>-->
                             </Button>
                             <Button x:Name="RemoveEmployerBtn" 
                                     Click="RemoveEmployerBtn_Click"
-                                    Style="{StaticResource RemoveRedBtn}"
-                                    FontSize="14"
+                                    Style="{StaticResource FlatRedBtnStandard}"
+                                    FontSize="18"
                                     Visibility="{Binding ActualEmployer, Converter={StaticResource SelectedItemToVisibilityConverter}}"
                                     Width="22"
                                     Height="22"
+                                    Content="-"
+                                    FontWeight="Bold"
                             >
                             </Button>
                             <!--Visibility="Collapsed"-->
@@ -378,30 +380,24 @@
                             </TextBlock>
                             <Button DockPanel.Dock="Left" x:Name="DefineLocationBtn" 
                                 Click="DefineLocationBtn_Click" 
-                                Style="{StaticResource AddGreenBtn}" 
+                                Style="{StaticResource FlatBlueBtnStandard}" 
                                 FontSize="14" 
                                 Width="auto" 
+                                MinWidth="22"
                                 Height="22"
                                 Visibility="{Binding ElementName=LocationLabel, Path=Text, Converter={StaticResource StringNullOrEmptyToVisibleConverter}}"
                                 Margin="0,0,5,0"
                                 Content="{Binding LocationName, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
-                                <Button.Background>
-                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                        <GradientStop Color="#FF9DB3E2" Offset="0.095"/>
-                                        <GradientStop Color="#FF204DB0" Offset="0.405"/>
-                                        <GradientStop Color="#FF3B64BB" Offset="0.888"/>
-                                        <GradientStop Color="#FF8CA6DE" Offset="0.01"/>
-                                        <GradientStop Color="#FF1D3893" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Button.Background>
                             </Button>
                             <Button HorizontalAlignment="Left" x:Name="RemoveLocationBtn" 
                                     Click="RemoveLocationBtn_Click"
-                                    Style="{StaticResource RemoveRedBtn}"
-                                    FontSize="14"
+                                    Style="{StaticResource FlatRedBtnStandard}"
+                                    FontSize="18"
                                     Visibility="{Binding LocationName, Converter={StaticResource SelectedItemToVisibilityConverter}}"
                                     Width="22"
                                     Height="22"
+                                    Content="-"
+                                    FontWeight="Bold"
                             >
                             </Button>
                         </StackPanel>
@@ -417,7 +413,7 @@
                                 </Paragraph>
                             </FlowDocument>
                         </RichTextBox>
-                        <Button x:Name="DuplicateBtn" DockPanel.Dock="Right" VerticalAlignment="Top" Width="70" Height="40" Content="Dupliquer" Click="DuplicateBtn_Click"></Button>
+                        <Button x:Name="DuplicateBtn" Style="{StaticResource FlatBlueBtnStandard}" DockPanel.Dock="Right" VerticalAlignment="Top" Width="80" Height="40" Content="Dupliquer" Click="DuplicateBtn_Click"></Button>
                     </DockPanel>
                 </StackPanel>
             </Border>
@@ -428,10 +424,10 @@
                     <Button DockPanel.Dock="Right" Width="140" Margin="10,5,10,0" Height="40" Click="BtnCancelConfirm_Click" Content="Retour"></Button>
                 </DockPanel>
             </Border>
-            <Border x:Name="DefaultDialogBtns" Margin="0,0,0,0" Visibility="Visible" Grid.Row="6" BorderBrush="LightGray">
+            <Border x:Name="DefaultDialogBtns" Margin="0,0,0,5" Visibility="Visible" Grid.Row="6" BorderBrush="LightGray">
                 <DockPanel VerticalAlignment="Bottom"  Margin="10,0,10,8" HorizontalAlignment="Stretch" LastChildFill="False">
-                    <Button DockPanel.Dock="Left" IsDefault="True" x:Name="btnAjouter" Click="BtnAjouter_Click" Content="Ok" Width="140" Height="40"/>
-                    <Button DockPanel.Dock="Right" IsCancel="True" x:Name="btnAnnuler" Click="BtnAnnuler_Click" Content="Annuler" Width="140" Height="40"></Button>
+                    <Button FontWeight="Bold" Style="{StaticResource FlatGrayBtnStandard}" DockPanel.Dock="Left" IsDefault="True" x:Name="btnAjouter" Click="BtnAjouter_Click" Content="Ok" Width="140" Height="40"/>
+                    <Button FontWeight="Bold" Style="{StaticResource FlatGrayBtnStandard}" DockPanel.Dock="Right" IsCancel="True" x:Name="btnAnnuler" Click="BtnAnnuler_Click" Content="Annuler" Width="140" Height="40"></Button>
                 </DockPanel>
             </Border>
         </Grid>
