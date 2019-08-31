@@ -57,7 +57,7 @@
                         <ControlTemplate TargetType="{x:Type RadioButton}">
                             <BulletDecorator Cursor="Hand">
                                 <!--Text element-->
-                                <Border x:Name="Switch" Width="60" Height="20" CornerRadius="3" BorderBrush="#FFE2E2E2" BorderThickness="1">
+                                <Border Background="White" x:Name="Switch" Width="60" Height="20" CornerRadius="3" BorderBrush="#FFE2E2E2" BorderThickness="1">
                                     <Grid>
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         <!--We don't need any bullet, cause our border is the switching element-->
@@ -65,12 +65,12 @@
                                         <!-- To change the apearance to button stripe 2, edit the margins! -->
                                     </Grid>
 
-                                    <Border.Background>
+                                    <!--<Border.Background>
                                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                             <GradientStop Color="White" Offset="0" />
                                             <GradientStop Color="#FFE2E2E2" Offset="1" />
                                         </LinearGradientBrush>
-                                    </Border.Background>
+                                    </Border.Background>-->
                                 </Border>
                             </BulletDecorator>
 
@@ -302,6 +302,7 @@
                                            Content="Début"></Label>
                                 <userControls:HourSelector
                                     Height="75"
+                                    Width="120"
                                     HorizontalAlignment="Left"
                                     HourValue="{Binding ShowHour, Mode=TwoWay}"
                                     MinutesValue="{Binding ShowMinutes, Mode=TwoWay}"
@@ -318,6 +319,7 @@
                                 <userControls:HourSelector
                                         x:Name="LengthOrEndHourControl"
                                         Height="75"
+                                        Width="120"
                                         HorizontalAlignment="Right"
                                         HourValue="{Binding ShowLengthHour, Mode=TwoWay}"
                                         MinutesValue="{Binding ShowLengthMinutes, Mode=TwoWay}"
@@ -355,10 +357,11 @@
                                     FontSize="14" 
                                     Width="Auto"
                                     MinWidth="22"
-                                    Height="18"
+                                    Height="20"
                                     Visibility="{Binding ElementName=EmployerLabel, Path=Text, Converter={StaticResource StringNullOrEmptyToVisibleConverter}}"
-                                    Margin="0,0,5,0"
-                                    Content="{Binding ActualEmployer, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
+                                    Margin="0,0,5,0">
+                                <TextBlock FontSize="13" Foreground="White" Text="Définir" ></TextBlock>
+                                <!--Content="{Binding ActualEmployer, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">-->
                                 <!--<Button.Background>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF9DB3E2" Offset="0.095"/>
@@ -374,9 +377,10 @@
                                     Style="{StaticResource FlatRedBtnStandard}"
                                     FontSize="18"
                                     Visibility="{Binding ActualEmployer, Converter={StaticResource SelectedItemToVisibilityConverter}}"
-                                    Width="22"
-                                    Height="18"
+                                    Width="15"
+                                    Height="15"
                                     FontWeight="Bold"
+                                    Margin="2,3,0,0"
                             >
                                 <TextBlock Margin="0,0,0,5" Foreground="White" Text="-" VerticalAlignment="Center" HorizontalAlignment="Center" />
                             </Button>
@@ -421,19 +425,21 @@
                                 FontSize="14" 
                                 Width="auto" 
                                 MinWidth="22"
-                                Height="18"
+                                Height="20"
                                 Visibility="{Binding ElementName=LocationLabel, Path=Text, Converter={StaticResource StringNullOrEmptyToVisibleConverter}}"
-                                Margin="0,0,5,0"
-                                Content="{Binding LocationName, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">
+                                Margin="0,0,5,0">
+                                <TextBlock FontSize="13" Foreground="White" Text="Définir" ></TextBlock>
+                                <!--Content="{Binding LocationName, Converter={StaticResource DataToStringLabelConverter}, ConverterParameter='Définir'}">-->
                             </Button>
                             <Button HorizontalAlignment="Left" x:Name="RemoveLocationBtn" 
                                     Click="RemoveLocationBtn_Click"
                                     Style="{StaticResource FlatRedBtnStandard}"
                                     FontSize="18"
                                     Visibility="{Binding LocationName, Converter={StaticResource SelectedItemToVisibilityConverter}}"
-                                    Width="22"
-                                    Height="18"
+                                    Width="15"
+                                    Height="15"
                                     FontWeight="Bold"
+                                    Margin="2,3,0,0"
                             >
                                 <TextBlock Margin="0,0,0,5" Foreground="White" Text="-" VerticalAlignment="Center" HorizontalAlignment="Center" />
                             </Button>
